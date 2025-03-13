@@ -49,14 +49,13 @@ export const FloatingLogos = () => {
       const randomOffsetX = (Math.random() - 0.5) * cellWidth * 0.7;
       const randomOffsetY = (Math.random() - 0.5) * cellHeight * 0.7;
       
-      // Ensure each logo starts with a minimum speed to prevent stationary logos
-      const minSpeed = 0.8;
-      let speedX = (Math.random() - 0.5) * 2;
-      let speedY = (Math.random() - 0.5) * 2;
+      // Ensure each logo starts with a good speed to prevent stationary logos
+      const minSpeed = 1.2; // Increased minimum speed
+      const maxSpeed = 2.5; // Set maximum speed
       
-      // Make sure speed is at least the minimum in either direction
-      if (Math.abs(speedX) < minSpeed) speedX = minSpeed * (speedX < 0 ? -1 : 1);
-      if (Math.abs(speedY) < minSpeed) speedY = minSpeed * (speedY < 0 ? -1 : 1);
+      // Generate random speeds within the min-max range
+      const speedX = (Math.random() * (maxSpeed - minSpeed) + minSpeed) * (Math.random() > 0.5 ? 1 : -1);
+      const speedY = (Math.random() * (maxSpeed - minSpeed) + minSpeed) * (Math.random() > 0.5 ? 1 : -1);
       
       return {
         id: index,
@@ -110,76 +109,96 @@ export const FloatingLogos = () => {
     
     // Add a periodic energy boost to ensure continuous movement
     let frameCount = 0;
-    const energyBoostInterval = 200; // Every 200 frames
+    const energyBoostInterval = 100; // More frequent energy boosts
     
     const animate = () => {
       frameCount++;
       
       setLogos(prevLogos => 
         prevLogos.map(logo => {
-          // Calculate distance to mouse
+          // Calculate current position and velocity
+          let newX = logo.x + logo.speedX;
+          let newY = logo.y + logo.speedY;
+          let newSpeedX = logo.speedX;
+          let newSpeedY = logo.speedY;
+          
+          // Mouse interaction - repulsion instead of attraction
           const dx = mousePosition.x - logo.x;
           const dy = mousePosition.y - logo.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          // Apply current velocity
-          let newX = logo.x + logo.speedX;
-          let newY = logo.y + logo.speedY;
-          
-          // Interactive radius and force for mouse interaction
-          const interactionRadius = 200;
+          const interactionRadius = 150;
           if (distance < interactionRadius) {
-            const force = (interactionRadius - distance) / interactionRadius * 1.5;
-            // Slight attraction to mouse position
-            newX += (dx / distance) * force;
-            newY += (dy / distance) * force;
+            // Calculate repulsion force (stronger when closer)
+            const repulsionForce = 2 * (1 - distance / interactionRadius);
+            
+            // Apply repulsion in the opposite direction of the mouse
+            newSpeedX -= (dx / distance) * repulsionForce;
+            newSpeedY -= (dy / distance) * repulsionForce;
           }
           
-          // Give energy boost periodically to ensure continuous movement
-          let newSpeedX = logo.speedX;
-          let newSpeedY = logo.speedY;
-          
-          if (frameCount % energyBoostInterval === 0) {
-            // If logo is moving too slowly, give it a boost
-            const currentSpeed = Math.sqrt(newSpeedX * newSpeedX + newSpeedY * newSpeedY);
-            if (currentSpeed < 0.5) {
-              const boostFactor = 1.5;
-              newSpeedX *= boostFactor;
-              newSpeedY *= boostFactor;
+          // Anti-clustering force - repel from other logos
+          prevLogos.forEach(otherLogo => {
+            if (logo.id !== otherLogo.id) {
+              const dxLogo = otherLogo.x - logo.x;
+              const dyLogo = otherLogo.y - logo.y;
+              const logoDistance = Math.sqrt(dxLogo * dxLogo + dyLogo * dyLogo);
               
-              // Add a small random component to break patterns
-              newSpeedX += (Math.random() - 0.5) * 0.3;
-              newSpeedY += (Math.random() - 0.5) * 0.3;
+              // Apply repulsion if logos are too close
+              const minDistance = (logo.size + otherLogo.size) * 0.8;
+              if (logoDistance < minDistance) {
+                const repulsionStrength = 0.7 * (1 - logoDistance / minDistance);
+                newSpeedX -= (dxLogo / logoDistance) * repulsionStrength;
+                newSpeedY -= (dyLogo / logoDistance) * repulsionStrength;
+              }
             }
-          }
+          });
           
           // Bounce off walls with randomized rebound
           if (newX < 0 || newX > dimensions.width) {
-            newSpeedX = -newSpeedX * (1 + Math.random() * 0.1);
+            newSpeedX = -newSpeedX * (0.9 + Math.random() * 0.2);
             newX = Math.max(0, Math.min(newX, dimensions.width));
-            // Add small random variation to Y speed to prevent horizontal oscillation
-            newSpeedY += (Math.random() - 0.5) * 0.5;
+            // Add small variation to avoid getting stuck on walls
+            newSpeedY += (Math.random() - 0.5) * 0.8;
           }
           
           if (newY < 0 || newY > dimensions.height) {
-            newSpeedY = -newSpeedY * (1 + Math.random() * 0.1);
+            newSpeedY = -newSpeedY * (0.9 + Math.random() * 0.2);
             newY = Math.max(0, Math.min(newY, dimensions.height));
-            // Add small random variation to X speed to prevent vertical oscillation
-            newSpeedX += (Math.random() - 0.5) * 0.5;
+            // Add small variation to avoid getting stuck on walls
+            newSpeedX += (Math.random() - 0.5) * 0.8;
           }
           
           // Apply gentle drag to prevent extreme speeds
-          const drag = 0.995;
+          const drag = 0.985;
           newSpeedX *= drag;
           newSpeedY *= drag;
           
-          // Minimum speed threshold to maintain movement
-          const minSpeed = 0.2;
-          const currentSpeed = Math.sqrt(newSpeedX * newSpeedX + newSpeedY * newSpeedY);
-          if (currentSpeed < minSpeed) {
-            const adjustFactor = minSpeed / currentSpeed;
-            newSpeedX *= adjustFactor;
-            newSpeedY *= adjustFactor;
+          // Energy boost to ensure continuous movement
+          if (frameCount % energyBoostInterval === 0) {
+            const currentSpeed = Math.sqrt(newSpeedX * newSpeedX + newSpeedY * newSpeedY);
+            const minSpeed = 1.0;
+            
+            if (currentSpeed < minSpeed) {
+              // Boost speed while preserving direction
+              const boostFactor = minSpeed / currentSpeed;
+              newSpeedX *= boostFactor;
+              newSpeedY *= boostFactor;
+              
+              // Add slight randomness to prevent synchronized movement
+              newSpeedX += (Math.random() - 0.5) * 0.5;
+              newSpeedY += (Math.random() - 0.5) * 0.5;
+            }
+            
+            // Max speed capping to prevent excessive speeds
+            const maxSpeed = 3.0;
+            const currentSpeedAfterBoost = Math.sqrt(newSpeedX * newSpeedX + newSpeedY * newSpeedY);
+            
+            if (currentSpeedAfterBoost > maxSpeed) {
+              const reduceFactor = maxSpeed / currentSpeedAfterBoost;
+              newSpeedX *= reduceFactor;
+              newSpeedY *= reduceFactor;
+            }
           }
           
           // Update rotation
