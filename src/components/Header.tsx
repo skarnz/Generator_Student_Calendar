@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -17,8 +16,8 @@ export function Header() {
   return (
     <header 
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6",
-        scrolled ? "glass-effect shadow-sm" : "bg-transparent"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 glass-effect shadow-sm",
+        scrolled ? "" : ""
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between">
