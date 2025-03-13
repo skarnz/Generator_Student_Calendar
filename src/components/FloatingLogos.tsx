@@ -30,20 +30,39 @@ export const FloatingLogos = () => {
     setDimensions({ width: containerRect.width, height: containerRect.height });
     
     // Filter out tools without logos and initialize positions
-    const initialLogos = tools
-      .filter(tool => tool.logoUrl)
-      .map((tool, index) => ({
+    const toolsWithLogos = tools.filter(tool => tool.logoUrl);
+    
+    // Create a grid to ensure even distribution
+    const rows = Math.ceil(Math.sqrt(toolsWithLogos.length));
+    const cols = Math.ceil(toolsWithLogos.length / rows);
+    const cellWidth = containerRect.width / cols;
+    const cellHeight = containerRect.height / rows;
+    
+    const initialLogos = toolsWithLogos.map((tool, index) => {
+      // Calculate grid position
+      const row = Math.floor(index / cols);
+      const col = index % cols;
+      
+      // Add some randomness within the cell
+      const baseX = col * cellWidth + cellWidth / 2;
+      const baseY = row * cellHeight + cellHeight / 2;
+      const randomOffsetX = (Math.random() - 0.5) * cellWidth * 0.7;
+      const randomOffsetY = (Math.random() - 0.5) * cellHeight * 0.7;
+      
+      return {
         id: index,
-        x: Math.random() * containerRect.width,
-        y: Math.random() * containerRect.height,
-        speedX: (Math.random() - 0.5) * 0.5,
-        speedY: (Math.random() - 0.5) * 0.5,
+        x: baseX + randomOffsetX,
+        y: baseY + randomOffsetY,
+        // Increased speed for faster movement
+        speedX: (Math.random() - 0.5) * 1.2,
+        speedY: (Math.random() - 0.5) * 1.2,
         size: 30 + Math.random() * 20,
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 0.3,
+        rotationSpeed: (Math.random() - 0.5) * 0.5,
         url: tool.logoUrl || '',
         name: tool.name
-      }));
+      };
+    });
     
     setLogos(initialLogos);
     
@@ -89,27 +108,37 @@ export const FloatingLogos = () => {
           const dy = mousePosition.y - logo.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          // Apply interactive force (logos are attracted to mouse)
-          const interactionRadius = 150;
+          // Increased interactive radius and force for more responsiveness
+          const interactionRadius = 200;
           let newX = logo.x + logo.speedX;
           let newY = logo.y + logo.speedY;
           
           if (distance < interactionRadius) {
-            const force = (interactionRadius - distance) / interactionRadius * 0.6;
+            // Increase the force for more dramatic interaction
+            const force = (interactionRadius - distance) / interactionRadius * 1.2;
             newX += (dx / distance) * force;
             newY += (dy / distance) * force;
           }
           
-          // Bounce off walls
+          // Bounce off walls with a slight randomness
           if (newX < 0 || newX > dimensions.width) {
-            logo.speedX *= -1;
+            logo.speedX *= -1.05; // Slightly increase speed on bounce
             newX = Math.max(0, Math.min(newX, dimensions.width));
+            // Add small random variation to prevent logos from getting stuck
+            logo.speedY += (Math.random() - 0.5) * 0.3;
           }
           
           if (newY < 0 || newY > dimensions.height) {
-            logo.speedY *= -1;
+            logo.speedY *= -1.05; // Slightly increase speed on bounce
             newY = Math.max(0, Math.min(newY, dimensions.height));
+            // Add small random variation to prevent logos from getting stuck
+            logo.speedX += (Math.random() - 0.5) * 0.3;
           }
+          
+          // Apply slight drag to prevent extreme speeds
+          const drag = 0.99;
+          logo.speedX *= drag;
+          logo.speedY *= drag;
           
           // Update rotation
           const newRotation = (logo.rotation + logo.rotationSpeed) % 360;
@@ -142,7 +171,7 @@ export const FloatingLogos = () => {
       {logos.map(logo => (
         <div
           key={logo.id}
-          className="absolute transition-transform duration-300 ease-out"
+          className="absolute transition-transform duration-200 ease-out"
           style={{
             left: `${logo.x}px`,
             top: `${logo.y}px`,
@@ -164,4 +193,3 @@ export const FloatingLogos = () => {
     </div>
   );
 };
-
