@@ -1,3 +1,4 @@
+
 interface Tool {
   name: string;
   description: string;
@@ -82,7 +83,7 @@ export const tools: Tool[] = [
     description: "An AI platform for music generation and composition.",
     url: "https://suno.ai/",
     category: "Music Creation",
-    logoUrl: "https://app.suno.ai/favicon.ico"
+    logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTY0QydKYbLgL7uA9tsz0ll-2XpyA_yJPWIOQ&s"
   },
   {
     name: "Exa",
