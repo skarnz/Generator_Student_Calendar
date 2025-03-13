@@ -1,3 +1,4 @@
+
 interface Tool {
   name: string;
   description: string;
@@ -40,14 +41,14 @@ export const tools: Tool[] = [
     description: "AI-powered text-to-speech platform that delivers high-quality, human-like voices in 32 languages.",
     url: "https://elevenlabs.io/",
     category: "AI Text to Speech",
-    logoUrl: "https://www.aiengineerpack.com/favicon.ico"
+    logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhiHGLIFhp21SIEtC3WBIGERC6rBtdFl36zQ&s"
   },
   {
     name: "ElevenLabs Scribe",
     description: "Advanced automatic speech recognition (ASR) model offering highly accurate transcription across 99 languages.",
     url: "https://elevenlabs.io/blog/meet-scribe",
     category: "AI Speech to Text",
-    logoUrl: "https://www.aiengineerpack.com/favicon.ico"
+    logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhiHGLIFhp21SIEtC3WBIGERC6rBtdFl36zQ&s"
   },
   {
     name: "Vizcom",
@@ -159,7 +160,7 @@ export const tools: Tool[] = [
     description: "A collection of many tools with some on this list heavily discounted or free for developers.",
     url: "https://www.aiengineerpack.com/",
     category: "Free Resources",
-    logoUrl: "https://www.aiengineerpack.com/favicon.ico"
+    logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhiHGLIFhp21SIEtC3WBIGERC6rBtdFl36zQ&s"
   }
 ];
 
