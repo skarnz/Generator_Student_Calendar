@@ -1,4 +1,3 @@
-
 interface Tool {
   name: string;
   description: string;
@@ -76,7 +75,7 @@ export const tools: Tool[] = [
     description: "An AI-powered melody generator that creates high-quality audio and MIDI loops, offering flexibility for music producers.",
     url: "https://www.lemonaide.ai/",
     category: "Music Creation",
-    logoUrl: "https://framerusercontent.com/images/QXneAEdTWwbDMh0kWh1l214IkI.svg"
+    logoUrl: "https://media.licdn.com/dms/image/v2/D4E0BAQHQQQfzzZbKaQ/company-logo_200_200/company-logo_200_200/0/1690288445177/lemonaid_music_logo?e=2147483647&v=beta&t=Nw_a__HyT5veD29sRMn68cBJhelOLExP7wKXEd-B0Tk"
   },
   {
     name: "Suno",
