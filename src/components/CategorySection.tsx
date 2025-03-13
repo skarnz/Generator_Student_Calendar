@@ -12,7 +12,7 @@ export function CategorySection({ categories, onSelectCategory, selectedCategory
   return (
     <section id="categories" className="py-16 sm:py-24 bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6">
-        <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl">Browse by Category</h2>
+        <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl text-center">Browse by Category</h2>
         
         <div className="mx-auto max-w-4xl overflow-x-auto py-4 -mx-4 px-4">
           <div className="flex flex-wrap justify-center gap-2 sm:gap-3 pb-4">

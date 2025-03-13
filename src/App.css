@@ -48,6 +48,26 @@
   color: #888;
 }
 
+.section-heading {
+  position: relative;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  display: inline-block;
+  text-align: center;
+}
+
+.section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 3px;
+  width: 100px;
+  background-color: #D5D6A8;
+  border-radius: 3px;
+}
+
 /* Mobile optimizations */
 @media (max-width: 640px) {
   .section-heading::after {
