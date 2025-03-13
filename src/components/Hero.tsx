@@ -2,6 +2,18 @@
 import { ArrowDown } from 'lucide-react';
 
 export function Hero() {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const targetId = href.substring(1);
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <section 
       id="hero" 
@@ -23,12 +35,14 @@ export function Hero() {
           <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <a
               href="#tools"
+              onClick={handleNavClick}
               className="inline-flex items-center justify-center rounded-lg bg-generator-gold px-6 py-3 text-base font-medium text-generator-darkGreen transition-all hover:bg-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green"
             >
               Explore Tools
             </a>
             <a
               href="#about"
+              onClick={handleNavClick}
               className="inline-flex items-center justify-center rounded-lg border border-generator-gold bg-transparent px-6 py-3 text-base font-medium text-generator-gold transition-all hover:bg-generator-darkGreen hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green"
             >
               Learn More
@@ -37,7 +51,7 @@ export function Hero() {
         </div>
         
         <div className="absolute bottom-8 left-0 right-0 mx-auto flex justify-center animate-float">
-          <a href="#about" className="flex flex-col items-center text-generator-gold">
+          <a href="#about" onClick={handleNavClick} className="flex flex-col items-center text-generator-gold">
             <span className="mb-2 text-sm">Scroll Down</span>
             <ArrowDown size={20} />
           </a>

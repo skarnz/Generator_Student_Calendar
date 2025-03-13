@@ -14,6 +14,18 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const targetId = href.substring(1);
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <header 
       className={cn(
@@ -35,15 +47,16 @@ export function Header() {
         </div>
         
         <nav className="hidden md:flex items-center space-x-1">
-          <a href="#hero" className="nav-link">Home</a>
-          <a href="#about" className="nav-link">About</a>
-          <a href="#tools" className="nav-link">AI Tools</a>
-          <a href="#categories" className="nav-link">Categories</a>
+          <a href="#hero" onClick={handleNavClick} className="nav-link">Home</a>
+          <a href="#about" onClick={handleNavClick} className="nav-link">About</a>
+          <a href="#tools" onClick={handleNavClick} className="nav-link">AI Tools</a>
+          <a href="#categories" onClick={handleNavClick} className="nav-link">Categories</a>
         </nav>
         
         <div className="flex items-center">
           <a 
             href="#tools" 
+            onClick={handleNavClick}
             className="generator-button text-sm md:text-base animate-pulse-soft"
           >
             Explore AI Tools

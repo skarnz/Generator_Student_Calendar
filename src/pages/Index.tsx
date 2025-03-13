@@ -21,6 +21,18 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const targetId = href.substring(1);
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-white">
@@ -50,6 +62,7 @@ const Index = () => {
       {/* Back to top button */}
       <a
         href="#hero"
+        onClick={handleNavClick}
         className="fixed bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-generator-green text-white shadow-lg transition-all hover:bg-generator-darkGreen"
         aria-label="Back to top"
       >
