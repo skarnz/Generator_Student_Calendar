@@ -13,6 +13,7 @@ interface ToolCardProps {
 
 export function ToolCard({ name, description, url, category, index, logoUrl }: ToolCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const animationDelay = `animate-delay-${(index % 5) * 100}`;
   
@@ -24,12 +25,13 @@ export function ToolCard({ name, description, url, category, index, logoUrl }: T
     >
       <div className="flex justify-between items-center mb-3">
         <span className="tech-chip">{category}</span>
-        {logoUrl && (
+        {logoUrl && !imageError && (
           <div className="w-10 h-10 flex items-center justify-center">
             <img 
               src={logoUrl} 
               alt={`${name} logo`} 
               className="max-w-full max-h-full object-contain"
+              onError={() => setImageError(true)}
             />
           </div>
         )}

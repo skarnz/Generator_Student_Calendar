@@ -27,35 +27,35 @@ export const tools: Tool[] = [
     description: "An AI image generation tool offering cost-effective solutions for creating stunning visuals.",
     url: "https://krea.ai/",
     category: "Text to Image",
-    logoUrl: "https://krea.ai/krea-thumb.png"
+    logoUrl: "https://assets-global.website-files.com/637be5d0f2736f32b8ad98cd/64c14cac4031dfb456ee6918_Frame%20427320736.svg"
   },
   {
     name: "Cursor",
     description: "An AI coding platform that provides intelligent code suggestions and automations to speed up development.",
     url: "https://cursor.so/",
     category: "Coding Tool",
-    logoUrl: "https://cursor.sh/brand/cursor-circle-white-green-type.svg"
+    logoUrl: "https://cursor.sh/favicon.ico"
   },
   {
     name: "ElevenLabs Text to Speech",
     description: "AI-powered text-to-speech platform that delivers high-quality, human-like voices in 32 languages.",
     url: "https://elevenlabs.io/",
     category: "AI Text to Speech",
-    logoUrl: "https://dashboard.elevenlabs.io/apple-touch-icon.png"
+    logoUrl: "https://storage.googleapis.com/eleven-public-prod/logos/eleven_labs_80.png"
   },
   {
     name: "ElevenLabs Scribe",
     description: "Advanced automatic speech recognition (ASR) model offering highly accurate transcription across 99 languages.",
     url: "https://elevenlabs.io/blog/meet-scribe",
     category: "AI Speech to Text",
-    logoUrl: "https://dashboard.elevenlabs.io/apple-touch-icon.png"
+    logoUrl: "https://storage.googleapis.com/eleven-public-prod/logos/eleven_labs_80.png"
   },
   {
     name: "Vizcom",
     description: "An AI tool for product design and prototyping, enabling 3D creation from images and text.",
     url: "https://vizcom.ai/",
     category: "3D Creation",
-    logoUrl: "https://vizcom.ai/favicon.ico"
+    logoUrl: "https://vizcom.ai/images/vizcom-icon.png"
   },
   {
     name: "n8n",
@@ -69,14 +69,14 @@ export const tools: Tool[] = [
     description: "An AI-powered platform that enables rapid development of cross-platform mobile applications using React Native.",
     url: "https://rork.app/",
     category: "Mobile App Development",
-    logoUrl: "https://www.rork.app/favicon.png"
+    logoUrl: "https://www.rork.app/favicon-32x32.png"
   },
   {
     name: "Lemonaide AI",
     description: "An AI-powered melody generator that creates high-quality audio and MIDI loops, offering flexibility for music producers.",
     url: "https://www.lemonaide.ai/",
     category: "Music Creation",
-    logoUrl: "https://www.lemonaide.ai/favicon.ico"
+    logoUrl: "https://www.lemonaide.ai/images/lemonaide-logo.svg"
   },
   {
     name: "Suno",
@@ -90,7 +90,7 @@ export const tools: Tool[] = [
     description: "An AI search tool capable of searching websets (databases of people, companies, etc.) and offering various features.",
     url: "https://exa.ai/",
     category: "AI Search",
-    logoUrl: "https://exa.ai/favicon.ico"
+    logoUrl: "https://exa.ai/assets/svgs/logos/exa-logo.svg"
   },
   {
     name: "Firecrawl",
@@ -104,7 +104,7 @@ export const tools: Tool[] = [
     description: "A lightweight, open-source library for building multimodal AI agents with memory, knowledge, and tools.",
     url: "https://github.com/agno-agi/agno",
     category: "Agent Framework",
-    logoUrl: "https://avatars.githubusercontent.com/u/150489855"
+    logoUrl: "https://raw.githubusercontent.com/agno-ai/agno/main/docs/assets/agno-logo-white.svg"
   },
   {
     name: "OpenAI Agents",
@@ -139,21 +139,21 @@ export const tools: Tool[] = [
     description: "An AI tool for creating engaging and interactive slide presentations.",
     url: "https://gamma.app/",
     category: "Presentation Creation",
-    logoUrl: "https://gamma.app/favicon.ico"
+    logoUrl: "https://cdn-app.gamma.app/assets/img/favicon/apple-touch-icon.png"
   },
   {
     name: "Agency Agents Marketplace",
     description: "A platform offering over 500 vetted copilots, tools, and AI agents to assist startups and small businesses.",
     url: "https://marketplace.agen.cy/home",
     category: "Agents Marketplace",
-    logoUrl: "https://marketplace.agen.cy/favicon.ico"
+    logoUrl: "https://uploads-ssl.webflow.com/6516efb063f6df11bc6b32d0/6516f48f798cf70e6dea5860_agency-icon.png"
   },
   {
     name: "Intercom",
     description: "Provides AI-driven customer service agents for professional chat support.",
     url: "https://intercom.com/",
     category: "Customer Service",
-    logoUrl: "https://www.intercom.com/favicon.ico"
+    logoUrl: "https://static.intercomassets.com/assets/favicon-32x32-d74e28fb6fac12d90d470c1fbf12156ca24e71d682afc1a05b1a87408b20d1c7.png"
   },
   {
     name: "AI Engineer Pack",
