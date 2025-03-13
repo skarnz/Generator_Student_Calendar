@@ -1,12 +1,73 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState, useEffect } from 'react';
+import { Header } from '@/components/Header';
+import { Hero } from '@/components/Hero';
+import { About } from '@/components/About';
+import { ToolsSection } from '@/components/ToolsSection';
+import { CategorySection } from '@/components/CategorySection';
+import { Footer } from '@/components/Footer';
+import { tools, categories } from '@/data/tools';
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate content loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="mb-4 h-16 w-16 animate-pulse rounded-full bg-generator-green mx-auto"></div>
+          <h2 className="text-xl font-medium text-generator-darkGreen">Loading Buildathon Tools...</h2>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main>
+        <Hero />
+        <About />
+        <CategorySection 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
+        <ToolsSection tools={tools} selectedCategory={selectedCategory} />
+      </main>
+      <Footer />
+      
+      {/* Back to top button */}
+      <a
+        href="#hero"
+        className="fixed bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-generator-green text-white shadow-lg transition-all hover:bg-generator-darkGreen"
+        aria-label="Back to top"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+      </a>
     </div>
   );
 };
