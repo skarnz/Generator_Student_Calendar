@@ -6,6 +6,7 @@ interface Tool {
   description: string;
   url: string;
   category: string;
+  logoUrl?: string;
 }
 
 interface ToolsSectionProps {
@@ -31,6 +32,7 @@ export function ToolsSection({ tools, selectedCategory }: ToolsSectionProps) {
               description={tool.description}
               url={tool.url}
               category={tool.category}
+              logoUrl={tool.logoUrl}
               index={index}
             />
           ))}
