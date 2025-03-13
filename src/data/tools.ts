@@ -161,9 +161,24 @@ export const tools: Tool[] = [
     url: "https://www.aiengineerpack.com/",
     category: "Free Resources",
     logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhiHGLIFhp21SIEtC3WBIGERC6rBtdFl36zQ&s"
+  },
+  {
+    name: "Informly Validator",
+    description: "AI-powered validation tool for screening prospective clients and generating professional risk reports.",
+    url: "https://validator.informly.ai/",
+    category: "Business Validation",
+    logoUrl: "https://validator.informly.ai/favicon.svg"
+  },
+  {
+    name: "Informly Business Reports",
+    description: "Comprehensive business validation platform offering detailed reports for business assessment and risk analysis.",
+    url: "https://businesses.informly.ai/sample-reports",
+    category: "Business Validation",
+    logoUrl: "https://validator.informly.ai/favicon.svg"
   }
 ];
 
 export const categories: string[] = [
   ...new Set(tools.map(tool => tool.category))
 ].sort();
+

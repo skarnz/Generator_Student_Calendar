@@ -87,8 +87,14 @@
   margin-right: auto;
 }
 
-#categories .flex.flex-wrap {
+#categories .container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#categories .inline-flex {
+  display: inline-flex;
+  max-width: 100%;
   justify-content: center;
-  width: 100%;
 }
