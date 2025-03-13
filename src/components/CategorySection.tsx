@@ -14,34 +14,36 @@ export function CategorySection({ categories, onSelectCategory, selectedCategory
       <div className="container mx-auto px-4 sm:px-6 text-center">
         <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl text-center">Browse by Category</h2>
         
-        <div className="mx-auto max-w-4xl overflow-x-auto py-4 -mx-4 px-4">
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 pb-4">
-            <button
-              onClick={() => onSelectCategory('All')}
-              className={cn(
-                "rounded-full px-3 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300",
-                selectedCategory === 'All'
-                  ? "bg-generator-green text-white shadow-md"
-                  : "bg-white text-gray-700 hover:bg-generator-lightGold hover:text-generator-darkGreen"
-              )}
-            >
-              All Tools
-            </button>
-            
-            {categories.map((category) => (
+        <div className="flex justify-center w-full">
+          <div className="w-full max-w-4xl overflow-x-auto py-4">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 pb-4 w-full">
               <button
-                key={category}
-                onClick={() => onSelectCategory(category)}
+                onClick={() => onSelectCategory('All')}
                 className={cn(
                   "rounded-full px-3 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300",
-                  selectedCategory === category
+                  selectedCategory === 'All'
                     ? "bg-generator-green text-white shadow-md"
                     : "bg-white text-gray-700 hover:bg-generator-lightGold hover:text-generator-darkGreen"
                 )}
               >
-                {category}
+                All Tools
               </button>
-            ))}
+              
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => onSelectCategory(category)}
+                  className={cn(
+                    "rounded-full px-3 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300",
+                    selectedCategory === category
+                      ? "bg-generator-green text-white shadow-md"
+                      : "bg-white text-gray-700 hover:bg-generator-lightGold hover:text-generator-darkGreen"
+                  )}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

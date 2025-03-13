@@ -81,13 +81,14 @@
   }
 }
 
-/* Center fix for category section */
-#categories .container {
-  text-align: center;
-}
-
+/* Fix for category section */
 #categories .section-heading {
   margin-left: auto;
   margin-right: auto;
 }
 
+#categories .flex.flex-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
