@@ -49,16 +49,24 @@ export const FloatingLogos = () => {
       const randomOffsetX = (Math.random() - 0.5) * cellWidth * 0.7;
       const randomOffsetY = (Math.random() - 0.5) * cellHeight * 0.7;
       
+      // Ensure each logo starts with a minimum speed to prevent stationary logos
+      const minSpeed = 0.8;
+      let speedX = (Math.random() - 0.5) * 2;
+      let speedY = (Math.random() - 0.5) * 2;
+      
+      // Make sure speed is at least the minimum in either direction
+      if (Math.abs(speedX) < minSpeed) speedX = minSpeed * (speedX < 0 ? -1 : 1);
+      if (Math.abs(speedY) < minSpeed) speedY = minSpeed * (speedY < 0 ? -1 : 1);
+      
       return {
         id: index,
         x: baseX + randomOffsetX,
         y: baseY + randomOffsetY,
-        // Increased speed for faster movement
-        speedX: (Math.random() - 0.5) * 1.2,
-        speedY: (Math.random() - 0.5) * 1.2,
+        speedX: speedX,
+        speedY: speedY,
         size: 30 + Math.random() * 20,
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 0.5,
+        rotationSpeed: (Math.random() - 0.5) * 1,
         url: tool.logoUrl || '',
         name: tool.name
       };
@@ -100,7 +108,13 @@ export const FloatingLogos = () => {
   useEffect(() => {
     if (logos.length === 0 || dimensions.width === 0) return;
     
+    // Add a periodic energy boost to ensure continuous movement
+    let frameCount = 0;
+    const energyBoostInterval = 200; // Every 200 frames
+    
     const animate = () => {
+      frameCount++;
+      
       setLogos(prevLogos => 
         prevLogos.map(logo => {
           // Calculate distance to mouse
@@ -108,37 +122,65 @@ export const FloatingLogos = () => {
           const dy = mousePosition.y - logo.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          // Increased interactive radius and force for more responsiveness
-          const interactionRadius = 200;
+          // Apply current velocity
           let newX = logo.x + logo.speedX;
           let newY = logo.y + logo.speedY;
           
+          // Interactive radius and force for mouse interaction
+          const interactionRadius = 200;
           if (distance < interactionRadius) {
-            // Increase the force for more dramatic interaction
-            const force = (interactionRadius - distance) / interactionRadius * 1.2;
+            const force = (interactionRadius - distance) / interactionRadius * 1.5;
+            // Slight attraction to mouse position
             newX += (dx / distance) * force;
             newY += (dy / distance) * force;
           }
           
-          // Bounce off walls with a slight randomness
+          // Give energy boost periodically to ensure continuous movement
+          let newSpeedX = logo.speedX;
+          let newSpeedY = logo.speedY;
+          
+          if (frameCount % energyBoostInterval === 0) {
+            // If logo is moving too slowly, give it a boost
+            const currentSpeed = Math.sqrt(newSpeedX * newSpeedX + newSpeedY * newSpeedY);
+            if (currentSpeed < 0.5) {
+              const boostFactor = 1.5;
+              newSpeedX *= boostFactor;
+              newSpeedY *= boostFactor;
+              
+              // Add a small random component to break patterns
+              newSpeedX += (Math.random() - 0.5) * 0.3;
+              newSpeedY += (Math.random() - 0.5) * 0.3;
+            }
+          }
+          
+          // Bounce off walls with randomized rebound
           if (newX < 0 || newX > dimensions.width) {
-            logo.speedX *= -1.05; // Slightly increase speed on bounce
+            newSpeedX = -newSpeedX * (1 + Math.random() * 0.1);
             newX = Math.max(0, Math.min(newX, dimensions.width));
-            // Add small random variation to prevent logos from getting stuck
-            logo.speedY += (Math.random() - 0.5) * 0.3;
+            // Add small random variation to Y speed to prevent horizontal oscillation
+            newSpeedY += (Math.random() - 0.5) * 0.5;
           }
           
           if (newY < 0 || newY > dimensions.height) {
-            logo.speedY *= -1.05; // Slightly increase speed on bounce
+            newSpeedY = -newSpeedY * (1 + Math.random() * 0.1);
             newY = Math.max(0, Math.min(newY, dimensions.height));
-            // Add small random variation to prevent logos from getting stuck
-            logo.speedX += (Math.random() - 0.5) * 0.3;
+            // Add small random variation to X speed to prevent vertical oscillation
+            newSpeedX += (Math.random() - 0.5) * 0.5;
           }
           
-          // Apply slight drag to prevent extreme speeds
-          const drag = 0.99;
-          logo.speedX *= drag;
-          logo.speedY *= drag;
+          // Apply gentle drag to prevent extreme speeds
+          const drag = 0.995;
+          newSpeedX *= drag;
+          newSpeedY *= drag;
+          
+          // Minimum speed threshold to maintain movement
+          const minSpeed = 0.2;
+          const currentSpeed = Math.sqrt(newSpeedX * newSpeedX + newSpeedY * newSpeedY);
+          if (currentSpeed < minSpeed) {
+            const adjustFactor = minSpeed / currentSpeed;
+            newSpeedX *= adjustFactor;
+            newSpeedY *= adjustFactor;
+          }
           
           // Update rotation
           const newRotation = (logo.rotation + logo.rotationSpeed) % 360;
@@ -147,6 +189,8 @@ export const FloatingLogos = () => {
             ...logo,
             x: newX,
             y: newY,
+            speedX: newSpeedX,
+            speedY: newSpeedY,
             rotation: newRotation
           };
         })
