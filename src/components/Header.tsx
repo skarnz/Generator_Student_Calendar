@@ -34,16 +34,12 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center">
           <img 
             src="/lovable-uploads/0ae39654-597b-4a29-9627-34589cc78afe.png" 
             alt="The Generator Logo" 
-            className="h-8 md:h-10 w-auto object-contain" 
+            className="h-10 md:h-12 w-auto object-contain" 
           />
-          <div className="hidden md:block">
-            <h1 className="text-lg font-bold text-generator-green">The Generator</h1>
-            <p className="text-xs text-generator-gold">Interdisciplinary AI Lab</p>
-          </div>
         </div>
         
         <nav className="hidden md:flex items-center space-x-1">
