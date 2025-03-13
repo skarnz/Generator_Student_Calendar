@@ -111,12 +111,12 @@
   }
 
   .section-heading {
-    @apply relative mb-12 text-center text-3xl font-bold text-generator-darkGreen md:text-4xl;
+    @apply relative mb-16 text-center text-3xl font-bold text-generator-darkGreen md:text-4xl;
   }
 
   .section-heading::after {
     content: '';
-    @apply absolute bottom-0 left-1/2 h-1 w-24 -translate-x-1/2 transform rounded bg-generator-gold;
+    @apply absolute -bottom-6 left-1/2 h-1 w-24 -translate-x-1/2 transform rounded bg-generator-gold;
   }
 
   .curved-pattern {
