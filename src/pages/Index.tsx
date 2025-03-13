@@ -37,8 +37,8 @@ const Index = () => {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-white">
         <div className="text-center">
-          <div className="mb-4 h-16 w-16 animate-pulse rounded-full bg-generator-green mx-auto"></div>
-          <h2 className="text-xl font-medium text-generator-darkGreen">Loading Buildathon Tools...</h2>
+          <div className="mb-4 h-12 w-12 sm:h-16 sm:w-16 animate-pulse rounded-full bg-generator-green mx-auto"></div>
+          <h2 className="text-lg sm:text-xl font-medium text-generator-darkGreen">Loading Buildathon Tools...</h2>
         </div>
       </div>
     );
@@ -47,7 +47,7 @@ const Index = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main>
+      <main className="pt-16 sm:pt-0">
         <Hero />
         <About />
         <CategorySection 
@@ -63,12 +63,12 @@ const Index = () => {
       <a
         href="#hero"
         onClick={handleNavClick}
-        className="fixed bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-generator-green text-white shadow-lg transition-all hover:bg-generator-darkGreen"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-generator-green text-white shadow-lg transition-all hover:bg-generator-darkGreen"
         aria-label="Back to top"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
+          className="h-5 w-5 sm:h-6 sm:w-6"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -83,6 +83,6 @@ const Index = () => {
       </a>
     </div>
   );
-};
+}
 
 export default Index;
