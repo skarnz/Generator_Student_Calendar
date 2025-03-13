@@ -80,3 +80,14 @@
     margin-bottom: 2rem;
   }
 }
+
+/* Center fix for category section */
+#categories .container {
+  text-align: center;
+}
+
+#categories .section-heading {
+  margin-left: auto;
+  margin-right: auto;
+}
+
