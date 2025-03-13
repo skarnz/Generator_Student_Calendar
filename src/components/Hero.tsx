@@ -1,5 +1,6 @@
 
 import { ArrowDown } from 'lucide-react';
+import { FloatingLogos } from './FloatingLogos';
 
 export function Hero() {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -20,6 +21,10 @@ export function Hero() {
       className="relative flex min-h-screen items-center justify-center overflow-hidden pattern-bg py-20 text-white"
     >
       <div className="curved-pattern" aria-hidden="true"></div>
+      
+      {/* Add the FloatingLogos component */}
+      <FloatingLogos />
+      
       <div className="container relative z-10 mx-auto px-6 py-32 text-center">
         <div className="mx-auto max-w-4xl">
           <h1 className="animate-fade-in mb-4 text-4xl font-extrabold md:text-6xl">
