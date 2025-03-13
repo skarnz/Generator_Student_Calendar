@@ -36,7 +36,7 @@ export function Hero() {
           </div>
         </div>
         
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 transform animate-float">
+        <div className="absolute bottom-8 left-0 right-0 mx-auto flex justify-center animate-float">
           <a href="#about" className="flex flex-col items-center text-generator-gold">
             <span className="mb-2 text-sm">Scroll Down</span>
             <ArrowDown size={20} />
