@@ -13,10 +13,9 @@ interface Tool {
 interface ToolsSectionProps {
   tools: Tool[];
   selectedCategory: string;
-  onSelectCategory?: (category: string) => void; // Added this prop
 }
 
-export function ToolsSection({ tools, selectedCategory, onSelectCategory }: ToolsSectionProps) {
+export function ToolsSection({ tools, selectedCategory }: ToolsSectionProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
@@ -76,13 +75,13 @@ export function ToolsSection({ tools, selectedCategory, onSelectCategory }: Tool
         <div className="mb-6 flex gap-4">
           <button 
             className={`px-4 py-2 rounded-md ${selectedCategory === 'All' ? 'bg-gray-800' : 'bg-gray-900'} text-white`}
-            onClick={() => onSelectCategory?.('All')}
+            onClick={() => setSelectedCategory('All')}
           >
             All Tools
           </button>
           <button 
             className={`px-4 py-2 rounded-md ${selectedCategory === 'Categories' ? 'bg-gray-800' : 'bg-gray-900'} text-white`}
-            onClick={() => onSelectCategory?.('Categories')}
+            onClick={() => setSelectedCategory('Categories')}
           >
             Categories
           </button>

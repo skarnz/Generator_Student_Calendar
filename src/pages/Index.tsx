@@ -56,11 +56,7 @@ const Index = () => {
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
-        <ToolsSection 
-          tools={tools} 
-          selectedCategory={selectedCategory} 
-          onSelectCategory={setSelectedCategory} 
-        />
+        <ToolsSection tools={tools} selectedCategory={selectedCategory} />
       </main>
       <Footer />
       
