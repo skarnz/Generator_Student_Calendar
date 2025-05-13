@@ -1,4 +1,6 @@
+
 import { useState, useEffect } from 'react';
+import { ToolCard } from './ToolCard';
 import { Search, Star } from 'lucide-react';
 
 interface Tool {
@@ -14,16 +16,10 @@ interface ToolsSectionProps {
   selectedCategory: string;
 }
 
-export function ToolsSection({ tools, selectedCategory: initialCategory }: ToolsSectionProps) {
+export function ToolsSection({ tools, selectedCategory }: ToolsSectionProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-  const [localCategory, setLocalCategory] = useState(initialCategory);
-  
-  // Keep local category in sync with prop
-  useEffect(() => {
-    setLocalCategory(initialCategory);
-  }, [initialCategory]);
   
   // Load favorites from localStorage on mount
   useEffect(() => {
@@ -49,7 +45,7 @@ export function ToolsSection({ tools, selectedCategory: initialCategory }: Tools
   };
 
   const filteredTools = tools.filter(tool => {
-    const matchesCategory = localCategory === 'All' || tool.category === localCategory;
+    const matchesCategory = selectedCategory === 'All' || tool.category === selectedCategory;
     const matchesSearch = tool.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           tool.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFavorites = !showOnlyFavorites || favorites.includes(tool.name);
@@ -58,107 +54,51 @@ export function ToolsSection({ tools, selectedCategory: initialCategory }: Tools
   });
     
   return (
-    <section id="tools" className="py-8 sm:py-12">
+    <section id="tools" className="py-16 sm:py-24">
       <div className="container mx-auto px-4 sm:px-6">
-        <h2 className="text-3xl font-bold mb-8 text-left text-generator-green">AI Tool Explorer</h2>
+        <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl">AI Tools Stack</h2>
         
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center">
-          <div className="relative w-full">
+        <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="relative w-full sm:w-64 md:w-80">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-4 w-4 text-gray-400" />
             </div>
             <input
               type="text"
-              placeholder="Search tools by name, feature, or category..."
+              placeholder="Search tools..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-3 w-full border border-gray-700 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-generator-green"
+              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-generator-green"
             />
           </div>
-        </div>
-        
-        <div className="mb-6 flex gap-4">
-          <button 
-            className={`px-4 py-2 rounded-md ${localCategory === 'All' ? 'bg-gray-800' : 'bg-gray-900'} text-white`}
-            onClick={() => setLocalCategory('All')}
-          >
-            All Tools
-          </button>
-          <button 
-            className={`px-4 py-2 rounded-md ${localCategory === 'Categories' ? 'bg-gray-800' : 'bg-gray-900'} text-white`}
-            onClick={() => setLocalCategory('Categories')}
-          >
-            Categories
-          </button>
-          <button 
+          
+          <button
             onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
               showOnlyFavorites 
-                ? 'bg-gray-800 text-white' 
-                : 'bg-gray-900 text-white'
+                ? 'bg-generator-green text-white' 
+                : 'bg-white text-gray-700 border border-gray-300'
             }`}
           >
-            <Star className={`h-4 w-4 ${showOnlyFavorites ? 'fill-yellow-500' : ''}`} />
+            <Star className={`h-4 w-4 ${showOnlyFavorites ? 'fill-white' : ''}`} />
             <span>Favorites</span>
           </button>
         </div>
         
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-900">
-              <tr className="text-left">
-                <th className="px-4 py-3 text-white font-medium">Name</th>
-                <th className="px-4 py-3 text-white font-medium">Category</th>
-                <th className="px-4 py-3 text-white font-medium">Tags</th>
-                <th className="px-4 py-3 text-white font-medium">Description</th>
-                <th className="px-4 py-3 text-white font-medium text-center">Favorite</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-800">
-              {filteredTools.map((tool, index) => (
-                <tr key={tool.name} className="bg-gray-900 hover:bg-gray-800 transition-colors">
-                  <td className="px-4 py-4 text-white font-medium">
-                    <a href={tool.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                      {tool.logoUrl ? (
-                        <img src={tool.logoUrl} alt={tool.name} className="h-5 w-5" />
-                      ) : (
-                        <div className="h-5 w-5 bg-gray-700 rounded-md flex items-center justify-center">
-                          <span className="text-xs font-bold text-white">
-                            {tool.name.charAt(0)}
-                          </span>
-                        </div>
-                      )}
-                      {tool.name}
-                    </a>
-                  </td>
-                  <td className="px-4 py-4 text-white">{tool.category}</td>
-                  <td className="px-4 py-4 text-white">
-                    <div className="flex flex-wrap gap-1">
-                      {tool.category.toLowerCase().split(', ').map(tag => (
-                        <span key={tag} className="inline-block text-xs bg-gray-800 text-gray-300 rounded-full px-2 py-1">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-white">{tool.description}</td>
-                  <td className="px-4 py-4 text-center">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        toggleFavorite(tool.name);
-                      }}
-                      className="p-1 inline-flex"
-                    >
-                      <Star 
-                        className={`h-5 w-5 ${favorites.includes(tool.name) ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}`} 
-                      />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredTools.map((tool, index) => (
+            <ToolCard
+              key={tool.name}
+              name={tool.name}
+              description={tool.description}
+              url={tool.url}
+              category={tool.category}
+              logoUrl={tool.logoUrl}
+              index={index}
+              isFavorite={favorites.includes(tool.name)}
+              onToggleFavorite={() => toggleFavorite(tool.name)}
+            />
+          ))}
         </div>
         
         {filteredTools.length === 0 && (
