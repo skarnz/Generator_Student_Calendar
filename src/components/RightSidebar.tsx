@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send } from 'lucide-react';
+import { MessageSquare, X, Send, ChevronLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 
@@ -12,14 +12,19 @@ interface Message {
 
 export function RightSidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { id: '1', content: "Hello! I'm your AI assistant. How can I help you today?", isUser: false },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
+    
+    // If expanding and no messages yet, add welcome message
+    if (!isExpanded && messages.length === 0) {
+      setMessages([
+        { id: '1', content: "Hello! I'm your AI assistant. How can I help you today?", isUser: false }
+      ]);
+    }
   };
 
   const handleSendMessage = () => {
@@ -56,7 +61,7 @@ export function RightSidebar() {
   return (
     <div 
       className={cn(
-        "fixed right-0 top-0 h-full bg-white border-l border-gray-200 transition-all duration-300 z-20",
+        "fixed right-0 top-0 h-full bg-gray-900 border-l border-gray-700 transition-all duration-300 z-20",
         isExpanded ? "w-80" : "w-12"
       )}
     >
@@ -65,7 +70,7 @@ export function RightSidebar() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="absolute left-0 top-4 transform -translate-x-1/2 bg-white border border-gray-200 rounded-full shadow-md"
+          className="absolute left-0 top-4 transform -translate-x-1/2 bg-gray-800 border border-gray-700 rounded-full shadow-md text-white"
           onClick={toggleSidebar}
           aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
         >
@@ -75,42 +80,51 @@ export function RightSidebar() {
         {/* Chat content - only visible when expanded */}
         {isExpanded && (
           <>
-            <div className="flex-none p-3 border-b border-gray-200">
-              <h2 className="font-semibold text-sm">AI Assistant</h2>
+            <div className="flex-none p-4 border-b border-gray-700 flex items-center">
+              <ChevronLeft className="h-4 w-4 text-gray-400 mr-2 cursor-pointer" 
+                onClick={toggleSidebar} 
+              />
+              <h2 className="font-medium text-white">Chat Assistant</h2>
             </div>
             
-            <div className="flex-grow overflow-y-auto p-3 space-y-4">
-              {messages.map((message) => (
-                <div 
-                  key={message.id}
-                  className={cn(
-                    "max-w-[85%] rounded-lg p-3 text-sm",
-                    message.isUser 
-                      ? "bg-generator-green text-white ml-auto" 
-                      : "bg-gray-100 text-gray-800"
-                  )}
-                >
-                  {message.content}
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
+            {messages.length > 0 ? (
+              <div className="flex-grow overflow-y-auto p-3 space-y-4">
+                {messages.map((message) => (
+                  <div 
+                    key={message.id}
+                    className={cn(
+                      "max-w-[85%] rounded-lg p-3 text-sm",
+                      message.isUser 
+                        ? "bg-blue-600 text-white ml-auto" 
+                        : "bg-gray-800 text-white"
+                    )}
+                  >
+                    {message.content}
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            ) : (
+              <div className="flex-grow flex items-center justify-center p-4 text-center">
+                <p className="text-gray-400">Start a conversation</p>
+              </div>
+            )}
             
-            <div className="flex-none p-3 border-t border-gray-200">
+            <div className="flex-none p-3 border-t border-gray-700">
               <div className="flex items-center gap-2">
                 <textarea
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Type a message..."
-                  className="flex-grow text-sm border border-gray-300 rounded-md px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-generator-green"
+                  placeholder="Describe your goal..."
+                  className="flex-grow text-sm border border-gray-700 bg-gray-800 rounded-md px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                   rows={1}
                 />
                 <Button 
                   size="icon" 
                   onClick={handleSendMessage}
                   disabled={!inputMessage.trim()}
-                  className="bg-generator-green hover:bg-generator-darkGreen"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
