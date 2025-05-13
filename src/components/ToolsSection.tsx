@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Search, Star } from 'lucide-react';
 
@@ -15,10 +14,16 @@ interface ToolsSectionProps {
   selectedCategory: string;
 }
 
-export function ToolsSection({ tools, selectedCategory }: ToolsSectionProps) {
+export function ToolsSection({ tools, selectedCategory: initialCategory }: ToolsSectionProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [localCategory, setLocalCategory] = useState(initialCategory);
+  
+  // Keep local category in sync with prop
+  useEffect(() => {
+    setLocalCategory(initialCategory);
+  }, [initialCategory]);
   
   // Load favorites from localStorage on mount
   useEffect(() => {
@@ -44,7 +49,7 @@ export function ToolsSection({ tools, selectedCategory }: ToolsSectionProps) {
   };
 
   const filteredTools = tools.filter(tool => {
-    const matchesCategory = selectedCategory === 'All' || tool.category === selectedCategory;
+    const matchesCategory = localCategory === 'All' || tool.category === localCategory;
     const matchesSearch = tool.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           tool.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFavorites = !showOnlyFavorites || favorites.includes(tool.name);
@@ -74,14 +79,14 @@ export function ToolsSection({ tools, selectedCategory }: ToolsSectionProps) {
         
         <div className="mb-6 flex gap-4">
           <button 
-            className={`px-4 py-2 rounded-md ${selectedCategory === 'All' ? 'bg-gray-800' : 'bg-gray-900'} text-white`}
-            onClick={() => setSelectedCategory('All')}
+            className={`px-4 py-2 rounded-md ${localCategory === 'All' ? 'bg-gray-800' : 'bg-gray-900'} text-white`}
+            onClick={() => setLocalCategory('All')}
           >
             All Tools
           </button>
           <button 
-            className={`px-4 py-2 rounded-md ${selectedCategory === 'Categories' ? 'bg-gray-800' : 'bg-gray-900'} text-white`}
-            onClick={() => setSelectedCategory('Categories')}
+            className={`px-4 py-2 rounded-md ${localCategory === 'Categories' ? 'bg-gray-800' : 'bg-gray-900'} text-white`}
+            onClick={() => setLocalCategory('Categories')}
           >
             Categories
           </button>
