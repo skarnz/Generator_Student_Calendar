@@ -6,6 +6,7 @@ import { About } from '@/components/About';
 import { ToolsSection } from '@/components/ToolsSection';
 import { CategorySection } from '@/components/CategorySection';
 import { Footer } from '@/components/Footer';
+import { RightSidebar } from '@/components/RightSidebar';
 import { tools, categories } from '@/data/tools';
 
 const Index = () => {
@@ -58,6 +59,9 @@ const Index = () => {
         <ToolsSection tools={tools} selectedCategory={selectedCategory} />
       </main>
       <Footer />
+      
+      {/* Add RightSidebar */}
+      <RightSidebar />
       
       {/* Back to top button */}
       <a

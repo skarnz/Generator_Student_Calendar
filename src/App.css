@@ -98,3 +98,15 @@
   max-width: 100%;
   justify-content: center;
 }
+
+/* Right sidebar adjustments */
+.right-sidebar-open {
+  margin-right: 80px;
+  transition: margin-right 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .right-sidebar-open {
+    margin-right: 320px;
+  }
+}
