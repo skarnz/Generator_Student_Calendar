@@ -1,8 +1,13 @@
 
 import { ArrowDown } from 'lucide-react';
-import { FloatingLogos } from './FloatingLogos';
+import { FloatingImages } from './FloatingImages';
+import { CalendarMiniView } from './CalendarMiniView';
 
-export function Hero() {
+interface HeroProps {
+  onDateSelect?: (date: Date) => void;
+}
+
+export function Hero({ onDateSelect }: HeroProps) {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const href = e.currentTarget.getAttribute('href');
@@ -22,37 +27,43 @@ export function Hero() {
     >
       <div className="curved-pattern" aria-hidden="true"></div>
       
-      {/* Add the FloatingLogos component */}
-      <FloatingLogos />
+      {/* Floating community images */}
+      <FloatingImages />
       
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 py-16 sm:py-32 text-center">
-        <div className="mx-auto max-w-4xl">
+      <div className="container relative z-10 mx-auto px-4 sm:px-6 py-16 sm:py-32">
+        <div className="mx-auto max-w-4xl text-center">
           <h1 className="animate-fade-in mb-4 text-3xl sm:text-4xl md:text-6xl font-extrabold">
-            <span className="block">Buildathon</span>
-            <span className="mt-2 block text-generator-gold">AI Tools Stack</span>
+            <span className="block">The Generator</span>
+            <span className="mt-2 block text-generator-gold">Events Calendar 2025-26</span>
           </h1>
           
           <p className="animate-fade-in animate-delay-100 mb-6 sm:mb-8 text-base sm:text-lg md:text-xl opacity-90 px-2">
-            Accelerate your innovation journey with our curated collection of AI tools.
-            Build, create, and launch your ideas in record time.
+            Join us for workshops, talks, buildathons, and networking events.
+            Build your entrepreneurial journey with our vibrant community.
           </p>
           
-          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4">
+          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4 mb-12">
             <a
-              href="#tools"
+              href="#events"
               onClick={handleNavClick}
               className="inline-flex items-center justify-center rounded-lg bg-generator-gold px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen transition-all hover:bg-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green"
             >
-              Explore Tools
+              View Events
             </a>
             <a
-              href="#about"
-              onClick={handleNavClick}
+              href="https://www.babson.edu/academics/centers/the-generator/associates/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-lg border border-generator-gold bg-transparent px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-gold transition-all hover:bg-generator-darkGreen hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green"
             >
-              Learn More
+              Join Associates
             </a>
           </div>
+        </div>
+        
+        {/* Calendar Mini View - positioned above gradient */}
+        <div className="animate-fade-in animate-delay-300 mx-auto max-w-2xl mb-16">
+          <CalendarMiniView onDateSelect={onDateSelect} />
         </div>
         
         <div className="absolute bottom-8 left-0 right-0 mx-auto flex justify-center animate-float">

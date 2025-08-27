@@ -3,14 +3,16 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
-import { ToolsSection } from '@/components/ToolsSection';
-import { CategorySection } from '@/components/CategorySection';
+import { EventsSection } from '@/components/EventsSection';
+import { FilterSection } from '@/components/FilterSection';
 import { Footer } from '@/components/Footer';
 import { RightSidebar } from '@/components/RightSidebar';
-import { tools, categories } from '@/data/tools';
+import { events, eventTypes, audiences } from '@/data/events';
 
 const Index = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedEventType, setSelectedEventType] = useState('All');
+  const [selectedAudience, setSelectedAudience] = useState('All');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ const Index = () => {
       <div className="flex h-screen w-full items-center justify-center bg-white">
         <div className="text-center">
           <div className="mb-4 h-12 w-12 sm:h-16 sm:w-16 animate-pulse rounded-full bg-generator-green mx-auto"></div>
-          <h2 className="text-lg sm:text-xl font-medium text-generator-darkGreen">Loading Buildathon Tools...</h2>
+          <h2 className="text-lg sm:text-xl font-medium text-generator-darkGreen">Loading Generator Events...</h2>
         </div>
       </div>
     );
@@ -49,14 +51,22 @@ const Index = () => {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="pt-16 sm:pt-0">
-        <Hero />
+        <Hero onDateSelect={setSelectedDate} />
         <About />
-        <CategorySection 
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+        <FilterSection 
+          eventTypes={eventTypes}
+          audiences={audiences}
+          selectedEventType={selectedEventType}
+          selectedAudience={selectedAudience}
+          onSelectEventType={setSelectedEventType}
+          onSelectAudience={setSelectedAudience}
         />
-        <ToolsSection tools={tools} selectedCategory={selectedCategory} />
+        <EventsSection 
+          events={events} 
+          selectedEventType={selectedEventType}
+          selectedAudience={selectedAudience}
+          selectedDate={selectedDate}
+        />
       </main>
       <Footer />
       

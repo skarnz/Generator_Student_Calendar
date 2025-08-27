@@ -1,0 +1,151 @@
+import { useState, useEffect, useMemo } from 'react';
+import { EventCard } from './EventCard';
+import { Search, Filter, Calendar, Users, Clock } from 'lucide-react';
+import { Event } from '@/data/events';
+import { isSameDay, format } from 'date-fns';
+
+interface EventsSectionProps {
+  events: Event[];
+  selectedEventType: string;
+  selectedAudience: string;
+  selectedDate?: Date | null;
+}
+
+export function EventsSection({ events, selectedEventType, selectedAudience, selectedDate }: EventsSectionProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showPastEvents, setShowPastEvents] = useState(false);
+  const [sortBy, setSortBy] = useState<'date' | 'type'>('date');
+  
+  const currentDate = useMemo(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, []);
+  
+  const filteredEvents = useMemo(() => {
+    return events.filter(event => {
+      const eventDate = new Date(event.date);
+      eventDate.setHours(0, 0, 0, 0);
+      
+      // If a specific date is selected, only show events for that date
+      if (selectedDate) {
+        const matchesSelectedDate = isSameDay(eventDate, selectedDate);
+        if (!matchesSelectedDate) return false;
+      }
+      
+      const isPastEvent = eventDate < currentDate;
+      const matchesTimeFilter = showPastEvents ? isPastEvent : !isPastEvent;
+      
+      const matchesEventType = selectedEventType === 'All' || event.eventType === selectedEventType;
+      const matchesAudience = selectedAudience === 'All' || event.audience.includes(selectedAudience);
+      const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (event.speakerName && event.speakerName.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      return matchesTimeFilter && matchesEventType && matchesAudience && matchesSearch;
+    });
+  }, [events, selectedEventType, selectedAudience, searchTerm, showPastEvents, currentDate, selectedDate]);
+
+  const sortedEvents = useMemo(() => {
+    const sorted = [...filteredEvents].sort((a, b) => {
+      if (sortBy === 'date') {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      } else {
+        return a.eventType.localeCompare(b.eventType);
+      }
+    });
+    return sorted;
+  }, [filteredEvents, sortBy]);
+
+  const upcomingCount = events.filter(e => new Date(e.date) >= currentDate).length;
+  const pastCount = events.filter(e => new Date(e.date) < currentDate).length;
+    
+  return (
+    <section id="events" className="py-16 sm:py-24 bg-gray-50">
+      <div className="container mx-auto px-4 sm:px-6">
+        <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl">
+          {selectedDate 
+            ? `Events on ${format(selectedDate, 'MMMM d, yyyy')}`
+            : showPastEvents ? 'Past Events' : 'Upcoming Events'}
+        </h2>
+        
+        {selectedDate && (
+          <div className="text-center mb-6">
+            <button
+              onClick={() => window.location.reload()}
+              className="text-sm text-generator-green hover:text-generator-darkGreen underline"
+            >
+              Clear date filter
+            </button>
+          </div>
+        )}
+        
+        <div className="mb-6 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+            <div className="relative flex-1 sm:flex-none sm:w-80">
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search events, speakers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-generator-green"
+              />
+            </div>
+            
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'date' | 'type')}
+              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-generator-green"
+            >
+              <option value="date">Sort by Date</option>
+              <option value="type">Sort by Type</option>
+            </select>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-gray-600">
+              <span className="font-medium">{upcomingCount}</span> upcoming • 
+              <span className="font-medium ml-1">{pastCount}</span> past
+            </div>
+            
+            <button
+              onClick={() => setShowPastEvents(!showPastEvents)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                showPastEvents 
+                  ? 'bg-gray-600 text-white' 
+                  : 'bg-generator-green text-white'
+              }`}
+            >
+              <Clock className="h-4 w-4" />
+              <span>{showPastEvents ? 'Past' : 'Upcoming'}</span>
+            </button>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {sortedEvents.map((event, index) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              index={index}
+            />
+          ))}
+        </div>
+        
+        {sortedEvents.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Calendar className="h-16 w-16 text-gray-300 mb-4" />
+            <p className="text-lg sm:text-xl text-gray-500">
+              {searchTerm ? 'No events match your search.' : 
+               showPastEvents ? 'No past events found.' : 
+               'No upcoming events found.'}
+            </p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

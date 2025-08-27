@@ -1,0 +1,115 @@
+import { Calendar, Clock, MapPin, Users, ExternalLink, Mail } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Event } from '@/data/events';
+
+interface EventCardProps {
+  event: Event;
+  index: number;
+}
+
+export function EventCard({ event, index }: EventCardProps) {
+  const delay = `${index * 0.05}s`;
+  
+  // Format date
+  const eventDate = new Date(event.date);
+  const formattedDate = eventDate.toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+  
+  // Determine if event is past
+  const isPast = new Date(event.date) < new Date();
+  
+  return (
+    <div
+      className={cn(
+        "bg-white border rounded-xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md",
+        isPast ? "opacity-60 border-gray-200" : "border-gray-100 hover:scale-[1.01]"
+      )}
+      style={{
+        animationDelay: delay,
+      }}
+    >
+      <div className="p-6">
+        <div className="flex items-start justify-between mb-3">
+          <h3 className="font-semibold text-xl text-generator-darkGreen flex-1 pr-4">
+            {event.title}
+          </h3>
+          {isPast && (
+            <span className="text-xs font-medium bg-gray-200 text-gray-600 rounded-full px-2.5 py-1">
+              Past Event
+            </span>
+          )}
+        </div>
+
+        <p className="text-sm text-gray-600 mb-4 line-clamp-3">{event.description}</p>
+
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Calendar className="h-4 w-4 text-generator-green" />
+            <span>{formattedDate}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Clock className="h-4 w-4 text-generator-green" />
+            <span>{event.time}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <MapPin className="h-4 w-4 text-generator-green" />
+            <span>{event.location}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Users className="h-4 w-4 text-generator-green" />
+            <span>{event.audience.join(", ")}</span>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="inline-block text-xs font-medium bg-generator-lightGreen text-generator-darkGreen rounded-full px-2.5 py-1">
+            {event.eventType}
+          </span>
+        </div>
+
+        {event.speakerName && (
+          <div className="mb-3 p-3 bg-generator-lightGold rounded-lg">
+            <p className="text-sm font-medium text-generator-darkGreen">
+              Speaker: {event.speakerName}
+              {event.speakerTitle && <span className="text-xs text-gray-600 block">{event.speakerTitle}</span>}
+            </p>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          {event.contactEmail ? (
+            <a 
+              href={`mailto:${event.contactEmail}`}
+              className="flex items-center gap-1 text-sm text-generator-green hover:text-generator-darkGreen transition-colors"
+            >
+              <Mail className="h-4 w-4" />
+              <span>Contact {event.contactName || "Organizer"}</span>
+            </a>
+          ) : (
+            <span className="text-sm text-gray-500">
+              Contact: {event.contactName || "The Generator"}
+            </span>
+          )}
+          
+          {event.registrationUrl && !isPast && (
+            <a
+              href={event.registrationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-sm font-medium text-generator-green hover:text-generator-darkGreen transition-colors"
+            >
+              <span>Register</span>
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -51,29 +51,29 @@ export function Header() {
         <nav className="hidden md:flex items-center space-x-1">
           <a href="#hero" onClick={handleNavClick} className="nav-link">Home</a>
           <a href="#about" onClick={handleNavClick} className="nav-link">About</a>
-          <a href="#tools" onClick={handleNavClick} className="nav-link">AI Tools</a>
-          <a href="#categories" onClick={handleNavClick} className="nav-link">Categories</a>
+          <a href="#events" onClick={handleNavClick} className="nav-link">Events</a>
+          <a href="#filters" onClick={handleNavClick} className="nav-link">Filter</a>
         </nav>
         
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center">
           <a 
-            href="#tools" 
+            href="#events" 
             onClick={handleNavClick}
             className="generator-button text-sm md:text-base animate-pulse-soft"
           >
-            Explore AI Tools
+            View All Events
           </a>
         </div>
 
         {/* Mobile Navigation Toggle */}
         <div className="flex md:hidden items-center space-x-4">
           <a 
-            href="#tools" 
+            href="#events" 
             onClick={handleNavClick}
             className="generator-button text-xs px-3 py-1.5 animate-pulse-soft"
           >
-            Explore
+            Events
           </a>
           <button 
             className="text-generator-darkGreen p-1 focus:outline-none"
@@ -91,8 +91,8 @@ export function Header() {
           <nav className="flex flex-col space-y-4">
             <a href="#hero" onClick={handleNavClick} className="nav-link text-center py-2">Home</a>
             <a href="#about" onClick={handleNavClick} className="nav-link text-center py-2">About</a>
-            <a href="#tools" onClick={handleNavClick} className="nav-link text-center py-2">AI Tools</a>
-            <a href="#categories" onClick={handleNavClick} className="nav-link text-center py-2">Categories</a>
+            <a href="#events" onClick={handleNavClick} className="nav-link text-center py-2">Events</a>
+            <a href="#filters" onClick={handleNavClick} className="nav-link text-center py-2">Filter</a>
           </nav>
         </div>
       )}
