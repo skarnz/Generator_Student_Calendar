@@ -20,7 +20,9 @@ export const FloatingImages = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [images, setImages] = useState<FloatingImage[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const animationFrameRef = useRef<number>();
+  const collisionStatesRef = useRef<Map<string, boolean>>(new Map());
   
   useEffect(() => {
     if (!containerRef.current) return;
@@ -49,12 +51,15 @@ export const FloatingImages = () => {
         y: y,
         speedX: speedX,
         speedY: speedY,
-        size: 180 + Math.random() * 120, // Much larger: 180-300px
+        // Mix of sizes - last 3 images are smaller
+        size: index >= communityImages.length - 3 
+          ? 100 + Math.random() * 80  // Small: 100-180px for last 3 images
+          : 200 + Math.random() * 200, // Large: 200-400px for others
         rotation: Math.random() * 20 - 10, // Subtle rotation: -10 to 10 degrees
         rotationSpeed: (Math.random() - 0.5) * 0.5, // Slow rotation
         url: img.url,
         alt: img.alt,
-        opacity: 0.15 + Math.random() * 0.15, // 15-30% opacity
+        opacity: 1, // 100% opacity - not transparent at all
         scale: 1
       };
     });
@@ -76,6 +81,21 @@ export const FloatingImages = () => {
     };
   }, []);
   
+  // Add mouse movement tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      setMousePosition({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+  
   useEffect(() => {
     if (images.length === 0 || dimensions.width === 0) return;
     
@@ -87,39 +107,98 @@ export const FloatingImages = () => {
           let newSpeedX = img.speedX;
           let newSpeedY = img.speedY;
           
-          // Gentle bounce off edges
-          if (newX < -img.size / 2 || newX > dimensions.width + img.size / 2) {
-            newSpeedX = -newSpeedX;
-            newX = Math.max(-img.size / 2, Math.min(newX, dimensions.width + img.size / 2));
+          // Mouse interaction - repel images away from cursor
+          const dx = mousePosition.x - img.x;
+          const dy = mousePosition.y - img.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          const interactionRadius = 200; // Larger interaction radius
+          if (distance < interactionRadius && distance > 0) {
+            const force = (1 - distance / interactionRadius) * 3; // Stronger force
+            newSpeedX -= (dx / distance) * force;
+            newSpeedY -= (dy / distance) * force;
           }
           
-          if (newY < -img.size / 2 || newY > dimensions.height + img.size / 2) {
-            newSpeedY = -newSpeedY;
-            newY = Math.max(-img.size / 2, Math.min(newY, dimensions.height + img.size / 2));
+          // Gentle bounce off edges - brought in by 7.5%
+          const boundaryInset = dimensions.width * 0.075;
+          const minX = boundaryInset - img.size / 2;
+          const maxX = dimensions.width - boundaryInset + img.size / 2;
+          const minY = boundaryInset - img.size / 2;
+          const maxY = dimensions.height - boundaryInset + img.size / 2;
+          
+          if (newX < minX || newX > maxX) {
+            newSpeedX = -newSpeedX * 0.8;
+            newX = Math.max(minX, Math.min(newX, maxX));
           }
           
-          // Apply gentle drag
-          const drag = 0.999;
+          if (newY < minY || newY > maxY) {
+            newSpeedY = -newSpeedY * 0.8;
+            newY = Math.max(minY, Math.min(newY, maxY));
+          }
+          
+          // Apply stronger drag
+          const drag = 0.98;
           newSpeedX *= drag;
           newSpeedY *= drag;
           
           // Add subtle random movement
-          if (Math.random() < 0.01) { // 1% chance each frame
-            newSpeedX += (Math.random() - 0.5) * 0.3;
-            newSpeedY += (Math.random() - 0.5) * 0.3;
+          if (Math.random() < 0.02) { // 2% chance each frame
+            newSpeedX += (Math.random() - 0.5) * 0.5;
+            newSpeedY += (Math.random() - 0.5) * 0.5;
           }
           
+          // Check collisions with other images
+          prevImages.forEach((otherImg, otherIndex) => {
+            if (index === otherIndex) return;
+            
+            const dx2 = otherImg.x - newX;
+            const dy2 = otherImg.y - newY;
+            const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+            const minDistance = (img.size + otherImg.size) / 2;
+            
+            if (distance2 < minDistance && distance2 > 0) {
+              const collisionKey = `${Math.min(index, otherIndex)}-${Math.max(index, otherIndex)}`;
+              
+              // 50% chance to bounce, 50% chance to pass through
+              if (!collisionStatesRef.current.has(collisionKey)) {
+                collisionStatesRef.current.set(collisionKey, Math.random() < 0.5);
+              }
+              
+              if (collisionStatesRef.current.get(collisionKey)) {
+                // Bounce off each other
+                const overlap = minDistance - distance2;
+                const pushX = (dx2 / distance2) * overlap * 0.5;
+                const pushY = (dy2 / distance2) * overlap * 0.5;
+                
+                newX -= pushX;
+                newY -= pushY;
+                
+                // Exchange velocities (elastic collision)
+                const relativeVx = img.speedX - otherImg.speedX;
+                const relativeVy = img.speedY - otherImg.speedY;
+                const dotProduct = (relativeVx * dx2 + relativeVy * dy2) / (distance2 * distance2);
+                
+                newSpeedX -= dotProduct * dx2 * 0.8;
+                newSpeedY -= dotProduct * dy2 * 0.8;
+              }
+            } else if (distance2 > minDistance * 1.5) {
+              // Reset collision state when images are far apart
+              const collisionKey = `${Math.min(index, otherIndex)}-${Math.max(index, otherIndex)}`;
+              collisionStatesRef.current.delete(collisionKey);
+            }
+          });
+          
           // Ensure minimum speed
-          const minSpeed = 0.1;
+          const minSpeed = 0.2;
           const currentSpeed = Math.sqrt(newSpeedX * newSpeedX + newSpeedY * newSpeedY);
-          if (currentSpeed < minSpeed) {
+          if (currentSpeed < minSpeed && distance > interactionRadius) {
             const boost = minSpeed / currentSpeed;
             newSpeedX *= boost;
             newSpeedY *= boost;
           }
           
-          // Update rotation
-          const newRotation = img.rotation + img.rotationSpeed;
+          // Update rotation based on movement
+          const newRotation = img.rotation + img.rotationSpeed + (newSpeedX * 0.1);
           
           // Gentle pulsing scale effect
           const scalePhase = (Date.now() / 1000 + index) * 0.2;
@@ -146,13 +225,32 @@ export const FloatingImages = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [images, dimensions]);
+  }, [images, dimensions, mousePosition]);
   
   return (
     <div 
       ref={containerRef} 
       className="absolute inset-0 overflow-hidden z-0 pointer-events-none"
     >
+      {/* Gradient mask for transparent pass-through effect - only behind main content */}
+      <div 
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(
+              ellipse at center,
+              transparent 0%,
+              transparent 40%,
+              rgba(10, 87, 65, 0.2) 50%,
+              rgba(10, 87, 65, 0.4) 60%,
+              rgba(10, 87, 65, 0.6) 70%,
+              rgba(10, 87, 65, 0.8) 90%
+            )
+          `,
+        }}
+      />
+      
+      {/* Floating images */}
       {images.map((img) => (
         <div
           key={img.id}
@@ -163,8 +261,9 @@ export const FloatingImages = () => {
             width: `${img.size}px`,
             height: `${img.size}px`,
             transform: `translate(-50%, -50%) rotate(${img.rotation}deg) scale(${img.scale})`,
-            opacity: img.opacity,
+            opacity: 1, // Always full opacity
             transition: 'transform 0.3s ease-out',
+            filter: 'none', // Remove any filters that might cause fading
           }}
         >
           <img

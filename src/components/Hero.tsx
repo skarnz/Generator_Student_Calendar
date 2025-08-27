@@ -68,7 +68,7 @@ export function Hero({ onDateSelect }: HeroProps) {
         
         <div className="absolute bottom-8 left-0 right-0 mx-auto flex justify-center animate-float">
           <a href="#about" onClick={handleNavClick} className="flex flex-col items-center text-generator-gold">
-            <span className="mb-2 text-xs sm:text-sm">Scroll Down</span>
+            <span className="mb-2 text-xs sm:text-sm">List View & Learn More</span>
             <ArrowDown size={16} className="sm:w-5 sm:h-5" />
           </a>
         </div>

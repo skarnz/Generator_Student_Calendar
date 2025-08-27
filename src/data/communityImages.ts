@@ -55,6 +55,24 @@ export const communityImages: CommunityImage[] = [
     url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=400&fit=crop',
     alt: 'Workshop participants learning AI',
     category: 'workshop'
+  },
+  {
+    id: '9',
+    url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&h=400&fit=crop',
+    alt: 'Startup pitch session',
+    category: 'event'
+  },
+  {
+    id: '10',
+    url: 'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=600&h=400&fit=crop',
+    alt: 'Brainstorming session at Generator',
+    category: 'workshop'
+  },
+  {
+    id: '11',
+    url: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=400&fit=crop',
+    alt: 'Team collaboration space',
+    category: 'community'
   }
 ];
 
