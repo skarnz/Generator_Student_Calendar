@@ -6,7 +6,6 @@ import { About } from '@/components/About';
 import { EventsSection } from '@/components/events/EventsSection';
 import { FilterSection } from '@/components/FilterSection';
 import { Footer } from '@/components/layout/Footer';
-import { RightSidebar } from '@/components/layout/RightSidebar';
 import { events, eventTypes, audiences } from '@/data/events';
 
 const Index = () => {
@@ -69,9 +68,6 @@ const Index = () => {
         />
       </main>
       <Footer />
-      
-      {/* Add RightSidebar */}
-      <RightSidebar />
       
       {/* Back to top button */}
       <a
