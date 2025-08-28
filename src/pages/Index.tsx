@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from 'react';
-import { Header } from '@/components/Header';
-import { Hero } from '@/components/Hero';
+import { Header } from '@/components/layout/Header';
+import { Hero } from '@/components/layout/Hero';
 import { About } from '@/components/About';
-import { EventsSection } from '@/components/EventsSection';
+import { EventsSection } from '@/components/events/EventsSection';
 import { FilterSection } from '@/components/FilterSection';
-import { Footer } from '@/components/Footer';
-import { RightSidebar } from '@/components/RightSidebar';
+import { Footer } from '@/components/layout/Footer';
+import { RightSidebar } from '@/components/layout/RightSidebar';
 import { events, eventTypes, audiences } from '@/data/events';
 
 const Index = () => {

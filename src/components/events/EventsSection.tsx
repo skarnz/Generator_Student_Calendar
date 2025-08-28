@@ -105,22 +105,29 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
             </select>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-gray-600">
-              <span className="font-medium">{upcomingCount}</span> upcoming • 
-              <span className="font-medium ml-1">{pastCount}</span> past
-            </div>
-            
+          <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
             <button
-              onClick={() => setShowPastEvents(!showPastEvents)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
-                showPastEvents 
-                  ? 'bg-gray-600 text-white' 
-                  : 'bg-generator-green text-white'
+              onClick={() => setShowPastEvents(false)}
+              className={`relative flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-300 ${
+                !showPastEvents 
+                  ? 'bg-generator-green text-white shadow-md' 
+                  : 'bg-transparent text-gray-600 hover:text-gray-800'
               }`}
             >
               <Clock className="h-4 w-4" />
-              <span>{showPastEvents ? 'Past' : 'Upcoming'}</span>
+              <span>{upcomingCount} upcoming</span>
+            </button>
+            
+            <button
+              onClick={() => setShowPastEvents(true)}
+              className={`relative flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-300 ${
+                showPastEvents 
+                  ? 'bg-generator-green text-white shadow-md' 
+                  : 'bg-transparent text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              <Clock className="h-4 w-4" />
+              <span>{pastCount} past</span>
             </button>
           </div>
         </div>

@@ -1,7 +1,7 @@
 
 import { ArrowDown } from 'lucide-react';
-import { FloatingImages } from './FloatingImages';
-import { CalendarMiniView } from './CalendarMiniView';
+import { FloatingImages } from '../FloatingImages';
+import { CalendarMiniView } from '../calendar/CalendarMiniView';
 
 interface HeroProps {
   onDateSelect?: (date: Date) => void;
@@ -32,17 +32,25 @@ export function Hero({ onDateSelect }: HeroProps) {
       
       <div className="container relative z-10 mx-auto px-4 sm:px-6 py-16 sm:py-32">
         <div className="mx-auto max-w-4xl text-center">
-          <h1 className="animate-fade-in mb-4 text-3xl sm:text-4xl md:text-6xl font-extrabold">
-            <span className="block">The Generator</span>
-            <span className="mt-2 block text-generator-gold">Events Calendar 2025-26</span>
-          </h1>
+          <div className="relative">
+            {/* Glass blur background only for title and subtitle */}
+            {/* IMPORTANT: Keep this exact glass blur styling - it looks perfect and professional! */}
+            {/* bg-white/5 backdrop-blur-sm with inset-0 -inset-x-8 -inset-y-4 creates the ideal effect */}
+            <div className="absolute inset-0 -inset-x-8 -inset-y-4 bg-white/5 backdrop-blur-sm rounded-2xl -z-10" />
+            <div className="p-8">
+              <h1 className="animate-fade-in mb-4 text-3xl sm:text-4xl md:text-6xl font-extrabold">
+                <span className="block">The Generator</span>
+                <span className="mt-2 block text-generator-gold">Events Calendar 2025-26</span>
+              </h1>
+              
+              <p className="animate-fade-in animate-delay-100 mb-0 text-base sm:text-lg md:text-xl opacity-90 px-2">
+                Join us for workshops, talks, buildathons, and networking events.
+                Build your entrepreneurial journey with our vibrant community.
+              </p>
+            </div>
+          </div>
           
-          <p className="animate-fade-in animate-delay-100 mb-6 sm:mb-8 text-base sm:text-lg md:text-xl opacity-90 px-2">
-            Join us for workshops, talks, buildathons, and networking events.
-            Build your entrepreneurial journey with our vibrant community.
-          </p>
-          
-          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4 mb-12">
+          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4 mt-8 mb-12">
             <a
               href="#events"
               onClick={handleNavClick}

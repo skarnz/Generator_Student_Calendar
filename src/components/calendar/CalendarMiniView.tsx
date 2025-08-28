@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, CalendarDays, CalendarRange, ChevronDown, ChevronUp, Clock, ArrowDown } from 'lucide-react';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, isToday, parse, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { ChevronLeft, ChevronRight, Calendar, CalendarDays, CalendarRange, ChevronDown } from 'lucide-react';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { events } from '@/data/events';
+import { TodaysEvents } from './TodaysEvents';
 
 type ViewMode = 'month' | 'week' | 'day';
 
@@ -13,7 +14,7 @@ interface CalendarMiniViewProps {
 export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('month');
+  const [viewMode, setViewMode] = useState<ViewMode>('week');
   const [expandedDate, setExpandedDate] = useState<Date | null>(null);
 
   // Get events for the current view
@@ -31,23 +32,6 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
     );
   };
 
-  // Get events for a specific hour
-  const getEventsForHour = (date: Date, hour: number) => {
-    const dayEvents = getEventsForDate(date);
-    return dayEvents.filter(event => {
-      // Parse event time to get the hour
-      const timeParts = event.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-      if (!timeParts) return false;
-      
-      let eventHour = parseInt(timeParts[1]);
-      const isPM = timeParts[3]?.toUpperCase() === 'PM';
-      
-      if (isPM && eventHour !== 12) eventHour += 12;
-      if (!isPM && eventHour === 12) eventHour = 0;
-      
-      return eventHour === hour;
-    });
-  };
 
   const toggleDateExpansion = (date: Date) => {
     if (expandedDate && isSameDay(expandedDate, date)) {
@@ -329,53 +313,20 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                       </div>
                     </button>
 
-                    {/* Expandable hourly view */}
-                    {isExpanded && (
-                      <div className="bg-white/5 rounded-lg p-4 space-y-2 animate-in slide-in-from-top-2 duration-300">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Clock className="h-4 w-4 text-generator-gold" />
-                          <span className="text-sm font-medium text-white">Hourly Schedule</span>
-                        </div>
-                        
-                        <div className="space-y-1 max-h-96 overflow-y-auto">
-                          {[...Array(24)].map((_, hour) => {
-                            const hourEvents = getEventsForHour(day, hour);
-                            const timeLabel = hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`;
-                            
-                            return (
-                              <div
-                                key={hour}
-                                className={cn(
-                                  "flex gap-3 p-2 rounded border-l-2 transition-all",
-                                  hourEvents.length > 0 
-                                    ? "border-generator-gold bg-white/10" 
-                                    : "border-white/10 hover:bg-white/5"
-                                )}
-                              >
-                                <span className="text-xs text-white/60 w-12 flex-shrink-0">
-                                  {timeLabel}
-                                </span>
-                                <div className="flex-1">
-                                  {hourEvents.length > 0 ? (
-                                    <div className="space-y-1">
-                                      {hourEvents.map(event => (
-                                        <div key={event.id} className="text-xs">
-                                          <div className="font-medium text-generator-gold">
-                                            {event.title}
-                                          </div>
-                                          <div className="text-white/70">
-                                            {event.time} • {event.location}
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <div className="h-4" />
-                                  )}
-                                </div>
+                    {/* Simple expanded event list */}
+                    {isExpanded && hasEvents && (
+                      <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 space-y-2 animate-in slide-in-from-top-2 duration-300">
+                        <div className="space-y-2">
+                          {dayEvents.map(event => (
+                            <div key={event.id} className="text-sm">
+                              <div className="font-medium text-generator-gold">
+                                {event.title}
                               </div>
-                            );
-                          })}
+                              <div className="text-white/70">
+                                {event.time} • {event.location}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -387,36 +338,8 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
         </div>
       </div>
 
-      {/* Event summary for selected date */}
-      {selectedDate && (
-        <div className="mt-4 pt-4 border-t border-white/20">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm text-generator-gold">
-              Events on {format(selectedDate, 'MMMM d, yyyy')}:
-            </p>
-            {getEventsForDate(selectedDate).length > 0 && (
-              <button
-                onClick={scrollToEvents}
-                className="flex items-center gap-1 text-xs text-white/70 hover:text-generator-gold transition-colors"
-              >
-                <span>View in list</span>
-                <ArrowDown className="h-3 w-3" />
-              </button>
-            )}
-          </div>
-          <div className="space-y-1">
-            {getEventsForDate(selectedDate).length > 0 ? (
-              getEventsForDate(selectedDate).map(event => (
-                <div key={event.id} className="text-xs text-white/80">
-                  • {event.time} - {event.title}
-                </div>
-              ))
-            ) : (
-              <p className="text-xs text-white/60">No events scheduled</p>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Today's Events section */}
+      <TodaysEvents />
     </div>
   );
 }

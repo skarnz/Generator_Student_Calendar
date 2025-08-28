@@ -1,7 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send } from 'lucide-react';
-import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -62,15 +61,13 @@ export function RightSidebar() {
     >
       <div className="flex flex-col h-full">
         {/* Toggle button */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="absolute left-0 top-4 transform -translate-x-1/2 bg-white border border-gray-200 rounded-full shadow-md"
+        <button 
+          className="absolute left-0 top-4 transform -translate-x-1/2 bg-white border border-gray-200 rounded-full shadow-md p-2 hover:bg-gray-50 transition-colors"
           onClick={toggleSidebar}
           aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
         >
           {isExpanded ? <X className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
-        </Button>
+        </button>
         
         {/* Chat content - only visible when expanded */}
         {isExpanded && (
@@ -106,14 +103,13 @@ export function RightSidebar() {
                   className="flex-grow text-sm border border-gray-300 rounded-md px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-generator-green"
                   rows={1}
                 />
-                <Button 
-                  size="icon" 
+                <button 
                   onClick={handleSendMessage}
                   disabled={!inputMessage.trim()}
-                  className="bg-generator-green hover:bg-generator-darkGreen"
+                  className="p-2 bg-generator-green hover:bg-generator-darkGreen text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             </div>
           </>
