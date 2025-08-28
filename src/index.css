@@ -77,6 +77,13 @@
   body {
     @apply bg-white text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
+  }
+  
+  html, body {
+    height: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -143,6 +150,19 @@
 
 .animate-delay-500 {
   animation-delay: 0.5s;
+}
+
+/* Mobile scrolling fix */
+@media (max-width: 768px) {
+  body {
+    position: relative;
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  main {
+    overflow-y: visible !important;
+  }
 }
 
 /* Pattern background */

@@ -47,7 +47,7 @@ const Index = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex flex-col">
       <Header />
       <main className="pt-16 sm:pt-0">
         <Hero onDateSelect={setSelectedDate} />

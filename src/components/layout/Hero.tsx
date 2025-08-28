@@ -23,7 +23,7 @@ export function Hero({ onDateSelect }: HeroProps) {
   return (
     <section 
       id="hero" 
-      className="relative flex min-h-screen items-center justify-center overflow-hidden pattern-bg py-10 sm:py-20 text-white"
+      className="relative flex min-h-screen items-center justify-center overflow-x-hidden pattern-bg py-10 sm:py-20 text-white"
     >
       <div className="curved-pattern" aria-hidden="true"></div>
       
