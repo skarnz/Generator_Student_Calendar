@@ -23,7 +23,7 @@ export function About() {
           
           <div className="animate-fade-in animate-delay-300 flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href="https://www.babson.edu/academics/centers/the-generator/"
+              href="https://www.babson.edu/thegenerator/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-lg bg-generator-green px-6 py-3 text-white font-medium hover:bg-generator-darkGreen transition-colors"
@@ -31,7 +31,7 @@ export function About() {
               Learn More About Us
             </a>
             <a 
-              href="https://www.babson.edu/academics/centers/the-generator/associates/"
+              href="https://forms.gle/D5mFsPjBNXrhzKqu9"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-lg border-2 border-generator-green px-6 py-3 text-generator-green font-medium hover:bg-generator-lightGold transition-colors"

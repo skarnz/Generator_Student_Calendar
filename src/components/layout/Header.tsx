@@ -67,16 +67,16 @@ export function Header() {
         </div>
 
         {/* Mobile Navigation Toggle */}
-        <div className="flex md:hidden items-center space-x-4">
+        <div className="flex md:hidden items-center space-x-2 sm:space-x-4">
           <a 
             href="#events" 
             onClick={handleNavClick}
-            className="generator-button text-xs px-3 py-1.5 animate-pulse-soft"
+            className="generator-button text-xs px-2 sm:px-3 py-2 sm:py-1.5 animate-pulse-soft min-h-[44px] sm:min-h-0 flex items-center"
           >
             Events
           </a>
           <button 
-            className="text-generator-darkGreen p-1 focus:outline-none"
+            className="text-generator-darkGreen p-2 focus:outline-none min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -87,12 +87,12 @@ export function Header() {
 
       {/* Mobile Navigation Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md py-4 px-6 transition-all transform">
-          <nav className="flex flex-col space-y-4">
-            <a href="#hero" onClick={handleNavClick} className="nav-link text-center py-2">Home</a>
-            <a href="#about" onClick={handleNavClick} className="nav-link text-center py-2">About</a>
-            <a href="#events" onClick={handleNavClick} className="nav-link text-center py-2">Events</a>
-            <a href="#filters" onClick={handleNavClick} className="nav-link text-center py-2">Filter</a>
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md py-4 px-6 transition-all transform z-50">
+          <nav className="flex flex-col space-y-2">
+            <a href="#hero" onClick={handleNavClick} className="nav-link text-center py-3 min-h-[44px] flex items-center justify-center">Home</a>
+            <a href="#about" onClick={handleNavClick} className="nav-link text-center py-3 min-h-[44px] flex items-center justify-center">About</a>
+            <a href="#events" onClick={handleNavClick} className="nav-link text-center py-3 min-h-[44px] flex items-center justify-center">Events</a>
+            <a href="#filters" onClick={handleNavClick} className="nav-link text-center py-3 min-h-[44px] flex items-center justify-center">Filter</a>
           </nav>
         </div>
       )}

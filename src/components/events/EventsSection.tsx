@@ -33,7 +33,10 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
         if (!matchesSelectedDate) return false;
       }
       
-      const isPastEvent = eventDate < currentDate;
+      // Check if event is past either by date comparison or explicit isPastEvent flag
+      const isPastByDate = eventDate < currentDate;
+      const isPastExplicit = event.isPastEvent === true;
+      const isPastEvent = isPastByDate || isPastExplicit;
       const matchesTimeFilter = showPastEvents ? isPastEvent : !isPastEvent;
       
       const matchesEventType = selectedEventType === 'All' || event.eventType === selectedEventType;
@@ -57,8 +60,23 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
     return sorted;
   }, [filteredEvents, sortBy]);
 
-  const upcomingCount = events.filter(e => new Date(e.date) >= currentDate).length;
-  const pastCount = events.filter(e => new Date(e.date) < currentDate).length;
+  const upcomingCount = events.filter(e => {
+    const eventDate = new Date(e.date);
+    eventDate.setHours(0, 0, 0, 0);
+    const isPastByDate = eventDate < currentDate;
+    const isPastExplicit = e.isPastEvent === true;
+    const isPastEvent = isPastByDate || isPastExplicit;
+    return !isPastEvent;
+  }).length;
+  
+  const pastCount = events.filter(e => {
+    const eventDate = new Date(e.date);
+    eventDate.setHours(0, 0, 0, 0);
+    const isPastByDate = eventDate < currentDate;
+    const isPastExplicit = e.isPastEvent === true;
+    const isPastEvent = isPastByDate || isPastExplicit;
+    return isPastEvent;
+  }).length;
     
   return (
     <section id="events" className="py-16 sm:py-24 bg-gray-50">

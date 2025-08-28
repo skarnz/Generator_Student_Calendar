@@ -31,9 +31,9 @@ export function EventCard({ event, index }: EventCardProps) {
         animationDelay: delay,
       }}
     >
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-3">
-          <h3 className="font-semibold text-xl text-generator-darkGreen flex-1 pr-4">
+      <div className="p-4 sm:p-6">
+        <div className="flex items-start justify-between mb-3 gap-3">
+          <h3 className="font-semibold text-lg sm:text-xl text-generator-darkGreen flex-1">
             {event.title}
           </h3>
           {isPast && (
@@ -43,9 +43,9 @@ export function EventCard({ event, index }: EventCardProps) {
           )}
         </div>
 
-        <p className="text-sm text-gray-600 mb-4 line-clamp-3">{event.description}</p>
+        <p className="text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-3 leading-relaxed">{event.description}</p>
 
-        <div className="space-y-2 mb-4">
+        <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Calendar className="h-4 w-4 text-generator-green" />
             <span>{formattedDate}</span>
@@ -67,14 +67,14 @@ export function EventCard({ event, index }: EventCardProps) {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-3 sm:mb-4">
           <span className="inline-block text-xs font-medium bg-generator-lightGreen text-generator-darkGreen rounded-full px-2.5 py-1">
             {event.eventType}
           </span>
         </div>
 
         {event.speakerName && (
-          <div className="mb-3 p-3 bg-generator-lightGold rounded-lg">
+          <div className="mb-3 p-2 sm:p-3 bg-generator-lightGold rounded-lg">
             <p className="text-sm font-medium text-generator-darkGreen">
               Speaker: {event.speakerName}
               {event.speakerTitle && <span className="text-xs text-gray-600 block">{event.speakerTitle}</span>}

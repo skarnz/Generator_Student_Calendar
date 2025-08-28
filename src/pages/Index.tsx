@@ -4,7 +4,6 @@ import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/layout/Hero';
 import { About } from '@/components/About';
 import { EventsSection } from '@/components/events/EventsSection';
-import { FilterSection } from '@/components/FilterSection';
 import { Footer } from '@/components/layout/Footer';
 import { events, eventTypes, audiences } from '@/data/events';
 
@@ -52,14 +51,6 @@ const Index = () => {
       <main className="pt-16 sm:pt-0">
         <Hero onDateSelect={setSelectedDate} />
         <About />
-        <FilterSection 
-          eventTypes={eventTypes}
-          audiences={audiences}
-          selectedEventType={selectedEventType}
-          selectedAudience={selectedAudience}
-          onSelectEventType={setSelectedEventType}
-          onSelectAudience={setSelectedAudience}
-        />
         <EventsSection 
           events={events} 
           selectedEventType={selectedEventType}
@@ -73,7 +64,7 @@ const Index = () => {
       <a
         href="#hero"
         onClick={handleNavClick}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-generator-green text-white shadow-lg transition-all hover:bg-generator-darkGreen"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 flex h-12 w-12 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-generator-green text-white shadow-lg transition-all hover:bg-generator-darkGreen active:bg-generator-darkGreen z-40 min-h-[44px] min-w-[44px]"
         aria-label="Back to top"
       >
         <svg

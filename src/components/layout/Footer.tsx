@@ -35,7 +35,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://www.babson.edu/academics/centers/the-generator/associates/" 
+                <a href="https://forms.gle/D5mFsPjBNXrhzKqu9" 
                    target="_blank" 
                    rel="noopener noreferrer"
                    className="hover:text-generator-gold transition-colors">
