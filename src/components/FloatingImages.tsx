@@ -16,60 +16,141 @@ interface FloatingImage {
   scale: number;
 }
 
+interface ResponsiveConfig {
+  minSize: number;
+  maxSize: number;
+  smallMinSize: number;
+  smallMaxSize: number;
+  speedMultiplier: number;
+  boundaryInsetRatio: number;
+  interactionRadius: number;
+}
+
 export const FloatingImages = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [images, setImages] = useState<FloatingImage[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [responsiveConfig, setResponsiveConfig] = useState<ResponsiveConfig>({
+    minSize: 200,
+    maxSize: 400,
+    smallMinSize: 100,
+    smallMaxSize: 180,
+    speedMultiplier: 1,
+    boundaryInsetRatio: 0.075,
+    interactionRadius: 200
+  });
   const animationFrameRef = useRef<number>();
   const collisionStatesRef = useRef<Map<string, boolean>>(new Map());
   
+  // Get responsive configuration based on screen size
+  const getResponsiveConfig = (): ResponsiveConfig => {
+    const width = window.innerWidth;
+    
+    if (width < 768) {
+      // Mobile: smaller images, slower movement
+      return {
+        minSize: 80,
+        maxSize: 150,
+        smallMinSize: 60,
+        smallMaxSize: 100,
+        speedMultiplier: 0.6,
+        boundaryInsetRatio: 0.12, // More inset on mobile
+        interactionRadius: 150
+      };
+    } else if (width < 1024) {
+      // Tablet: medium images
+      return {
+        minSize: 140,
+        maxSize: 220,
+        smallMinSize: 80,
+        smallMaxSize: 140,
+        speedMultiplier: 0.8,
+        boundaryInsetRatio: 0.1,
+        interactionRadius: 175
+      };
+    } else {
+      // Desktop: current sizes
+      return {
+        minSize: 200,
+        maxSize: 400,
+        smallMinSize: 100,
+        smallMaxSize: 180,
+        speedMultiplier: 1,
+        boundaryInsetRatio: 0.075,
+        interactionRadius: 200
+      };
+    }
+  };
+  
+  // Update responsive config on resize
+  useEffect(() => {
+    const updateConfig = () => {
+      setResponsiveConfig(getResponsiveConfig());
+    };
+    
+    updateConfig(); // Initial config
+    window.addEventListener('resize', updateConfig);
+    
+    return () => window.removeEventListener('resize', updateConfig);
+  }, []);
+
+  // Initialize images and handle container resize
   useEffect(() => {
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
     setDimensions({ width: containerRect.width, height: containerRect.height });
     
-    // Create floating images with larger sizes and better distribution
-    const initialImages = communityImages.map((img, index) => {
-      const angle = (index / communityImages.length) * Math.PI * 2;
-      const radius = Math.min(containerRect.width, containerRect.height) * 0.35;
-      const centerX = containerRect.width / 2;
-      const centerY = containerRect.height / 2;
-      
-      // Distribute images in a circle pattern with some randomness
-      const x = centerX + Math.cos(angle) * radius + (Math.random() - 0.5) * 100;
-      const y = centerY + Math.sin(angle) * radius + (Math.random() - 0.5) * 100;
-      
-      // Slower, more gentle movement for larger images
-      const speedX = (Math.random() - 0.5) * 0.8;
-      const speedY = (Math.random() - 0.5) * 0.8;
-      
-      return {
-        id: img.id,
-        x: x,
-        y: y,
-        speedX: speedX,
-        speedY: speedY,
-        // Mix of sizes - last 3 images are smaller
-        size: index >= communityImages.length - 3 
-          ? 100 + Math.random() * 80  // Small: 100-180px for last 3 images
-          : 200 + Math.random() * 200, // Large: 200-400px for others
-        rotation: Math.random() * 20 - 10, // Subtle rotation: -10 to 10 degrees
-        rotationSpeed: (Math.random() - 0.5) * 0.5, // Slow rotation
-        url: img.url,
-        alt: img.alt,
-        opacity: 1, // 100% opacity - not transparent at all
-        scale: 1
-      };
-    });
+    // Create floating images with responsive sizes and better distribution
+    const createImages = () => {
+      return communityImages.map((img, index) => {
+        const angle = (index / communityImages.length) * Math.PI * 2;
+        const radius = Math.min(containerRect.width, containerRect.height) * 0.35;
+        const centerX = containerRect.width / 2;
+        const centerY = containerRect.height / 2;
+        
+        // Distribute images in a circle pattern with some randomness
+        const randomOffset = Math.min(containerRect.width, containerRect.height) * 0.1;
+        const x = centerX + Math.cos(angle) * radius + (Math.random() - 0.5) * randomOffset;
+        const y = centerY + Math.sin(angle) * radius + (Math.random() - 0.5) * randomOffset;
+        
+        // Responsive speed based on screen size
+        const baseSpeed = 0.8 * responsiveConfig.speedMultiplier;
+        const speedX = (Math.random() - 0.5) * baseSpeed;
+        const speedY = (Math.random() - 0.5) * baseSpeed;
+        
+        return {
+          id: img.id,
+          x: x,
+          y: y,
+          speedX: speedX,
+          speedY: speedY,
+          // Mix of sizes - last 3 images are smaller, using responsive config
+          size: index >= communityImages.length - 3 
+            ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
+            : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
+          rotation: Math.random() * 20 - 10, // Subtle rotation: -10 to 10 degrees
+          rotationSpeed: (Math.random() - 0.5) * 0.5, // Slow rotation
+          url: img.url,
+          alt: img.alt,
+          opacity: 1, // 100% opacity - not transparent at all
+          scale: 1
+        };
+      });
+    };
     
-    setImages(initialImages);
+    setImages(createImages());
     
     const handleResize = () => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       setDimensions({ width: rect.width, height: rect.height });
+      
+      // Recreate images with new responsive sizes on resize
+      setTimeout(() => {
+        setImages(createImages());
+      }, 100);
     };
     
     window.addEventListener('resize', handleResize);
@@ -79,7 +160,7 @@ export const FloatingImages = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, []);
+  }, [responsiveConfig]);
   
   // Add mouse movement tracking
   useEffect(() => {
@@ -112,15 +193,15 @@ export const FloatingImages = () => {
           const dy = mousePosition.y - img.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          const interactionRadius = 200; // Larger interaction radius
+          const interactionRadius = responsiveConfig.interactionRadius;
           if (distance < interactionRadius && distance > 0) {
             const force = (1 - distance / interactionRadius) * 3; // Stronger force
             newSpeedX -= (dx / distance) * force;
             newSpeedY -= (dy / distance) * force;
           }
           
-          // Gentle bounce off edges - brought in by 7.5%
-          const boundaryInset = dimensions.width * 0.075;
+          // Gentle bounce off edges - responsive boundary insets
+          const boundaryInset = dimensions.width * responsiveConfig.boundaryInsetRatio;
           const minX = boundaryInset - img.size / 2;
           const maxX = dimensions.width - boundaryInset + img.size / 2;
           const minY = boundaryInset - img.size / 2;
@@ -225,12 +306,16 @@ export const FloatingImages = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [images, dimensions, mousePosition]);
+  }, [images, dimensions, mousePosition, responsiveConfig]);
   
   return (
     <div 
       ref={containerRef} 
       className="absolute inset-0 overflow-hidden z-0 pointer-events-none"
+      style={{
+        // Ensure container doesn't interfere with content on small screens
+        minHeight: responsiveConfig.speedMultiplier < 0.8 ? '60vh' : '100vh'
+      }}
     >
       {/* Gradient mask for transparent pass-through effect - only behind main content */}
       <div 
@@ -262,8 +347,9 @@ export const FloatingImages = () => {
             height: `${img.size}px`,
             transform: `translate(-50%, -50%) rotate(${img.rotation}deg) scale(${img.scale})`,
             opacity: 1, // Always full opacity
-            transition: 'transform 0.3s ease-out',
+            transition: 'all 0.3s ease-out',
             filter: 'none', // Remove any filters that might cause fading
+            willChange: 'transform', // Optimize for animations
           }}
         >
           <img
@@ -271,6 +357,16 @@ export const FloatingImages = () => {
             alt={img.alt}
             className="w-full h-full object-cover rounded-xl shadow-2xl"
             loading="lazy"
+            style={{
+              // Responsive image optimizations
+              maxWidth: '100%',
+              height: 'auto',
+              objectFit: 'cover' as const,
+              borderRadius: responsiveConfig.speedMultiplier < 0.8 ? '8px' : '12px',
+              boxShadow: responsiveConfig.speedMultiplier < 0.8 
+                ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' 
+                : '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
             }}

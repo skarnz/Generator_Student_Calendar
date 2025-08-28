@@ -80,8 +80,8 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
           </div>
         )}
         
-        <div className="mb-6 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+        <div className="mb-6 flex flex-col lg:flex-row gap-3 sm:gap-4 items-start lg:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full lg:w-auto">
             <div className="relative flex-1 sm:flex-none sm:w-80">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
@@ -91,48 +91,48 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
                 placeholder="Search events, speakers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-generator-green"
+                className="pl-10 pr-4 py-3 sm:py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-generator-green text-base sm:text-sm min-h-[44px] sm:min-h-0"
               />
             </div>
             
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'date' | 'type')}
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-generator-green"
+              className="px-4 py-3 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-generator-green text-base sm:text-sm min-h-[44px] sm:min-h-0"
             >
               <option value="date">Sort by Date</option>
               <option value="type">Sort by Type</option>
             </select>
           </div>
           
-          <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+          <div className="flex items-center gap-1 sm:gap-2 bg-gray-100 p-1 rounded-lg w-full sm:w-auto">
             <button
               onClick={() => setShowPastEvents(false)}
-              className={`relative flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-300 ${
+              className={`relative flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2 rounded-md transition-all duration-300 flex-1 sm:flex-none justify-center min-h-[44px] sm:min-h-0 ${
                 !showPastEvents 
                   ? 'bg-generator-green text-white shadow-md' 
                   : 'bg-transparent text-gray-600 hover:text-gray-800'
               }`}
             >
               <Clock className="h-4 w-4" />
-              <span>{upcomingCount} upcoming</span>
+              <span className="text-xs sm:text-sm">{upcomingCount} upcoming</span>
             </button>
             
             <button
               onClick={() => setShowPastEvents(true)}
-              className={`relative flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-300 ${
+              className={`relative flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2 rounded-md transition-all duration-300 flex-1 sm:flex-none justify-center min-h-[44px] sm:min-h-0 ${
                 showPastEvents 
                   ? 'bg-generator-green text-white shadow-md' 
                   : 'bg-transparent text-gray-600 hover:text-gray-800'
               }`}
             >
               <Clock className="h-4 w-4" />
-              <span>{pastCount} past</span>
+              <span className="text-xs sm:text-sm">{pastCount} past</span>
             </button>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
           {sortedEvents.map((event, index) => (
             <EventCard
               key={event.id}
@@ -143,9 +143,9 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
         </div>
         
         {sortedEvents.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Calendar className="h-16 w-16 text-gray-300 mb-4" />
-            <p className="text-lg sm:text-xl text-gray-500">
+          <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center px-4">
+            <Calendar className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300 mb-4" />
+            <p className="text-base sm:text-lg lg:text-xl text-gray-500">
               {searchTerm ? 'No events match your search.' : 
                showPastEvents ? 'No past events found.' : 
                'No upcoming events found.'}

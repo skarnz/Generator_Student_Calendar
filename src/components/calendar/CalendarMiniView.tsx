@@ -127,20 +127,20 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-xl">
+    <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-6 shadow-xl">
       {/* Header with navigation */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-semibold text-lg">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3 sm:gap-0">
+        <h3 className="text-white font-semibold text-sm sm:text-lg break-words max-w-full">
           {getHeaderText()}
         </h3>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
           {/* View mode toggle */}
-          <div className="flex bg-white/20 rounded-lg p-1">
+          <div className="flex bg-white/20 rounded-lg p-0.5 sm:p-1">
             <button
               onClick={() => setViewMode('month')}
               className={cn(
-                "p-1.5 rounded transition-colors",
+                "p-2 sm:p-1.5 rounded transition-colors min-h-[44px] sm:min-h-0",
                 viewMode === 'month' ? "bg-white text-generator-darkGreen" : "text-white hover:bg-white/10"
               )}
               title="Month view"
@@ -150,7 +150,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
             <button
               onClick={() => setViewMode('week')}
               className={cn(
-                "p-1.5 rounded transition-colors",
+                "p-2 sm:p-1.5 rounded transition-colors min-h-[44px] sm:min-h-0",
                 viewMode === 'week' ? "bg-white text-generator-darkGreen" : "text-white hover:bg-white/10"
               )}
               title="Week view"
@@ -160,7 +160,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
             <button
               onClick={() => setViewMode('day')}
               className={cn(
-                "p-1.5 rounded transition-colors",
+                "p-2 sm:p-1.5 rounded transition-colors min-h-[44px] sm:min-h-0",
                 viewMode === 'day' ? "bg-white text-generator-darkGreen" : "text-white hover:bg-white/10"
               )}
               title="Day view"
@@ -172,19 +172,19 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
           {/* Navigation buttons */}
           <button
             onClick={navigatePrevious}
-            className="p-1.5 text-white hover:bg-white/20 rounded transition-colors"
+            className="p-2 sm:p-1.5 text-white hover:bg-white/20 rounded transition-colors min-h-[44px] sm:min-h-0 min-w-[44px] sm:min-w-0"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <button
             onClick={navigateToToday}
-            className="px-3 py-1 text-sm text-white hover:bg-white/20 rounded transition-colors"
+            className="px-2 sm:px-3 py-2 sm:py-1 text-xs sm:text-sm text-white hover:bg-white/20 rounded transition-colors min-h-[44px] sm:min-h-0"
           >
             Today
           </button>
           <button
             onClick={navigateNext}
-            className="p-1.5 text-white hover:bg-white/20 rounded transition-colors"
+            className="p-2 sm:p-1.5 text-white hover:bg-white/20 rounded transition-colors min-h-[44px] sm:min-h-0 min-w-[44px] sm:min-w-0"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -195,9 +195,9 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
       <div className="space-y-2">
         {/* Day headers for month/week view */}
         {viewMode !== 'day' && (
-          <div className="grid grid-cols-7 gap-1 text-center">
+          <div className="grid grid-cols-7 gap-0.5 sm:gap-1 text-center">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="text-xs font-medium text-generator-gold py-1">
+              <div key={day} className="text-xs font-medium text-generator-gold py-1 px-0.5">
                 {day}
               </div>
             ))}
@@ -211,7 +211,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
         )}>
           {viewMode === 'month' ? (
             // Month view - grid layout
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
               {calendarDays.map((day, index) => {
                 const dayEvents = getEventsForDate(day);
                 const isCurrentMonth = isSameMonth(day, currentDate);
@@ -223,15 +223,15 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                     key={index}
                     onClick={() => handleDateClick(day)}
                     className={cn(
-                      "relative p-2 rounded-lg transition-all aspect-square",
-                      "hover:bg-white/20",
+                      "relative p-1 sm:p-2 rounded-lg transition-all aspect-square min-h-[44px] sm:min-h-0",
+                      "hover:bg-white/20 active:bg-white/30",
                       isCurrentMonth ? "text-white" : "text-white/40",
                       isToday(day) && "ring-2 ring-generator-gold",
                       isSelected && "bg-white/30"
                     )}
                   >
                     <span className={cn(
-                      "text-sm font-medium",
+                      "text-xs sm:text-sm font-medium",
                       isToday(day) && "text-generator-gold"
                     )}>
                       {format(day, 'd')}
@@ -239,7 +239,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                     
                     {/* Event indicators */}
                     {hasEvents && (
-                      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-0.5">
+                      <div className="absolute bottom-0.5 sm:bottom-1 left-1/2 transform -translate-x-1/2 flex gap-0.5">
                         {dayEvents.slice(0, 3).map((_, i) => (
                           <div
                             key={i}
@@ -271,15 +271,15 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                         }
                       }}
                       className={cn(
-                        "w-full relative p-3 rounded-lg transition-all flex items-center justify-between",
-                        "hover:bg-white/20",
+                        "w-full relative p-2 sm:p-3 rounded-lg transition-all flex items-center justify-between min-h-[44px]",
+                        "hover:bg-white/20 active:bg-white/30",
                         isToday(day) && "ring-2 ring-generator-gold",
                         isSelected && "bg-white/30"
                       )}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                         <span className={cn(
-                          "text-sm font-medium",
+                          "text-xs sm:text-sm font-medium truncate",
                           isToday(day) && "text-generator-gold",
                           "text-white"
                         )}>
@@ -287,13 +287,13 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                         </span>
                         
                         {hasEvents && (
-                          <span className="text-xs text-generator-gold">
+                          <span className="text-xs text-generator-gold whitespace-nowrap">
                             {dayEvents.length} event{dayEvents.length !== 1 ? 's' : ''}
                           </span>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                         {hasEvents && (
                           <div className="flex gap-0.5">
                             {dayEvents.slice(0, 3).map((_, i) => (
@@ -315,14 +315,14 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
 
                     {/* Simple expanded event list */}
                     {isExpanded && hasEvents && (
-                      <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 space-y-2 animate-in slide-in-from-top-2 duration-300">
+                      <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 sm:p-4 space-y-2 animate-in slide-in-from-top-2 duration-300">
                         <div className="space-y-2">
                           {dayEvents.map(event => (
-                            <div key={event.id} className="text-sm">
-                              <div className="font-medium text-generator-gold">
+                            <div key={event.id} className="text-xs sm:text-sm">
+                              <div className="font-medium text-generator-gold break-words">
                                 {event.title}
                               </div>
-                              <div className="text-white/70">
+                              <div className="text-white/70 text-xs break-words">
                                 {event.time} • {event.location}
                               </div>
                             </div>
