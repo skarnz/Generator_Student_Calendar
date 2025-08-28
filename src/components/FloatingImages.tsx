@@ -131,7 +131,7 @@ export const FloatingImages = () => {
             ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
             : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
           rotation: Math.random() * 20 - 10, // Subtle rotation: -10 to 10 degrees
-          rotationSpeed: (Math.random() - 0.5) * 0.5, // Slow rotation
+          rotationSpeed: (Math.random() - 0.5) * 0.2, // Very slow rotation for smoothness
           url: img.url,
           alt: img.alt,
           opacity: 1, // 100% opacity - not transparent at all
@@ -180,7 +180,17 @@ export const FloatingImages = () => {
   useEffect(() => {
     if (images.length === 0 || dimensions.width === 0) return;
     
-    const animate = () => {
+    let lastTime = 0;
+    const targetFPS = 60;
+    const frameInterval = 1000 / targetFPS;
+    
+    const animate = (currentTime: number) => {
+      // Limit to 60 FPS for consistent smooth animation
+      if (currentTime - lastTime < frameInterval) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+      lastTime = currentTime;
       setImages(prevImages => 
         prevImages.map((img, index) => {
           let newX = img.x + img.speedX;
@@ -278,12 +288,12 @@ export const FloatingImages = () => {
             newSpeedY *= boost;
           }
           
-          // Update rotation based on movement
-          const newRotation = img.rotation + img.rotationSpeed + (newSpeedX * 0.1);
+          // Update rotation based on movement - smoother for mobile
+          const rotationDelta = responsiveConfig.speedMultiplier < 0.8 ? 0.05 : 0.1;
+          const newRotation = img.rotation + img.rotationSpeed + (newSpeedX * rotationDelta);
           
-          // Gentle pulsing scale effect
-          const scalePhase = (Date.now() / 1000 + index) * 0.2;
-          const newScale = 1 + Math.sin(scalePhase) * 0.05; // 95% to 105% scale
+          // Gentle pulsing scale effect - disabled on mobile to reduce jitter
+          const newScale = responsiveConfig.speedMultiplier < 0.8 ? 1 : (1 + Math.sin((Date.now() / 1000 + index) * 0.2) * 0.03); // 97% to 103% scale on desktop only
           
           return {
             ...img,
@@ -345,11 +355,15 @@ export const FloatingImages = () => {
             top: `${img.y}px`,
             width: `${img.size}px`,
             height: `${img.size}px`,
-            transform: `translate(-50%, -50%) rotate(${img.rotation}deg) scale(${img.scale})`,
+            transform: `translate3d(-50%, -50%, 0) rotate(${img.rotation}deg) scale(${img.scale})`,
             opacity: 1, // Always full opacity
-            transition: 'all 0.3s ease-out',
+            // No transition for smoother continuous animation
             filter: 'none', // Remove any filters that might cause fading
             willChange: 'transform', // Optimize for animations
+            // Force GPU acceleration for smoother rotation
+            backfaceVisibility: 'hidden',
+            perspective: 1000,
+            transformStyle: 'preserve-3d'
           }}
         >
           <img
