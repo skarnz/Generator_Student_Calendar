@@ -21,21 +21,22 @@ export interface Event {
 // Load events from markdown file - human-verified dates and content!
 function loadEventsFromMarkdown(): Event[] {
   const events: Event[] = [
-    // August 2025
+    // September 2025
     {
-      id: "quad-mixer-2025",
-      title: "Quad Generator Mixer",
-      description: "The opening generator mixer aims to bring the larger student community together in a less formal manner with a focus on creating a welcoming and interactive atmosphere for students to connect.",
-      date: "2025-08-30", // Friday, August 30
+      id: "babson-commons-mixer-2025",
+      title: "Babson Commons Mixer",
+      description: "The opening generator mixer aims to bring the larger student community together in a less formal manner with a focus on creating a welcoming and interactive atmosphere for students to connect. Postponed from August 30 due to rain. Join us for free Chick-fil-A, great music from our DJ, and enter the raffle for a chance to win Meta Ray Bans!",
+      date: "2025-09-04", // Thursday, September 4
       time: "1:00 PM - 3:00 PM",
-      location: "Freshman Quad",
+      location: "Babson Commons",
       eventType: "Major Event",
       audience: ["Freshman", "New Students"],
       contactEmail: "generator@babson.edu",
-      shortBlurb: "Opening mixer with community atmosphere"
+      food: "Free Chick-fil-A",
+      prize: "Raffle for Meta Ray Bans",
+      shortBlurb: "Opening mixer with free Chick-fil-A, DJ, and Meta Ray Bans raffle"
     },
     
-    // September 2025
     {
       id: "org-fair-2025",
       title: "Org Fair",
