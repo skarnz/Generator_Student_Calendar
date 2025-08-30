@@ -132,31 +132,37 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
 
   return (
     <div className="relative calendar-blur-container">
-      {/* CRITICAL: DO NOT MODIFY THIS BLUR IMPLEMENTATION */}
-      {/* Multiple layer approach for maximum compatibility */}
+      {/* ENHANCED GLASS BLUR - FULLY PERSISTENT ACROSS ALL BROWSERS */}
+      {/* Triple-layer approach for maximum compatibility and persistence */}
       
-      {/* Layer 1: Solid fallback background */}
+      {/* Layer 1: Base gradient background - always visible */}
       <div 
-        className="absolute inset-0 rounded-xl"
+        className="absolute inset-0 rounded-xl calendar-glass-morphism"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.08)',
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%)',
           zIndex: 0,
         }}
       />
       
-      {/* Layer 2: Blur effect layer */}
+      {/* Layer 2: Primary blur effect with fallbacks */}
       <div 
         className="absolute inset-0 rounded-xl calendar-blur-effect"
         style={{
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
           zIndex: 1,
         }}
       />
       
+      {/* Layer 3: Additional glass overlay for enhanced effect */}
+      <div
+        className="absolute inset-0 rounded-xl"
+        style={{
+          background: 'radial-gradient(ellipse at top left, rgba(255, 255, 255, 0.1) 0%, transparent 50%)',
+          pointerEvents: 'none',
+          zIndex: 2,
+        }}
+      />
+      
       {/* Content layer - MUST have highest zIndex */}
-      <div className="relative rounded-xl p-3 sm:p-6 shadow-xl" style={{ zIndex: 2 }}>
+      <div className="relative rounded-xl p-3 sm:p-6 shadow-2xl" style={{ zIndex: 3 }}>
       {/* Header with navigation */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3 sm:gap-0">
         <h3 className="text-white font-semibold text-sm sm:text-lg break-words max-w-full">
@@ -345,11 +351,12 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                     {/* Simple expanded event list */}
                     {isExpanded && hasEvents && (
                       <div 
-                        className="glass-blur-strong rounded-lg p-3 sm:p-4 space-y-2 animate-in slide-in-from-top-2 duration-300"
+                        className="rounded-lg p-3 sm:p-4 space-y-2 animate-in slide-in-from-top-2 duration-300"
                         style={{
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                          backdropFilter: 'blur(12px)',
-                          WebkitBackdropFilter: 'blur(12px)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                          backdropFilter: 'blur(16px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                          boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.2)',
                         }}
                       >
                         <div className="space-y-2">
