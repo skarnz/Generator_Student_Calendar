@@ -5,6 +5,44 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure backdrop-filter support and persistence */
+@supports (backdrop-filter: blur(0px)) or (-webkit-backdrop-filter: blur(0px)) {
+  .glass-blur {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  
+  .glass-blur-strong {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* Force backdrop blur on calendar with high specificity */
+[style*="backdrop-filter"],
+[style*="backdropFilter"] {
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* CRITICAL: Calendar-specific blur protection */
+/* This ensures the calendar blur ALWAYS works */
+.calendar-blur-protection {
+  position: relative;
+}
+
+.calendar-blur-protection > div:first-child {
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 0.75rem !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  z-index: 0 !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

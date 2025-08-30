@@ -1,6 +1,6 @@
 
 import { ArrowDown } from 'lucide-react';
-import { FloatingImages } from '../FloatingImages';
+import { FloatingImages } from './FloatingImages';
 import { CalendarMiniView } from '../calendar/CalendarMiniView';
 
 interface HeroProps {
@@ -35,8 +35,15 @@ export function Hero({ onDateSelect }: HeroProps) {
           <div className="relative">
             {/* Glass blur background only for title and subtitle */}
             {/* IMPORTANT: Keep this exact glass blur styling - it looks perfect and professional! */}
-            {/* bg-white/5 backdrop-blur-sm with inset-0 -inset-x-8 -inset-y-4 creates the ideal effect */}
-            <div className="absolute inset-0 -inset-x-4 sm:-inset-x-8 -inset-y-3 sm:-inset-y-4 bg-white/5 backdrop-blur-sm rounded-2xl -z-10" />
+            {/* Using multiple techniques to ensure persistence across builds */}
+            <div 
+              className="glass-blur absolute inset-0 -inset-x-4 sm:-inset-x-8 -inset-y-3 sm:-inset-y-4 rounded-2xl -z-10"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(4px)',
+                WebkitBackdropFilter: 'blur(4px)',
+              }}
+            />
             <div className="p-4 sm:p-6 lg:p-8">
               <h1 className="animate-fade-in mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-extrabold leading-tight">
                 <span className="block">The Generator</span>

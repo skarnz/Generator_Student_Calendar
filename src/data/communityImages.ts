@@ -9,13 +9,13 @@ export interface CommunityImage {
 export const communityImages: CommunityImage[] = [
   {
     id: '1',
-    url: '/lovable-uploads/0ae39654-597b-4a29-9627-34589cc78afe.png',
+    url: '/images/logos/generator-logo.png',
     alt: 'The Generator Logo',
     category: 'community'
   },
   {
     id: '2',
-    url: '/lovable-uploads/bb1515d1-8646-4719-9d4f-a615463b3467.png',
+    url: '/images/events/generator-event.png',
     alt: 'Generator Event',
     category: 'event'
   },
@@ -77,7 +77,13 @@ export const communityImages: CommunityImage[] = [
 ];
 
 // Instructions for adding real images:
-// 1. Add event/community photos to public/lovable-uploads folder
+// 1. Add photos to appropriate folders in public/images/
+//    - Community photos: public/images/community/
+//    - Event photos: public/images/events/
+//    - Logos: public/images/logos/
+//    - Other images: public/images/misc/
 // 2. Update the communityImages array with proper file paths
-// 3. Use format: /lovable-uploads/filename.jpg
+// 3. Use format: /images/[category]/filename.jpg
 // 4. Ensure images are optimized for web (compressed, proper dimensions)
+// 5. Use descriptive filenames with hyphens instead of spaces
+// 6. See public/images/README.md for detailed guidelines

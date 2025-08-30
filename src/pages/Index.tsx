@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/layout/Hero';
-import { About } from '@/components/About';
+import { About } from '@/components/layout/About';
 import { EventsSection } from '@/components/events/EventsSection';
 import { Footer } from '@/components/layout/Footer';
 import { events, eventTypes, audiences } from '@/data/events';

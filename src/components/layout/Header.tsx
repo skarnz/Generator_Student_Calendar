@@ -41,7 +41,7 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         <div className="flex items-center">
           <img 
-            src="/lovable-uploads/0ae39654-597b-4a29-9627-34589cc78afe.png" 
+            src="/images/logos/generator-logo.png" 
             alt="The Generator Logo" 
             className="h-8 sm:h-10 md:h-12 w-auto object-contain" 
           />

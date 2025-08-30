@@ -127,7 +127,22 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-6 shadow-xl">
+    <div className="relative calendar-blur-protection">
+      {/* CRITICAL: DO NOT MODIFY THIS BLUR IMPLEMENTATION */}
+      {/* See CALENDAR-BLUR-CRITICAL.md before making ANY changes */}
+      {/* Backdrop blur layer - MUST remain as separate div */}
+      <div 
+        className="absolute inset-0 rounded-xl"
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          zIndex: 0,
+        }}
+      />
+      
+      {/* Content layer - MUST have zIndex: 1 */}
+      <div className="relative rounded-xl p-3 sm:p-6 shadow-xl" style={{ zIndex: 1 }}>
       {/* Header with navigation */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3 sm:gap-0">
         <h3 className="text-white font-semibold text-sm sm:text-lg break-words max-w-full">
@@ -315,7 +330,14 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
 
                     {/* Simple expanded event list */}
                     {isExpanded && hasEvents && (
-                      <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 sm:p-4 space-y-2 animate-in slide-in-from-top-2 duration-300">
+                      <div 
+                        className="glass-blur-strong rounded-lg p-3 sm:p-4 space-y-2 animate-in slide-in-from-top-2 duration-300"
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(12px)',
+                          WebkitBackdropFilter: 'blur(12px)',
+                        }}
+                      >
                         <div className="space-y-2">
                           {dayEvents.map(event => (
                             <div key={event.id} className="text-xs sm:text-sm">
@@ -340,6 +362,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
 
       {/* Today's Events section */}
       <TodaysEvents />
+      </div>
     </div>
   );
 }
