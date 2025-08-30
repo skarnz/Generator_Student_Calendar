@@ -2,12 +2,12 @@
 
 ## August 2025
 
-### Quad Generator Mixer
-**Date:** Friday, August 29, 2025 - 1-3 PM  
+### Babson Commons Mixer
+**Date:** Thursday, September 4, 2025 - 1-3 PM  
 **For:** Freshman / New Students  
-**Location:** Freshman Quad
+**Location:** Babson Commons
 
-The opening generator mixer aims to bring the larger student community together in a less formal manner with a focus on creating a welcoming and interactive atmosphere for students to connect.
+The opening generator mixer aims to bring the larger student community together in a less formal manner with a focus on creating a welcoming and interactive atmosphere for students to connect. Postponed from August 30 due to rain. Join us for free Chick-fil-A, great music from our DJ, and enter the raffle for a chance to win Meta Ray Bans!
 
 ## September 2025
 

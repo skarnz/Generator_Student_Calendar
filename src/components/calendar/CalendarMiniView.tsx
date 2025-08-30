@@ -127,22 +127,32 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
   };
 
   return (
-    <div className="relative calendar-blur-protection">
+    <div className="relative calendar-blur-container">
       {/* CRITICAL: DO NOT MODIFY THIS BLUR IMPLEMENTATION */}
-      {/* See CALENDAR-BLUR-CRITICAL.md before making ANY changes */}
-      {/* Backdrop blur layer - MUST remain as separate div */}
+      {/* Multiple layer approach for maximum compatibility */}
+      
+      {/* Layer 1: Solid fallback background */}
       <div 
         className="absolute inset-0 rounded-xl"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%)',
           zIndex: 0,
         }}
       />
       
-      {/* Content layer - MUST have zIndex: 1 */}
-      <div className="relative rounded-xl p-3 sm:p-6 shadow-xl" style={{ zIndex: 1 }}>
+      {/* Layer 2: Blur effect layer */}
+      <div 
+        className="absolute inset-0 rounded-xl calendar-blur-effect"
+        style={{
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          zIndex: 1,
+        }}
+      />
+      
+      {/* Content layer - MUST have highest zIndex */}
+      <div className="relative rounded-xl p-3 sm:p-6 shadow-xl" style={{ zIndex: 2 }}>
       {/* Header with navigation */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3 sm:gap-0">
         <h3 className="text-white font-semibold text-sm sm:text-lg break-words max-w-full">

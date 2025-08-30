@@ -41,7 +41,7 @@ function loadEventsFromMarkdown(): Event[] {
       id: "org-fair-2025",
       title: "Org Fair",
       description: "Babson's club and org fair for all students, with a focus on showing off the generator's capability and new updates.",
-      date: "2025-09-05",
+      date: "2025-09-05", // Friday, September 5
       time: "11:00 AM - 1:00 PM",
       location: "LGRAC",
       eventType: "External Event",

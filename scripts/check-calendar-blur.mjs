@@ -17,25 +17,27 @@ const CSS_FILE = path.join(__dirname, '../src/index.css');
 
 // Critical patterns that MUST exist in the calendar file
 const REQUIRED_PATTERNS = [
-  // Two-div structure
-  /<div className="relative calendar-blur-protection">/,
+  // Container structure
+  /<div className="relative calendar-blur-container">/,
   
-  // Blur layer div
+  // Fallback background layer
   /<div[\s\n]+className="absolute inset-0 rounded-xl"/,
   
+  // Blur effect layer
+  /<div[\s\n]+className="absolute inset-0 rounded-xl calendar-blur-effect"/,
+  
   // Inline styles for blur
-  /backgroundColor:\s*['"]rgba\(255,\s*255,\s*255,\s*0\.1\)['"]/,
   /backdropFilter:\s*['"]blur\(12px\)['"]/,
   /WebkitBackdropFilter:\s*['"]blur\(12px\)['"]/,
-  /zIndex:\s*0/,
   
   // Content layer with z-index
-  /style=\{\{\s*zIndex:\s*1\s*\}\}/,
+  /style=\{\{\s*zIndex:\s*2\s*\}\}/,
 ];
 
 // CSS patterns that must exist
 const REQUIRED_CSS_PATTERNS = [
-  /\.calendar-blur-protection/,
+  /\.calendar-blur-container/,
+  /\.calendar-blur-effect/,
   /backdrop-filter:\s*blur\(12px\)\s*!important/,
 ];
 

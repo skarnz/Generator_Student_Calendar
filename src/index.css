@@ -28,19 +28,45 @@
 }
 
 /* CRITICAL: Calendar-specific blur protection */
-/* This ensures the calendar blur ALWAYS works */
-.calendar-blur-protection {
-  position: relative;
+/* Multi-layer approach for ALL screen sizes */
+.calendar-blur-container {
+  position: relative !important;
+  isolation: isolate !important; /* Create new stacking context */
+  transform: translateZ(0) !important; /* Force layer creation */
 }
 
-.calendar-blur-protection > div:first-child {
-  position: absolute !important;
-  inset: 0 !important;
-  border-radius: 0.75rem !important;
-  background-color: rgba(255, 255, 255, 0.1) !important;
+/* Ensure blur effect works on all screen sizes */
+.calendar-blur-effect {
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  z-index: 0 !important;
+}
+
+/* Media query specific fixes */
+@media screen and (min-width: 640px) {
+  .calendar-blur-container {
+    /* Desktop specific fixes */
+    will-change: transform;
+  }
+}
+
+/* Force backdrop filter on all screen sizes */
+@media all {
+  .calendar-blur-effect {
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    /* Fallback visible background */
+    background-color: rgba(255, 255, 255, 0.08) !important;
+  }
+}
+
+/* Additional fallback for when backdrop-filter is not supported */
+@supports not (backdrop-filter: blur(12px)) {
+  .calendar-blur-effect {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.15) 0%, 
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.05) 100%) !important;
+  }
 }
 
 @layer base {
