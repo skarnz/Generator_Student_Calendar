@@ -19,10 +19,14 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
 
   // Get events for the current view
   const eventsInView = useMemo(() => {
-    return events.map(event => ({
-      ...event,
-      date: new Date(event.date)
-    }));
+    return events.map(event => {
+      // Parse date as local to avoid timezone issues
+      const [year, month, day] = event.date.split('-').map(Number);
+      return {
+        ...event,
+        date: new Date(year, month - 1, day)
+      };
+    });
   }, []);
 
   // Get events for a specific date

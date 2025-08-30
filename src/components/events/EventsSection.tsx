@@ -24,7 +24,9 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
   
   const filteredEvents = useMemo(() => {
     return events.filter(event => {
-      const eventDate = new Date(event.date);
+      // Parse date as local to avoid timezone issues
+      const [year, month, day] = event.date.split('-').map(Number);
+      const eventDate = new Date(year, month - 1, day);
       eventDate.setHours(0, 0, 0, 0);
       
       // If a specific date is selected, only show events for that date
@@ -52,7 +54,9 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
   const sortedEvents = useMemo(() => {
     const sorted = [...filteredEvents].sort((a, b) => {
       if (sortBy === 'date') {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
+        const [aYear, aMonth, aDay] = a.date.split('-').map(Number);
+        const [bYear, bMonth, bDay] = b.date.split('-').map(Number);
+        return new Date(aYear, aMonth - 1, aDay).getTime() - new Date(bYear, bMonth - 1, bDay).getTime();
       } else {
         return a.eventType.localeCompare(b.eventType);
       }
@@ -61,7 +65,8 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
   }, [filteredEvents, sortBy]);
 
   const upcomingCount = events.filter(e => {
-    const eventDate = new Date(e.date);
+    const [year, month, day] = e.date.split('-').map(Number);
+    const eventDate = new Date(year, month - 1, day);
     eventDate.setHours(0, 0, 0, 0);
     const isPastByDate = eventDate < currentDate;
     const isPastExplicit = e.isPastEvent === true;
@@ -70,7 +75,8 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
   }).length;
   
   const pastCount = events.filter(e => {
-    const eventDate = new Date(e.date);
+    const [year, month, day] = e.date.split('-').map(Number);
+    const eventDate = new Date(year, month - 1, day);
     eventDate.setHours(0, 0, 0, 0);
     const isPastByDate = eventDate < currentDate;
     const isPastExplicit = e.isPastEvent === true;

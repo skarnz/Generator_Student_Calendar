@@ -3,7 +3,7 @@
 ## August 2025
 
 ### Babson Commons Mixer
-**Date:** Thursday, September 4, 2025 - 1-3 PM  
+**Date:** Thursday, September 4, 2025 - 3-6 PM  
 **For:** Freshman / New Students  
 **Location:** Babson Commons
 

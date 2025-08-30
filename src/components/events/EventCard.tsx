@@ -10,8 +10,9 @@ interface EventCardProps {
 export function EventCard({ event, index }: EventCardProps) {
   const delay = `${index * 0.05}s`;
   
-  // Format date
-  const eventDate = new Date(event.date);
+  // Format date - parse as local date to avoid timezone issues
+  const [year, month, day] = event.date.split('-').map(Number);
+  const eventDate = new Date(year, month - 1, day);
   const formattedDate = eventDate.toLocaleDateString('en-US', { 
     month: 'long', 
     day: 'numeric', 
@@ -19,7 +20,9 @@ export function EventCard({ event, index }: EventCardProps) {
   });
   
   // Determine if event is past
-  const isPast = new Date(event.date) < new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isPast = eventDate < today;
   
   return (
     <div
