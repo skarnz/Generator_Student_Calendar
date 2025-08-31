@@ -64,23 +64,31 @@ export function generateICSFile(data: CalendarEventData): string {
  * Downloads an ICS file for the given event
  */
 export function downloadICSFile(event: Event): void {
-  const icsContent = generateICSFile({ event });
-  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  
-  // Create filename
-  const filename = `${event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${format(parseISO(event.date), 'yyyy-MM-dd')}.ics`;
-  
-  // Trigger download
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  // Clean up
-  URL.revokeObjectURL(url);
+  try {
+    const icsContent = generateICSFile({ event });
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create filename
+    const filename = `${event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${format(parseISO(event.date), 'yyyy-MM-dd')}.ics`;
+    
+    // Trigger download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    
+    // Clean up after a short delay
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100);
+  } catch (error) {
+    console.error('Error generating calendar file:', error);
+    alert('Sorry, there was an error creating the calendar file. Please try again.');
+  }
 }
 
 /**

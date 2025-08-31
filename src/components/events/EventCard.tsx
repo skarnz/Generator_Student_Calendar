@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Calendar, Clock, MapPin, Users, ExternalLink, Mail, ImageIcon } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, ExternalLink, Mail, ImageIcon, CalendarPlus, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Event } from '@/data/events';
 import { EventDetailsModal } from './EventDetailsModal';
+import { downloadICSFile } from '@/services/calendarService';
 import { getEventPosterUrl } from '@/utils/generatePlaceholder';
 
 interface EventCardProps {
@@ -32,19 +33,11 @@ export function EventCard({ event, index }: EventCardProps) {
     <>
       <div
         className={cn(
-          "bg-white border rounded-xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md cursor-pointer group",
-          isPast ? "opacity-60 border-gray-200" : "border-gray-100 hover:scale-[1.01]"
+          "bg-white border rounded-xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md group",
+          isPast ? "opacity-60 border-gray-200" : "border-gray-100"
         )}
         style={{
           animationDelay: delay,
-        }}
-        onClick={() => setShowModal(true)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            setShowModal(true);
-          }
         }}
       >
       <div className="p-4 sm:p-6 relative">
@@ -104,7 +97,8 @@ export function EventCard({ event, index }: EventCardProps) {
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        {/* Contact and Registration row */}
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100 mb-4">
           {event.contactEmail ? (
             <a 
               href={`mailto:${event.contactEmail}`}
@@ -132,9 +126,52 @@ export function EventCard({ event, index }: EventCardProps) {
           )}
         </div>
         
-        {/* Click indicator */}
-        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Click for details</div>
+        {/* Action buttons */}
+        <div className="flex gap-3 mt-auto">
+          <button
+            onClick={() => {
+              if (!isPast) {
+                try {
+                  downloadICSFile(event);
+                } catch (error) {
+                  console.error('Error downloading calendar file:', error);
+                  alert('There was an error creating the calendar file. Please check the console for details.');
+                }
+              } else {
+                alert('This event has already passed.');
+              }
+            }}
+            className={cn(
+              "relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 font-medium rounded-lg transition-all duration-300 overflow-hidden group/btn",
+              isPast 
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                : "bg-generator-green text-white hover:bg-generator-darkGreen"
+            )}
+            disabled={isPast}
+            aria-label="Add event to calendar"
+            type="button"
+          >
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 ease-out">
+              <div className="h-full w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
+            </div>
+            
+            <CalendarPlus className="h-4 w-4" />
+            <span className="text-sm hidden sm:inline">Add to Calendar</span>
+          </button>
+          
+          <button
+            onClick={() => setShowModal(true)}
+            className="relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-generator-green text-white font-medium rounded-lg hover:bg-generator-darkGreen transition-all duration-300 overflow-hidden group/btn"
+          >
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 ease-out">
+              <div className="h-full w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
+            </div>
+            
+            <Eye className="h-4 w-4" />
+            <span className="text-sm"><span className="hidden sm:inline">See </span>Details</span>
+          </button>
         </div>
       </div>
     </div>
