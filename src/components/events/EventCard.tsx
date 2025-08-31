@@ -1,6 +1,9 @@
-import { Calendar, Clock, MapPin, Users, ExternalLink, Mail } from 'lucide-react';
+import { useState } from 'react';
+import { Calendar, Clock, MapPin, Users, ExternalLink, Mail, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Event } from '@/data/events';
+import { EventDetailsModal } from './EventDetailsModal';
+import { getEventPosterUrl } from '@/utils/generatePlaceholder';
 
 interface EventCardProps {
   event: Event;
@@ -8,6 +11,7 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, index }: EventCardProps) {
+  const [showModal, setShowModal] = useState(false);
   const delay = `${index * 0.05}s`;
   
   // Format date - parse as local date to avoid timezone issues
@@ -25,18 +29,27 @@ export function EventCard({ event, index }: EventCardProps) {
   const isPast = eventDate < today;
   
   return (
-    <div
-      className={cn(
-        "bg-white border rounded-xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md",
-        isPast ? "opacity-60 border-gray-200" : "border-gray-100 hover:scale-[1.01]"
-      )}
-      style={{
-        animationDelay: delay,
-      }}
-    >
-      <div className="p-4 sm:p-6">
+    <>
+      <div
+        className={cn(
+          "bg-white border rounded-xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md cursor-pointer group",
+          isPast ? "opacity-60 border-gray-200" : "border-gray-100 hover:scale-[1.01]"
+        )}
+        style={{
+          animationDelay: delay,
+        }}
+        onClick={() => setShowModal(true)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            setShowModal(true);
+          }
+        }}
+      >
+      <div className="p-4 sm:p-6 relative">
         <div className="flex items-start justify-between mb-3 gap-3">
-          <h3 className="font-semibold text-lg sm:text-xl text-generator-darkGreen flex-1">
+          <h3 className="font-semibold text-lg sm:text-xl text-generator-darkGreen flex-1 group-hover:text-generator-green transition-colors">
             {event.title}
           </h3>
           {isPast && (
@@ -74,6 +87,12 @@ export function EventCard({ event, index }: EventCardProps) {
           <span className="inline-block text-xs font-medium bg-generator-lightGreen text-generator-darkGreen rounded-full px-2.5 py-1">
             {event.eventType}
           </span>
+          {event.posterImage && (
+            <span className="inline-block text-xs font-medium bg-gray-100 text-gray-600 rounded-full px-2.5 py-1 flex items-center gap-1">
+              <ImageIcon className="h-3 w-3" />
+              Poster
+            </span>
+          )}
         </div>
 
         {event.speakerName && (
@@ -112,7 +131,20 @@ export function EventCard({ event, index }: EventCardProps) {
             </a>
           )}
         </div>
+        
+        {/* Click indicator */}
+        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Click for details</div>
+        </div>
       </div>
     </div>
+    
+    {/* Event Details Modal */}
+    <EventDetailsModal 
+      event={event} 
+      isOpen={showModal} 
+      onClose={() => setShowModal(false)} 
+    />
+    </>
   );
 }

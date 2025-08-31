@@ -18,6 +18,8 @@ export interface Event {
   food?: string;
   prize?: string;
   shortBlurb?: string;
+  posterImage?: string; // Filename of the poster image (e.g., "babson-commons-mixer-2025.jpg")
+  posterImageAlt?: string; // Alt text for accessibility
 }
 
 // Load events from consolidated JSON file - single source of truth!

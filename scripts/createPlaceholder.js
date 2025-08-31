@@ -1,0 +1,50 @@
+// Simple script to create a placeholder image
+// Run with: node scripts/createPlaceholder.js
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Create a simple SVG placeholder
+const svg = `
+<svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2D5A2D" />
+      <stop offset="100%" style="stop-color:#3B7F3C" />
+    </linearGradient>
+    <pattern id="dots" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <circle cx="40" cy="40" r="30" fill="#FFD700" opacity="0.1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect width="1200" height="1200" fill="url(#dots)"/>
+  
+  <!-- Text -->
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="white" text-anchor="middle">
+    THE GENERATOR
+  </text>
+  <text x="600" y="650" font-family="Arial, sans-serif" font-size="60" fill="white" text-anchor="middle">
+    Event Poster Coming Soon
+  </text>
+  
+  <!-- Logo placeholder circle -->
+  <circle cx="600" cy="350" r="100" fill="none" stroke="#FFD700" stroke-width="8" opacity="0.3"/>
+  <text x="600" y="370" font-family="Arial, sans-serif" font-size="140" fill="#FFD700" text-anchor="middle" opacity="0.3">
+    G
+  </text>
+</svg>
+`;
+
+// Save SVG
+const publicDir = path.join(__dirname, '..', 'public', 'event-posters');
+fs.writeFileSync(path.join(publicDir, 'placeholder.svg'), svg.trim());
+
+console.log('Placeholder image created successfully!');
+console.log('You can convert it to JPG using an online tool or ImageMagick:');
+console.log('convert public/event-posters/placeholder.svg public/event-posters/placeholder.jpg');
