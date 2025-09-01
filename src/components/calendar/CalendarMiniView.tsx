@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, CalendarDays, CalendarRange, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, CalendarDays, CalendarRange, ChevronDown, Clock, MapPin, X } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { events } from '@/data/events';
+import { events, Event } from '@/data/events';
 import { TodaysEvents } from './TodaysEvents';
+import { downloadICSFile } from '@/services/calendarService';
 
 type ViewMode = 'month' | 'week' | 'day';
 
@@ -16,6 +17,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('week');
   const [expandedDate, setExpandedDate] = useState<Date | null>(null);
+  const [quickExpandEvent, setQuickExpandEvent] = useState<Event | null>(null);
 
   // Get events for the current view
   const eventsInView = useMemo(() => {
@@ -282,20 +284,20 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                               ? event.title.substring(0, 12) + '...' 
                               : event.title;
                             
-                            // Event type colors
+                            // Event type colors with better contrast
                             const typeColors: Record<string, string> = {
-                              'Workshop': 'bg-blue-500/20 text-blue-200',
-                              'Major Event': 'bg-generator-gold/20 text-generator-gold',
-                              'Speaker Series': 'bg-purple-500/20 text-purple-200',
-                              'Roundtable': 'bg-green-500/20 text-green-200',
-                              'Weekly Event': 'bg-orange-500/20 text-orange-200',
-                              'Talk': 'bg-indigo-500/20 text-indigo-200',
-                              'Buildathon': 'bg-red-500/20 text-red-200',
-                              'Hackathon': 'bg-pink-500/20 text-pink-200',
-                              'Competition': 'bg-yellow-500/20 text-yellow-200',
-                              'Mixer': 'bg-teal-500/20 text-teal-200',
-                              'Open House': 'bg-cyan-500/20 text-cyan-200',
-                              'default': 'bg-white/20 text-white/80'
+                              'Workshop': 'bg-blue-600/40 text-white border border-blue-400/50',
+                              'Major Event': 'bg-generator-gold/40 text-white border border-generator-gold/50',
+                              'Speaker Series': 'bg-purple-600/40 text-white border border-purple-400/50',
+                              'Roundtable': 'bg-green-600/40 text-white border border-green-400/50',
+                              'Weekly Event': 'bg-orange-600/40 text-white border border-orange-400/50',
+                              'Talk': 'bg-indigo-600/40 text-white border border-indigo-400/50',
+                              'Buildathon': 'bg-red-600/40 text-white border border-red-400/50',
+                              'Hackathon': 'bg-pink-600/40 text-white border border-pink-400/50',
+                              'Competition': 'bg-yellow-600/40 text-white border border-yellow-400/50',
+                              'Mixer': 'bg-teal-600/40 text-white border border-teal-400/50',
+                              'Open House': 'bg-cyan-600/40 text-white border border-cyan-400/50',
+                              'default': 'bg-white/30 text-white border border-white/40'
                             };
                             
                             const colorClass = typeColors[event.eventType] || typeColors.default;
@@ -306,12 +308,17 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                                 className={cn(
                                   "text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-md truncate",
                                   "font-medium backdrop-blur-sm flex items-center gap-0.5",
+                                  "cursor-pointer hover:scale-105 transition-transform",
                                   colorClass
                                 )}
                                 title={event.title}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setQuickExpandEvent(event);
+                                }}
                               >
-                                <Calendar className="h-2.5 w-2.5 flex-shrink-0" />
-                                <span className="truncate">{shortTitle}</span>
+                                <Calendar className="h-3 w-3 flex-shrink-0 drop-shadow-sm" />
+                                <span className="truncate font-semibold">{shortTitle}</span>
                               </div>
                             );
                           })}
@@ -424,6 +431,109 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
       {/* Today's Events section */}
       <TodaysEvents />
       </div>
+      
+      {/* Quick Expand Event Popup */}
+      {quickExpandEvent && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setQuickExpandEvent(null)}
+        >
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          
+          <div 
+            className="relative max-w-md w-full animate-in zoom-in-95 fade-in duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Glass morphism container */}
+            <div className="calendar-blur-container rounded-2xl overflow-hidden">
+              <div className="calendar-blur-effect" />
+              <div className="calendar-glass-morphism" />
+              
+              <div className="relative p-6 z-10">
+                {/* Close button */}
+                <button
+                  onClick={() => setQuickExpandEvent(null)}
+                  className="absolute top-4 right-4 p-1 rounded-full hover:bg-white/20 transition-colors"
+                >
+                  <X className="h-5 w-5 text-white" />
+                </button>
+                
+                {/* Event type badge */}
+                <div className="inline-block px-3 py-1 mb-3 text-xs font-medium bg-generator-gold/30 text-generator-gold rounded-full border border-generator-gold/50">
+                  {quickExpandEvent.eventType}
+                </div>
+                
+                {/* Event title */}
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {quickExpandEvent.title}
+                </h3>
+                
+                {/* Event details */}
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-white/80">
+                    <Calendar className="h-4 w-4 text-generator-gold" />
+                    <span className="text-sm">{format(quickExpandEvent.date, 'EEEE, MMMM d, yyyy')}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-white/80">
+                    <Clock className="h-4 w-4 text-generator-gold" />
+                    <span className="text-sm">{quickExpandEvent.time}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-white/80">
+                    <MapPin className="h-4 w-4 text-generator-gold" />
+                    <span className="text-sm">{quickExpandEvent.location}</span>
+                  </div>
+                </div>
+                
+                {/* Description */}
+                <p className="text-sm text-white/70 mb-4 line-clamp-3">
+                  {quickExpandEvent.description}
+                </p>
+                
+                {/* Actions */}
+                <div className="flex gap-3">
+                  {/* Check if event is past */}
+                  {(() => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const isPast = quickExpandEvent.date < today;
+                    
+                    return !isPast ? (
+                      <button
+                        onClick={() => {
+                          downloadICSFile(quickExpandEvent);
+                          setQuickExpandEvent(null);
+                        }}
+                        className="flex-1 py-2 px-4 bg-generator-gold text-generator-darkGreen font-medium rounded-lg hover:bg-yellow-400 transition-colors"
+                      >
+                        Add to Calendar
+                      </button>
+                    ) : (
+                      <div className="flex-1 py-2 px-4 bg-white/20 text-white/60 text-center rounded-lg">
+                        Past Event
+                      </div>
+                    );
+                  })()}
+                  
+                  <button
+                    onClick={() => {
+                      // Navigate to events section with this date selected
+                      if (onDateSelect) {
+                        onDateSelect(quickExpandEvent.date);
+                      }
+                      setQuickExpandEvent(null);
+                    }}
+                    className="flex-1 py-2 px-4 bg-white/20 text-white font-medium rounded-lg hover:bg-white/30 transition-colors"
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
