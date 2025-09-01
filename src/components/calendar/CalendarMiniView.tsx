@@ -258,31 +258,71 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                     key={index}
                     onClick={() => handleDateClick(day)}
                     className={cn(
-                      "relative p-1 sm:p-2 rounded-lg transition-all aspect-square min-h-[44px] sm:min-h-0",
+                      "relative p-1 sm:p-2 rounded-lg transition-all min-h-[60px] sm:min-h-[80px]",
                       "hover:bg-white/20 active:bg-white/30",
                       isCurrentMonth ? "text-white" : "text-white/40",
                       isToday(day) && "ring-2 ring-generator-gold",
                       isSelected && "bg-white/30"
                     )}
                   >
-                    <span className={cn(
-                      "text-xs sm:text-sm font-medium",
-                      isToday(day) && "text-generator-gold"
-                    )}>
-                      {format(day, 'd')}
-                    </span>
-                    
-                    {/* Event indicators */}
-                    {hasEvents && (
-                      <div className="absolute bottom-0.5 sm:bottom-1 left-1/2 transform -translate-x-1/2 flex gap-0.5">
-                        {dayEvents.slice(0, 3).map((_, i) => (
-                          <div
-                            key={i}
-                            className="w-1 h-1 bg-generator-gold rounded-full"
-                          />
-                        ))}
-                      </div>
-                    )}
+                    <div className="flex flex-col items-center justify-start h-full">
+                      <span className={cn(
+                        "text-xs sm:text-sm font-medium mb-1",
+                        isToday(day) && "text-generator-gold"
+                      )}>
+                        {format(day, 'd')}
+                      </span>
+                      
+                      {/* Event title bubbles */}
+                      {hasEvents && (
+                        <div className="flex flex-col gap-0.5 w-full px-1">
+                          {dayEvents.slice(0, 2).map((event, i) => {
+                            // Shorten event titles for grid view
+                            const shortTitle = event.title.length > 15 
+                              ? event.title.substring(0, 12) + '...' 
+                              : event.title;
+                            
+                            // Event type colors
+                            const typeColors: Record<string, string> = {
+                              'Workshop': 'bg-blue-500/20 text-blue-200',
+                              'Major Event': 'bg-generator-gold/20 text-generator-gold',
+                              'Speaker Series': 'bg-purple-500/20 text-purple-200',
+                              'Roundtable': 'bg-green-500/20 text-green-200',
+                              'Weekly Event': 'bg-orange-500/20 text-orange-200',
+                              'Talk': 'bg-indigo-500/20 text-indigo-200',
+                              'Buildathon': 'bg-red-500/20 text-red-200',
+                              'Hackathon': 'bg-pink-500/20 text-pink-200',
+                              'Competition': 'bg-yellow-500/20 text-yellow-200',
+                              'Mixer': 'bg-teal-500/20 text-teal-200',
+                              'Open House': 'bg-cyan-500/20 text-cyan-200',
+                              'default': 'bg-white/20 text-white/80'
+                            };
+                            
+                            const colorClass = typeColors[event.eventType] || typeColors.default;
+                            
+                            return (
+                              <div
+                                key={event.id}
+                                className={cn(
+                                  "text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-md truncate",
+                                  "font-medium backdrop-blur-sm flex items-center gap-0.5",
+                                  colorClass
+                                )}
+                                title={event.title}
+                              >
+                                <Calendar className="h-2.5 w-2.5 flex-shrink-0" />
+                                <span className="truncate">{shortTitle}</span>
+                              </div>
+                            );
+                          })}
+                          {dayEvents.length > 2 && (
+                            <div className="text-[8px] text-white/60 text-center">
+                              +{dayEvents.length - 2} more
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </button>
                 );
               })}
