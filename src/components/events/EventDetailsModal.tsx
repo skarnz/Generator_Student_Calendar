@@ -30,6 +30,11 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
     day: 'numeric', 
     year: 'numeric' 
   });
+  
+  // Determine if event is past
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isPast = eventDate < today;
 
   const handleDownloadICS = () => {
     downloadICSFile(event);
@@ -171,19 +176,27 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
 
             {/* Action buttons */}
             <div className="space-y-3">
-              {/* Add to Calendar button */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowCalendarOptions(!showCalendarOptions)}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-generator-green text-white font-medium rounded-lg hover:bg-generator-darkGreen transition-colors"
-                >
-                  <Calendar className="h-5 w-5" />
-                  Add to Calendar
-                  <ChevronDown className={cn(
-                    "h-4 w-4 transition-transform",
-                    showCalendarOptions && "rotate-180"
-                  )} />
-                </button>
+              {/* Past event notice */}
+              {isPast && (
+                <div className="p-4 bg-gray-100 text-gray-600 rounded-lg text-center">
+                  <p className="text-sm font-medium">This event has already taken place</p>
+                </div>
+              )}
+              
+              {/* Add to Calendar button - only show for future events */}
+              {!isPast && (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowCalendarOptions(!showCalendarOptions)}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-generator-green text-white font-medium rounded-lg hover:bg-generator-darkGreen transition-colors"
+                  >
+                    <Calendar className="h-5 w-5" />
+                    Add to Calendar
+                    <ChevronDown className={cn(
+                      "h-4 w-4 transition-transform",
+                      showCalendarOptions && "rotate-180"
+                    )} />
+                  </button>
 
                 {/* Calendar options dropdown */}
                 {showCalendarOptions && (
@@ -215,10 +228,11 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
                     </a>
                   </div>
                 )}
-              </div>
+                </div>
+              )}
 
               {/* Registration button */}
-              {event.registrationUrl && (
+              {event.registrationUrl && !isPast && (
                 <a
                   href={event.registrationUrl}
                   target="_blank"

@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Calendar, Clock, MapPin, Users, ExternalLink, Mail, ImageIcon, CalendarPlus, Eye } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, ExternalLink, Mail, ImageIcon, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Event } from '@/data/events';
 import { EventDetailsModal } from './EventDetailsModal';
-import { downloadICSFile } from '@/services/calendarService';
 import { getEventPosterUrl } from '@/utils/generatePlaceholder';
 
 interface EventCardProps {
@@ -126,29 +125,11 @@ export function EventCard({ event, index }: EventCardProps) {
           )}
         </div>
         
-        {/* Action buttons */}
-        <div className="flex gap-3 mt-auto">
+        {/* Action button - Single button for details */}
+        <div className="mt-auto">
           <button
-            onClick={() => {
-              if (!isPast) {
-                try {
-                  downloadICSFile(event);
-                } catch (error) {
-                  console.error('Error downloading calendar file:', error);
-                  alert('There was an error creating the calendar file. Please check the console for details.');
-                }
-              } else {
-                alert('This event has already passed.');
-              }
-            }}
-            className={cn(
-              "relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 font-medium rounded-lg transition-all duration-300 overflow-hidden group/btn",
-              isPast 
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
-                : "bg-generator-green text-white hover:bg-generator-darkGreen"
-            )}
-            disabled={isPast}
-            aria-label="Add event to calendar"
+            onClick={() => setShowModal(true)}
+            className="relative w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-generator-green text-white font-medium rounded-lg hover:bg-generator-darkGreen transition-all duration-300 overflow-hidden group/btn"
             type="button"
           >
             {/* Shimmer effect */}
@@ -156,21 +137,8 @@ export function EventCard({ event, index }: EventCardProps) {
               <div className="h-full w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
             </div>
             
-            <CalendarPlus className="h-4 w-4" />
-            <span className="text-sm hidden sm:inline">Add to Calendar</span>
-          </button>
-          
-          <button
-            onClick={() => setShowModal(true)}
-            className="relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-generator-green text-white font-medium rounded-lg hover:bg-generator-darkGreen transition-all duration-300 overflow-hidden group/btn"
-          >
-            {/* Shimmer effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 ease-out">
-              <div className="h-full w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
-            </div>
-            
             <Eye className="h-4 w-4" />
-            <span className="text-sm"><span className="hidden sm:inline">See </span>Details</span>
+            <span className="text-sm font-medium">View Details</span>
           </button>
         </div>
       </div>
