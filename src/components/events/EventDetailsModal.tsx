@@ -21,8 +21,9 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
 
   const calendarLinks = generateCalendarLinks(event);
   
-  // Parse date for display
-  const eventDate = new Date(event.date);
+  // Parse date for display - parse as local date to avoid timezone issues
+  const [year, month, day] = event.date.split('-').map(Number);
+  const eventDate = new Date(year, month - 1, day);
   const formattedDate = eventDate.toLocaleDateString('en-US', { 
     weekday: 'long',
     month: 'long', 

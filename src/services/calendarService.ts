@@ -1,5 +1,5 @@
 import ical, { ICalCalendar } from 'ical-generator';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { Event } from '@/data/events';
 
 const TIMEZONE = 'America/New_York'; // Babson is in Eastern Time
@@ -25,8 +25,9 @@ export function generateICSFile(data: CalendarEventData): string {
     timezone: TIMEZONE,
   });
 
-  // Parse date and time
-  const eventDate = parseISO(event.date);
+  // Parse date and time - parse as local date to avoid timezone issues
+  const [year, month, day] = event.date.split('-').map(Number);
+  const eventDate = new Date(year, month - 1, day);
   const { startTime, endTime } = parseEventTime(event.time, eventDate);
 
   // Create event
@@ -69,8 +70,10 @@ export function downloadICSFile(event: Event): void {
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     
-    // Create filename
-    const filename = `${event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${format(parseISO(event.date), 'yyyy-MM-dd')}.ics`;
+    // Create filename - parse date locally to avoid timezone issues
+    const [year, month, day] = event.date.split('-').map(Number);
+    const eventDate = new Date(year, month - 1, day);
+    const filename = `${event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${format(eventDate, 'yyyy-MM-dd')}.ics`;
     
     // Trigger download
     const link = document.createElement('a');
@@ -196,7 +199,9 @@ export function generateCalendarLinks(event: Event): {
   outlook: string;
   yahoo: string;
 } {
-  const eventDate = parseISO(event.date);
+  // Parse date locally to avoid timezone issues
+  const [year, month, day] = event.date.split('-').map(Number);
+  const eventDate = new Date(year, month - 1, day);
   const { startTime, endTime } = parseEventTime(event.time, eventDate);
   
   // Format dates for URLs

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Clock, MapPin, Gift, Utensils, Calendar } from 'lucide-react';
-import { format, isToday, parseISO, differenceInMinutes, isFuture, isPast, addHours } from 'date-fns';
+import { format, isToday, differenceInMinutes, isFuture, isPast, addHours } from 'date-fns';
 import { events } from '@/data/events';
 import { cn } from '@/lib/utils';
 
@@ -27,10 +27,16 @@ export function TodaysEvents() {
     // Filter and process today's events
     const today = new Date();
     const todayEvents = events
-      .filter(event => isToday(parseISO(event.date)))
+      .filter(event => {
+        // Parse date locally to avoid timezone issues
+        const [year, month, day] = event.date.split('-').map(Number);
+        const eventDate = new Date(year, month - 1, day);
+        return isToday(eventDate);
+      })
       .map(event => {
-        // Parse event time
-        const eventDate = parseISO(event.date);
+        // Parse event time - parse date locally to avoid timezone issues
+        const [year, month, day] = event.date.split('-').map(Number);
+        const eventDate = new Date(year, month - 1, day);
         const timeParts = event.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
         if (!timeParts) return null;
         

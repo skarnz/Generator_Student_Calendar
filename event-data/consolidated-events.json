@@ -1045,9 +1045,9 @@
     "TBD"
   ],
   "stats": {
-    "totalEvents": 43,
+    "totalEvents": 76,
     "currentEvents": 16,
-    "pastEvents": 27,
+    "pastEvents": 60,
     "eventsByType": {
       "Workshop": 12,
       "Major Event": 6,
