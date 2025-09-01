@@ -138,7 +138,10 @@ export function EventCard({ event, index }: EventCardProps) {
             </div>
             
             <Eye className="h-4 w-4" />
-            <span className="text-sm font-medium">View Details</span>
+            <span className="text-sm font-medium">
+              <span className="sm:hidden">Details & Calendar</span>
+              <span className="hidden sm:inline">Details & Add to Calendar</span>
+            </span>
           </button>
         </div>
       </div>
