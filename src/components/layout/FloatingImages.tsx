@@ -31,6 +31,7 @@ export const FloatingImages = () => {
   const [images, setImages] = useState<FloatingImage[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
   const [responsiveConfig, setResponsiveConfig] = useState<ResponsiveConfig>({
     minSize: 200,
     maxSize: 400,
@@ -48,15 +49,15 @@ export const FloatingImages = () => {
     const width = window.innerWidth;
     
     if (width < 768) {
-      // Mobile: smaller images, slower movement
+      // Mobile: much smaller images, minimal movement
       return {
-        minSize: 80,
-        maxSize: 150,
-        smallMinSize: 60,
-        smallMaxSize: 100,
-        speedMultiplier: 0.6,
-        boundaryInsetRatio: 0.12, // More inset on mobile
-        interactionRadius: 150
+        minSize: 60,
+        maxSize: 100,
+        smallMinSize: 40,
+        smallMaxSize: 60,
+        speedMultiplier: 0.2, // Much slower for performance
+        boundaryInsetRatio: 0.15, // More inset to avoid edges
+        interactionRadius: 0 // No interaction on mobile
       };
     } else if (width < 1024) {
       // Tablet: medium images
@@ -83,9 +84,11 @@ export const FloatingImages = () => {
     }
   };
   
-  // Update responsive config on resize
+  // Update responsive config and mobile detection on resize
   useEffect(() => {
     const updateConfig = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768 || 'ontouchstart' in window);
       setResponsiveConfig(getResponsiveConfig());
     };
     
@@ -104,8 +107,11 @@ export const FloatingImages = () => {
     
     // Create floating images with responsive sizes and better distribution
     const createImages = () => {
-      return communityImages.map((img, index) => {
-        const angle = (index / communityImages.length) * Math.PI * 2;
+      // Use fewer images on mobile for better performance
+      const imagesToUse = isMobile ? communityImages.slice(0, 6) : communityImages;
+      
+      return imagesToUse.map((img, index) => {
+        const angle = (index / imagesToUse.length) * Math.PI * 2;
         const radius = Math.min(containerRect.width, containerRect.height) * 0.35;
         const centerX = containerRect.width / 2;
         const centerY = containerRect.height / 2;
@@ -127,7 +133,7 @@ export const FloatingImages = () => {
           speedX: speedX,
           speedY: speedY,
           // Mix of sizes - last 3 images are smaller, using responsive config
-          size: index >= communityImages.length - 3 
+          size: index >= imagesToUse.length - 3 
             ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
             : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
           rotation: Math.random() * 20 - 10, // Subtle rotation: -10 to 10 degrees
@@ -160,10 +166,12 @@ export const FloatingImages = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [responsiveConfig]);
+  }, [responsiveConfig, isMobile]);
   
-  // Add mouse movement tracking
+  // Add mouse movement tracking (desktop only)
   useEffect(() => {
+    if (isMobile) return; // Skip mouse tracking on mobile
+    
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
@@ -175,7 +183,7 @@ export const FloatingImages = () => {
     
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [isMobile]);
   
   useEffect(() => {
     if (images.length === 0 || dimensions.width === 0) return;
@@ -198,16 +206,18 @@ export const FloatingImages = () => {
           let newSpeedX = img.speedX;
           let newSpeedY = img.speedY;
           
-          // Mouse interaction - repel images away from cursor
-          const dx = mousePosition.x - img.x;
-          const dy = mousePosition.y - img.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          const interactionRadius = responsiveConfig.interactionRadius;
-          if (distance < interactionRadius && distance > 0) {
-            const force = (1 - distance / interactionRadius) * 3; // Stronger force
-            newSpeedX -= (dx / distance) * force;
-            newSpeedY -= (dy / distance) * force;
+          // Mouse interaction - repel images away from cursor (desktop only)
+          if (!isMobile && responsiveConfig.interactionRadius > 0) {
+            const dx = mousePosition.x - img.x;
+            const dy = mousePosition.y - img.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            const interactionRadius = responsiveConfig.interactionRadius;
+            if (distance < interactionRadius && distance > 0) {
+              const force = (1 - distance / interactionRadius) * 3; // Stronger force
+              newSpeedX -= (dx / distance) * force;
+              newSpeedY -= (dy / distance) * force;
+            }
           }
           
           // Gentle bounce off edges - responsive boundary insets
@@ -238,46 +248,48 @@ export const FloatingImages = () => {
             newSpeedY += (Math.random() - 0.5) * 0.5;
           }
           
-          // Check collisions with other images
-          prevImages.forEach((otherImg, otherIndex) => {
-            if (index === otherIndex) return;
-            
-            const dx2 = otherImg.x - newX;
-            const dy2 = otherImg.y - newY;
-            const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-            const minDistance = (img.size + otherImg.size) / 2;
-            
-            if (distance2 < minDistance && distance2 > 0) {
-              const collisionKey = `${Math.min(index, otherIndex)}-${Math.max(index, otherIndex)}`;
+          // Check collisions with other images (desktop only for performance)
+          if (!isMobile) {
+            prevImages.forEach((otherImg, otherIndex) => {
+              if (index === otherIndex) return;
               
-              // 50% chance to bounce, 50% chance to pass through
-              if (!collisionStatesRef.current.has(collisionKey)) {
-                collisionStatesRef.current.set(collisionKey, Math.random() < 0.5);
-              }
+              const dx2 = otherImg.x - newX;
+              const dy2 = otherImg.y - newY;
+              const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+              const minDistance = (img.size + otherImg.size) / 2;
               
-              if (collisionStatesRef.current.get(collisionKey)) {
-                // Bounce off each other
-                const overlap = minDistance - distance2;
-                const pushX = (dx2 / distance2) * overlap * 0.5;
-                const pushY = (dy2 / distance2) * overlap * 0.5;
+              if (distance2 < minDistance && distance2 > 0) {
+                const collisionKey = `${Math.min(index, otherIndex)}-${Math.max(index, otherIndex)}`;
                 
-                newX -= pushX;
-                newY -= pushY;
+                // 50% chance to bounce, 50% chance to pass through
+                if (!collisionStatesRef.current.has(collisionKey)) {
+                  collisionStatesRef.current.set(collisionKey, Math.random() < 0.5);
+                }
                 
-                // Exchange velocities (elastic collision)
-                const relativeVx = img.speedX - otherImg.speedX;
-                const relativeVy = img.speedY - otherImg.speedY;
-                const dotProduct = (relativeVx * dx2 + relativeVy * dy2) / (distance2 * distance2);
-                
-                newSpeedX -= dotProduct * dx2 * 0.8;
-                newSpeedY -= dotProduct * dy2 * 0.8;
+                if (collisionStatesRef.current.get(collisionKey)) {
+                  // Bounce off each other
+                  const overlap = minDistance - distance2;
+                  const pushX = (dx2 / distance2) * overlap * 0.5;
+                  const pushY = (dy2 / distance2) * overlap * 0.5;
+                  
+                  newX -= pushX;
+                  newY -= pushY;
+                  
+                  // Exchange velocities (elastic collision)
+                  const relativeVx = img.speedX - otherImg.speedX;
+                  const relativeVy = img.speedY - otherImg.speedY;
+                  const dotProduct = (relativeVx * dx2 + relativeVy * dy2) / (distance2 * distance2);
+                  
+                  newSpeedX -= dotProduct * dx2 * 0.8;
+                  newSpeedY -= dotProduct * dy2 * 0.8;
+                }
+              } else if (distance2 > minDistance * 1.5) {
+                // Reset collision state when images are far apart
+                const collisionKey = `${Math.min(index, otherIndex)}-${Math.max(index, otherIndex)}`;
+                collisionStatesRef.current.delete(collisionKey);
               }
-            } else if (distance2 > minDistance * 1.5) {
-              // Reset collision state when images are far apart
-              const collisionKey = `${Math.min(index, otherIndex)}-${Math.max(index, otherIndex)}`;
-              collisionStatesRef.current.delete(collisionKey);
-            }
-          });
+            });
+          }
           
           // Ensure minimum speed
           const minSpeed = 0.2;
@@ -316,7 +328,7 @@ export const FloatingImages = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [images, dimensions, mousePosition, responsiveConfig]);
+  }, [images, dimensions, mousePosition, responsiveConfig, isMobile]);
   
   return (
     <div 
@@ -324,7 +336,11 @@ export const FloatingImages = () => {
       className="absolute inset-0 overflow-hidden z-0 pointer-events-none"
       style={{
         // Ensure container doesn't interfere with content on small screens
-        minHeight: responsiveConfig.speedMultiplier < 0.8 ? '60vh' : '100vh'
+        minHeight: isMobile ? '50vh' : '100vh',
+        // Prevent any touch interactions on mobile
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
       }}
     >
       {/* Gradient mask for transparent pass-through effect - only behind main content */}

@@ -6,12 +6,22 @@ export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {
+    const checkMobile = () => {
+      const isSmallScreen = window.innerWidth < MOBILE_BREAKPOINT
+      const isTouchDevice = 'ontouchstart' in window || 
+                           navigator.maxTouchPoints > 0 ||
+                           window.matchMedia('(pointer: coarse)').matches
+      return isSmallScreen || isTouchDevice
+    }
+    
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+      setIsMobile(checkMobile())
     }
+    
     mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    setIsMobile(checkMobile())
+    
     return () => mql.removeEventListener("change", onChange)
   }, [])
 
