@@ -19,59 +19,59 @@ export const communityImages: CommunityImage[] = [
     alt: 'Generator Event',
     category: 'event'
   },
-  // Placeholder images - these would be replaced with actual event photos
+  // Real Generator photos
   {
     id: '3',
-    url: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&h=400&fit=crop',
-    alt: 'Students collaborating at Builder\'s Day',
-    category: 'workshop'
+    url: '/images/events/generator-event-1.jpg',
+    alt: 'Students collaborating at Generator event',
+    category: 'event'
   },
   {
     id: '4',
-    url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop',
-    alt: 'Team working on AI project',
-    category: 'buildathon'
+    url: '/images/events/generator-event-2.jpg',
+    alt: 'Team working at The Generator',
+    category: 'event'
   },
   {
     id: '5',
-    url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=600&h=400&fit=crop',
+    url: '/images/events/generator-event-3.jpg',
     alt: 'Networking event at The Generator',
     category: 'event'
   },
   {
     id: '6',
-    url: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=600&h=400&fit=crop',
-    alt: 'Speaker presenting at B.R.A.I.N. Talk',
+    url: '/images/events/generator-event-4.jpg',
+    alt: 'Speaker presenting at Generator',
     category: 'event'
   },
   {
     id: '7',
-    url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop',
-    alt: 'Demo Day presentations',
-    category: 'event'
+    url: '/images/misc/buildathon-1.jpg',
+    alt: 'Buildathon participants collaborating',
+    category: 'buildathon'
   },
   {
     id: '8',
-    url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=400&fit=crop',
-    alt: 'Workshop participants learning AI',
-    category: 'workshop'
+    url: '/images/misc/buildathon-2.jpg',
+    alt: 'Teams working at Buildathon',
+    category: 'buildathon'
   },
   {
     id: '9',
-    url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&h=400&fit=crop',
-    alt: 'Startup pitch session',
-    category: 'event'
+    url: '/images/misc/workshop-1.jpg',
+    alt: 'Workshop session at Generator',
+    category: 'workshop'
   },
   {
     id: '10',
-    url: 'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=600&h=400&fit=crop',
-    alt: 'Brainstorming session at Generator',
+    url: '/images/misc/workshop-2.jpg',
+    alt: 'Hands-on learning at Generator workshop',
     category: 'workshop'
   },
   {
     id: '11',
-    url: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=400&fit=crop',
-    alt: 'Team collaboration space',
+    url: '/images/community/generator-community-1.jpg',
+    alt: 'Generator community collaboration',
     category: 'community'
   }
 ];
