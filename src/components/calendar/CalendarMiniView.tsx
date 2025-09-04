@@ -500,11 +500,13 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                     const isPast = quickExpandEvent.date < today;
                     
                     return !isPast ? (
-                      <AddToCalendarButton 
-                        event={quickExpandEvent}
-                        variant="mobile"
-                        className="flex-1"
-                      />
+                      <div className="flex-1">
+                        <AddToCalendarButton 
+                          event={quickExpandEvent}
+                          variant="mobile"
+                          className="w-full"
+                        />
+                      </div>
                     ) : (
                       <div className="flex-1 py-2 px-4 bg-white/20 text-white/60 text-center rounded-lg">
                         Past Event

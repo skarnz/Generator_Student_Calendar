@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
+import 'add-to-calendar-button/assets/css/atcb.css';
 import 'add-to-calendar-button';
 import { Event } from '@/data/events';
+import { cn } from '@/lib/utils';
 
 // Declare the custom element for TypeScript
 declare global {
@@ -81,6 +83,15 @@ export function AddToCalendarButton({ event, className = '', variant = 'default'
     
     const { startTime, endTime } = parseEventTime(event.time, event.date);
     
+    // Create a wrapper with button styling
+    const wrapper = document.createElement('div');
+    wrapper.className = cn(
+      "inline-flex items-center justify-center gap-2 px-6 py-3",
+      "bg-generator-green text-white font-medium rounded-lg",
+      "hover:bg-green-700 transition-colors cursor-pointer",
+      className
+    );
+    
     // Create the button element
     const button = document.createElement('add-to-calendar-button');
     
@@ -98,28 +109,37 @@ export function AddToCalendarButton({ event, className = '', variant = 'default'
     
     // Mobile optimizations
     if (variant === 'mobile') {
-      button.setAttribute('size', '4');
+      button.setAttribute('size', '0'); // Hide default button
       button.setAttribute('listStyle', 'modal');
       button.setAttribute('trigger', 'click');
     } else {
-      button.setAttribute('size', '5');
+      button.setAttribute('size', '0'); // Hide default button
       button.setAttribute('listStyle', 'dropdown');
+      button.setAttribute('trigger', 'click');
     }
-    
-    // Styling
-    button.setAttribute('lightMode', 'dark');
-    button.setAttribute('buttonStyle', 'round');
-    button.setAttribute('hideBackground', 'true');
-    button.setAttribute('hideCheckmark', 'true');
     
     // Calendar options
     button.setAttribute('options', 'Apple,Google,Yahoo,Outlook.com,Microsoft365,MicrosoftTeams,iCal');
     
-    // Clear and append
-    buttonRef.current.innerHTML = '';
-    buttonRef.current.appendChild(button);
+    // Create custom button text
+    const buttonText = document.createElement('span');
+    buttonText.textContent = 'Details & Add to Calendar';
     
-  }, [event, variant]);
+    // Clear and build structure
+    buttonRef.current.innerHTML = '';
+    wrapper.appendChild(buttonText);
+    wrapper.appendChild(button);
+    buttonRef.current.appendChild(wrapper);
+    
+    // Add click handler to wrapper to trigger the calendar button
+    wrapper.addEventListener('click', () => {
+      const calButton = button.shadowRoot?.querySelector('.atcb-trigger') as HTMLElement;
+      if (calButton) {
+        calButton.click();
+      }
+    });
+    
+  }, [event, variant, className]);
   
-  return <div ref={buttonRef} className={className} />;
+  return <div ref={buttonRef} />;
 }
