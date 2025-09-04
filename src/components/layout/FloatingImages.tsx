@@ -47,9 +47,9 @@ export const FloatingImages = () => {
   const animationFrameRef = useRef<number>();
   const collisionStatesRef = useRef<Map<string, boolean>>(new Map());
   const nextImageIndexRef = useRef<number>(0);
-  const IMAGE_DISPLAY_DURATION = 12000; // 12 seconds per image
-  const IMAGE_TRANSITION_INTERVAL = 3000; // New image every 3 seconds
-  const FADE_DURATION = 1000; // 1 second fade in/out
+  const IMAGE_DISPLAY_DURATION = 15000; // 15 seconds per image (was 12)
+  const IMAGE_TRANSITION_INTERVAL = 3750; // New image every 3.75 seconds (was 3)
+  const FADE_DURATION = 1250; // 1.25 second fade in/out (was 1)
   
   // Get responsive configuration based on screen size
   const getResponsiveConfig = (): ResponsiveConfig => {

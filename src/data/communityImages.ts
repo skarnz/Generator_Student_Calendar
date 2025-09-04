@@ -5,21 +5,8 @@ export interface CommunityImage {
   category: 'event' | 'community' | 'workshop' | 'buildathon';
 }
 
-// These would be replaced with actual images of Generator events and community
+// Real Generator photos only - no placeholders
 export const communityImages: CommunityImage[] = [
-  {
-    id: '1',
-    url: '/images/logos/generator-logo.png',
-    alt: 'The Generator Logo',
-    category: 'community'
-  },
-  {
-    id: '2',
-    url: '/images/events/generator-event.png',
-    alt: 'Generator Event',
-    category: 'event'
-  },
-  // Real Generator photos
   {
     id: '3',
     url: '/images/events/generator-event-1.jpg',
