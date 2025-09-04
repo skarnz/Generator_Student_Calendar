@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { X, Calendar, Download, ExternalLink, MapPin, Clock, Users, Mail, Gift, Pizza, ChevronDown } from 'lucide-react';
+import { X, ExternalLink, MapPin, Clock, Users, Mail, Gift, Pizza, Calendar } from 'lucide-react';
 import { Event } from '@/data/events';
-import { downloadICSFile, generateCalendarLinks } from '@/services/calendarService';
 import { getEventPosterUrl, generatePosterSrcSet } from '@/utils/generatePlaceholder';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { cn } from '@/lib/utils';
+import { AddToCalendarButton } from '@/components/ui/AddToCalendarButton';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface EventDetailsModalProps {
   event: Event;
@@ -13,13 +14,11 @@ interface EventDetailsModalProps {
 }
 
 export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalProps) {
-  const [showCalendarOptions, setShowCalendarOptions] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
+  const isMobile = useIsMobile();
   
   if (!isOpen) return null;
-
-  const calendarLinks = generateCalendarLinks(event);
   
   // Parse date for display - parse as local date to avoid timezone issues
   const [year, month, day] = event.date.split('-').map(Number);
@@ -35,11 +34,6 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const isPast = eventDate < today;
-
-  const handleDownloadICS = () => {
-    downloadICSFile(event);
-    // Optional: Show success toast
-  };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -186,48 +180,11 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
               {/* Add to Calendar button - only show for future events */}
               {!isPast && (
                 <div className="relative">
-                  <button
-                    onClick={() => setShowCalendarOptions(!showCalendarOptions)}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-generator-green text-white font-medium rounded-lg hover:bg-generator-darkGreen transition-colors"
-                  >
-                    <Calendar className="h-5 w-5" />
-                    Add to Calendar
-                    <ChevronDown className={cn(
-                      "h-4 w-4 transition-transform",
-                      showCalendarOptions && "rotate-180"
-                    )} />
-                  </button>
-
-                {/* Calendar options dropdown */}
-                {showCalendarOptions && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-10 animate-in slide-in-from-top-2 duration-200">
-                    <button
-                      onClick={handleDownloadICS}
-                      className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3"
-                    >
-                      <Download className="h-4 w-4" />
-                      Download .ics file
-                    </button>
-                    <a
-                      href={calendarLinks.google}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 block"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      Add to Google Calendar
-                    </a>
-                    <a
-                      href={calendarLinks.outlook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 block"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      Add to Outlook
-                    </a>
-                  </div>
-                )}
+                  <AddToCalendarButton 
+                    event={event} 
+                    variant={isMobile ? 'mobile' : 'default'}
+                    className="w-full"
+                  />
                 </div>
               )}
 

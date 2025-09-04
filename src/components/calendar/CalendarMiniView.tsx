@@ -4,7 +4,7 @@ import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInte
 import { cn } from '@/lib/utils';
 import { events, Event } from '@/data/events';
 import { TodaysEvents } from './TodaysEvents';
-import { downloadICSFile } from '@/services/calendarService';
+import { AddToCalendarButton } from '@/components/ui/AddToCalendarButton';
 
 type ViewMode = 'month' | 'week' | 'day';
 
@@ -500,15 +500,11 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                     const isPast = quickExpandEvent.date < today;
                     
                     return !isPast ? (
-                      <button
-                        onClick={() => {
-                          downloadICSFile(quickExpandEvent);
-                          setQuickExpandEvent(null);
-                        }}
-                        className="flex-1 py-2 px-4 bg-generator-gold text-generator-darkGreen font-medium rounded-lg hover:bg-yellow-400 transition-colors"
-                      >
-                        Add to Calendar
-                      </button>
+                      <AddToCalendarButton 
+                        event={quickExpandEvent}
+                        variant="mobile"
+                        className="flex-1"
+                      />
                     ) : (
                       <div className="flex-1 py-2 px-4 bg-white/20 text-white/60 text-center rounded-lg">
                         Past Event
