@@ -43,24 +43,24 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
+      className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300 overflow-y-auto"
       onClick={handleBackdropClick}
     >
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-4xl my-8 sm:my-0 bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 p-2 bg-white/90 backdrop-blur rounded-full shadow-lg hover:bg-gray-100 transition-colors"
           aria-label="Close modal"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4 sm:h-5 sm:w-5" />
         </button>
 
-        <div className="flex flex-col lg:flex-row h-full">
+        <div className="flex flex-col lg:flex-row">
           {/* Left side - Event poster */}
-          <div className="w-full lg:w-1/2 bg-gray-100 relative">
+          <div className="w-full lg:w-1/2 bg-gray-100 relative flex-shrink-0">
             {event.posterImage || !imageError ? (
-              <div className="relative w-full h-64 lg:h-full">
+              <div className="relative w-full h-48 sm:h-64 lg:h-[500px]">
                 <LazyImage
                   src={getEventPosterUrl(event.posterImage, 'mobile')}
                   srcSet={generatePosterSrcSet(event.posterImage)}
@@ -87,7 +87,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
           </div>
 
           {/* Right side - Event details */}
-          <div className="w-full lg:w-1/2 p-6 lg:p-8 overflow-y-auto">
+          <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 max-h-[60vh] lg:max-h-[500px] overflow-y-auto">
             {/* Event type badge */}
             <div className="inline-block px-3 py-1 mb-4 text-sm font-medium text-generator-green bg-generator-green/10 rounded-full">
               {event.eventType}

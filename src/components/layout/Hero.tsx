@@ -57,7 +57,7 @@ export function Hero({ onDateSelect }: HeroProps) {
             </div>
           </div>
           
-          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4 mt-6 sm:mt-8 mb-8 sm:mb-12">
+          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4 mt-6 sm:mt-8 mb-8 sm:mb-12 flex-wrap">
             <a
               href="#events"
               onClick={handleNavClick}
@@ -72,6 +72,14 @@ export function Hero({ onDateSelect }: HeroProps) {
               className="inline-flex items-center justify-center rounded-lg border border-generator-gold bg-transparent px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-gold transition-all hover:bg-generator-darkGreen hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
               Join Associates
+            </a>
+            <a
+              href="https://chat.whatsapp.com/GdnB3cExacMA5XfqsXh4pO?mode=ems_copy_c"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-lg border border-generator-gold bg-transparent px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-gold transition-all hover:bg-generator-darkGreen hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0 mt-3 sm:mt-0"
+            >
+              Join Our WhatsApp for Updates and Opportunities!
             </a>
           </div>
         </div>
