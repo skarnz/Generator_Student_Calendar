@@ -55,16 +55,16 @@ export const FloatingImages = () => {
   
   // Define 5 different image sets with different starting orders for all 41 images
   const IMAGE_SETS = [
-    // Set 1: Sequential with offset
-    Array.from({ length: 41 }, (_, i) => i),
-    // Set 2: Reverse order
-    Array.from({ length: 41 }, (_, i) => 40 - i),
-    // Set 3: Every 3rd image, wrapping around
-    Array.from({ length: 41 }, (_, i) => (i * 3) % 41),
-    // Set 4: Random-like pattern using prime number
-    Array.from({ length: 41 }, (_, i) => (i * 7) % 41),
-    // Set 5: Mixed pattern - alternating from start and end
-    Array.from({ length: 41 }, (_, i) => i % 2 === 0 ? i / 2 : 40 - Math.floor(i / 2))
+    // Set 1: IMG_5951 (index 19) appears frequently
+    Array.from({ length: 41 }, (_, i) => i % 4 === 0 ? 19 : i),
+    // Set 2: IMG_5951 at start and every 5th position
+    Array.from({ length: 41 }, (_, i) => (i === 0 || i % 5 === 0) ? 19 : 40 - i),
+    // Set 3: IMG_5951 heavy rotation - appears every 3rd position
+    Array.from({ length: 41 }, (_, i) => i % 3 === 0 ? 19 : (i * 3) % 41),
+    // Set 4: IMG_5951 every 4th position with mixed pattern
+    Array.from({ length: 41 }, (_, i) => i % 4 === 2 ? 19 : (i * 7) % 41),
+    // Set 5: IMG_5951 alternating pattern - very frequent
+    Array.from({ length: 41 }, (_, i) => (i % 2 === 0) ? 19 : i % 2 === 0 ? i / 2 : 40 - Math.floor(i / 2))
   ];
   
   // Get responsive configuration based on screen size
@@ -159,16 +159,28 @@ export const FloatingImages = () => {
         const speedX = (Math.random() - 0.5) * baseSpeed;
         const speedY = (Math.random() - 0.5) * baseSpeed;
         
+        // Make IMG_5951 (index 19) appear larger
+        const isSpecialImage = imageIndex === 19;
+        let imageSize;
+        
+        if (isSpecialImage) {
+          // IMG_5951 is always large, 50% bigger than normal max size
+          imageSize = responsiveConfig.maxSize * 1.5;
+        } else if (i >= numActiveImages - 3) {
+          // Last 3 images are smaller
+          imageSize = responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize);
+        } else {
+          // Normal size range
+          imageSize = responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize);
+        }
+        
         initialImages.push({
           id: `${img.id}-${Date.now()}-${i}`, // Unique ID for each instance
           x: x,
           y: y,
           speedX: speedX,
           speedY: speedY,
-          // Mix of sizes - last 3 images are smaller, using responsive config
-          size: i >= numActiveImages - 3 
-            ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
-            : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
+          size: imageSize,
           rotation: Math.random() * 20 - 10, // Subtle rotation: -10 to 10 degrees
           rotationSpeed: (Math.random() - 0.5) * 0.2, // Very slow rotation for smoothness
           url: img.url,
@@ -318,15 +330,28 @@ export const FloatingImages = () => {
             
             const baseSpeed = 0.8 * responsiveConfig.speedMultiplier;
             
+            // Make IMG_5951 (index 19) appear larger when cycling
+            const isSpecialImage = imageIndex === 19;
+            let imageSize;
+            
+            if (isSpecialImage) {
+              // IMG_5951 is always large, 50% bigger than normal max size
+              imageSize = responsiveConfig.maxSize * 1.5;
+            } else if (Math.random() < 0.3) {
+              // 30% chance for small images
+              imageSize = responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize);
+            } else {
+              // Normal size range
+              imageSize = responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize);
+            }
+            
             newImages.push({
               id: `${newImg.id}-${currentTime}-${i}`,
               x: bestX,
               y: bestY,
               speedX: (Math.random() - 0.5) * baseSpeed,
               speedY: (Math.random() - 0.5) * baseSpeed,
-              size: Math.random() < 0.3 
-                ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
-                : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
+              size: imageSize,
               rotation: Math.random() * 20 - 10,
               rotationSpeed: (Math.random() - 0.5) * 0.2,
               url: newImg.url,

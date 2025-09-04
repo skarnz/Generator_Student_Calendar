@@ -85,9 +85,22 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
   }).length;
     
   return (
-    <section id="events" className="py-16 sm:py-24 bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6">
-        <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl">
+    <section id="events" className="py-16 sm:py-24 relative">
+      {/* Background image - half of the section height */}
+      <div className="absolute inset-0 z-0 h-1/2">
+        <img
+          src="/images/events/babson-commons-header.jpg"
+          alt="Generator events background"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-gray-50" />
+      </div>
+      
+      {/* Bottom half background */}
+      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gray-50 z-0" />
+      
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl text-white drop-shadow-lg">
           {selectedDate 
             ? `Events on ${format(selectedDate, 'MMMM d, yyyy')}`
             : showPastEvents ? 'Past Events' : 'Upcoming Events'}
