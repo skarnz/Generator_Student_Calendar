@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react';
-import 'add-to-calendar-button';
 import { Event } from '@/data/events';
-import { cn } from '@/lib/utils';
+
+// Try to import the package, but also load from CDN as fallback
+try {
+  import('add-to-calendar-button');
+} catch {
+  // Will load from CDN as fallback
+}
 
 // Declare the custom element for TypeScript
 declare global {
@@ -19,17 +24,15 @@ interface AddToCalendarButtonProps {
 }
 
 export function AddToCalendarButton({ event, className = '', variant = 'default' }: AddToCalendarButtonProps) {
-  const buttonRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   // Parse event time to get start and end times
   const parseEventTime = (timeStr: string, date: string) => {
-    const [year, month, day] = date.split('-').map(Number);
-    
     // Default times if TBD
     if (!timeStr || timeStr.toLowerCase() === 'tbd') {
       return {
-        startTime: `${date}T09:00:00`,
-        endTime: `${date}T17:00:00`
+        startTime: '09:00',
+        endTime: '17:00'
       };
     }
     
@@ -48,10 +51,10 @@ export function AddToCalendarButton({ event, className = '', variant = 'default'
       if (endMeridiem?.toUpperCase() === 'PM' && endH !== 12) endH += 12;
       if (endMeridiem?.toUpperCase() === 'AM' && endH === 12) endH = 0;
       
-      const startTime = `${date}T${String(startH).padStart(2, '0')}:${startMin}:00`;
-      const endTime = `${date}T${String(endH).padStart(2, '0')}:${endMin}:00`;
-      
-      return { startTime, endTime };
+      return {
+        startTime: `${String(startH).padStart(2, '0')}:${startMin}`,
+        endTime: `${String(endH).padStart(2, '0')}:${endMin}`
+      };
     }
     
     // Single time - assume 2 hour duration
@@ -63,82 +66,107 @@ export function AddToCalendarButton({ event, className = '', variant = 'default'
       if (meridiem?.toUpperCase() === 'PM' && h !== 12) h += 12;
       if (meridiem?.toUpperCase() === 'AM' && h === 12) h = 0;
       
-      const startTime = `${date}T${String(h).padStart(2, '0')}:${min}:00`;
       const endH = (h + 2) % 24;
-      const endTime = `${date}T${String(endH).padStart(2, '0')}:${min}:00`;
       
-      return { startTime, endTime };
+      return {
+        startTime: `${String(h).padStart(2, '0')}:${min}`,
+        endTime: `${String(endH).padStart(2, '0')}:${min}`
+      };
     }
     
     // Default fallback
     return {
-      startTime: `${date}T09:00:00`,
-      endTime: `${date}T11:00:00`
+      startTime: '09:00',
+      endTime: '11:00'
     };
   };
   
   useEffect(() => {
-    if (!buttonRef.current) return;
+    if (!containerRef.current) return;
+    
+    // Ensure the web component is loaded
+    if (!customElements.get('add-to-calendar-button')) {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/add-to-calendar-button@2/dist/atcb.min.js';
+      script.async = true;
+      document.head.appendChild(script);
+    }
+    
+    // Clear container
+    containerRef.current.innerHTML = '';
     
     const { startTime, endTime } = parseEventTime(event.time, event.date);
     
-    // Create a wrapper with button styling
-    const wrapper = document.createElement('div');
-    wrapper.className = cn(
-      "inline-flex items-center justify-center gap-2 px-6 py-3",
-      "bg-generator-green text-white font-medium rounded-lg",
-      "hover:bg-green-700 transition-colors cursor-pointer",
-      className
-    );
+    // Escape special characters for HTML attributes
+    const escapeHtml = (str: string) => {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    };
     
-    // Create the button element
-    const button = document.createElement('add-to-calendar-button');
+    // Create the web component with all necessary attributes
+    const htmlContent = `
+      <add-to-calendar-button
+        name="${escapeHtml(event.title)}"
+        description="${escapeHtml(event.description)}"
+        startDate="${event.date}"
+        startTime="${startTime}"
+        endTime="${endTime}"
+        timeZone="America/New_York"
+        location="${escapeHtml(event.location)}"
+        organizer="The Generator|generator@babson.edu"
+        options="Apple,Google,Outlook.com,Microsoft365,Yahoo,iCal"
+        iCalFileName="${event.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}"
+        label="Details &amp; Add to Calendar"
+        trigger="click"
+        listStyle="${variant === 'mobile' ? 'modal' : 'dropdown'}"
+        buttonStyle="flat"
+        size="16|16|16"
+        lightMode="bodyScheme"
+      ></add-to-calendar-button>
+    `;
     
-    // Set attributes
-    button.setAttribute('name', event.title);
-    button.setAttribute('description', event.description);
-    button.setAttribute('startDate', event.date);
-    button.setAttribute('startTime', startTime.split('T')[1]);
-    button.setAttribute('endTime', endTime.split('T')[1]);
-    button.setAttribute('timeZone', 'America/New_York');
-    button.setAttribute('location', event.location);
-    
-    // Set organizer info
-    button.setAttribute('organizer', 'The Generator|generator@babson.edu');
-    
-    // Mobile optimizations
-    if (variant === 'mobile') {
-      button.setAttribute('size', '0'); // Hide default button
-      button.setAttribute('listStyle', 'modal');
-      button.setAttribute('trigger', 'click');
-    } else {
-      button.setAttribute('size', '0'); // Hide default button
-      button.setAttribute('listStyle', 'dropdown');
-      button.setAttribute('trigger', 'click');
-    }
-    
-    // Calendar options
-    button.setAttribute('options', 'Apple,Google,Yahoo,Outlook.com,Microsoft365,MicrosoftTeams,iCal');
-    
-    // Create custom button text
-    const buttonText = document.createElement('span');
-    buttonText.textContent = 'Details & Add to Calendar';
-    
-    // Clear and build structure
-    buttonRef.current.innerHTML = '';
-    wrapper.appendChild(buttonText);
-    wrapper.appendChild(button);
-    buttonRef.current.appendChild(wrapper);
-    
-    // Add click handler to wrapper to trigger the calendar button
-    wrapper.addEventListener('click', () => {
-      const calButton = button.shadowRoot?.querySelector('.atcb-trigger') as HTMLElement;
-      if (calButton) {
-        calButton.click();
+    // Add CSS to style the button
+    const style = document.createElement('style');
+    style.textContent = `
+      add-to-calendar-button {
+        width: 100%;
       }
-    });
+      add-to-calendar-button::part(atcb-button) {
+        background-color: #22c55e !important;
+        color: white !important;
+        border: none !important;
+        padding: 12px 24px !important;
+        border-radius: 8px !important;
+        font-weight: 500 !important;
+        font-size: 16px !important;
+        width: 100% !important;
+        cursor: pointer !important;
+        transition: background-color 0.2s !important;
+      }
+      add-to-calendar-button::part(atcb-button):hover {
+        background-color: #16a34a !important;
+      }
+      add-to-calendar-button::part(atcb-list) {
+        border-radius: 8px !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+      }
+      add-to-calendar-button::part(atcb-list-item) {
+        padding: 12px 16px !important;
+      }
+      add-to-calendar-button::part(atcb-list-item):hover {
+        background-color: #f3f4f6 !important;
+      }
+      ${className ? `.${className} add-to-calendar-button { ${className} }` : ''}
+    `;
+    
+    containerRef.current.appendChild(style);
+    containerRef.current.insertAdjacentHTML('beforeend', htmlContent);
     
   }, [event, variant, className]);
   
-  return <div ref={buttonRef} />;
+  return <div ref={containerRef} className={className} />;
 }
