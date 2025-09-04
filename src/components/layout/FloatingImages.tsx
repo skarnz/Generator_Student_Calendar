@@ -294,7 +294,7 @@ export const FloatingImages = () => {
           // Ensure minimum speed
           const minSpeed = 0.2;
           const currentSpeed = Math.sqrt(newSpeedX * newSpeedX + newSpeedY * newSpeedY);
-          if (currentSpeed < minSpeed && distance > interactionRadius) {
+          if (currentSpeed < minSpeed) {
             const boost = minSpeed / currentSpeed;
             newSpeedX *= boost;
             newSpeedY *= boost;
