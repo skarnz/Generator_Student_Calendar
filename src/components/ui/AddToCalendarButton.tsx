@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import 'add-to-calendar-button/assets/css/atcb.css';
 import 'add-to-calendar-button';
 import { Event } from '@/data/events';
 import { cn } from '@/lib/utils';
