@@ -14,6 +14,9 @@ interface FloatingImage {
   alt: string;
   opacity: number;
   scale: number;
+  imageIndex: number; // Index in the full image array
+  startTime: number; // When this image started displaying
+  transitionState: 'fading-in' | 'visible' | 'fading-out';
 }
 
 interface ResponsiveConfig {
@@ -43,6 +46,10 @@ export const FloatingImages = () => {
   });
   const animationFrameRef = useRef<number>();
   const collisionStatesRef = useRef<Map<string, boolean>>(new Map());
+  const nextImageIndexRef = useRef<number>(0);
+  const IMAGE_DISPLAY_DURATION = 12000; // 12 seconds per image
+  const IMAGE_TRANSITION_INTERVAL = 3000; // New image every 3 seconds
+  const FADE_DURATION = 1000; // 1 second fade in/out
   
   // Get responsive configuration based on screen size
   const getResponsiveConfig = (): ResponsiveConfig => {
@@ -105,13 +112,16 @@ export const FloatingImages = () => {
     const containerRect = containerRef.current.getBoundingClientRect();
     setDimensions({ width: containerRect.width, height: containerRect.height });
     
-    // Create floating images with responsive sizes and better distribution
-    const createImages = () => {
-      // Use fewer images on mobile for better performance
-      const imagesToUse = isMobile ? communityImages.slice(0, 6) : communityImages;
+    // Create initial floating images
+    const createInitialImages = () => {
+      const numActiveImages = isMobile ? 6 : 8; // Show 6 on mobile, 8 on desktop
+      const initialImages: FloatingImage[] = [];
       
-      return imagesToUse.map((img, index) => {
-        const angle = (index / imagesToUse.length) * Math.PI * 2;
+      for (let i = 0; i < numActiveImages; i++) {
+        const imageIndex = i % communityImages.length;
+        const img = communityImages[imageIndex];
+        
+        const angle = (i / numActiveImages) * Math.PI * 2;
         const radius = Math.min(containerRect.width, containerRect.height) * 0.35;
         const centerX = containerRect.width / 2;
         const centerY = containerRect.height / 2;
@@ -126,36 +136,57 @@ export const FloatingImages = () => {
         const speedX = (Math.random() - 0.5) * baseSpeed;
         const speedY = (Math.random() - 0.5) * baseSpeed;
         
-        return {
-          id: img.id,
+        initialImages.push({
+          id: `${img.id}-${Date.now()}-${i}`, // Unique ID for each instance
           x: x,
           y: y,
           speedX: speedX,
           speedY: speedY,
           // Mix of sizes - last 3 images are smaller, using responsive config
-          size: index >= imagesToUse.length - 3 
+          size: i >= numActiveImages - 3 
             ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
             : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
           rotation: Math.random() * 20 - 10, // Subtle rotation: -10 to 10 degrees
           rotationSpeed: (Math.random() - 0.5) * 0.2, // Very slow rotation for smoothness
           url: img.url,
           alt: img.alt,
-          opacity: 1, // 100% opacity - not transparent at all
-          scale: 1
-        };
-      });
+          opacity: 1,
+          scale: 1,
+          imageIndex: imageIndex,
+          startTime: Date.now() - (i * IMAGE_TRANSITION_INTERVAL), // Stagger start times
+          transitionState: 'visible' as const
+        });
+      }
+      
+      // Set the next image index to continue from where we left off
+      nextImageIndexRef.current = numActiveImages % communityImages.length;
+      
+      return initialImages;
     };
     
-    setImages(createImages());
+    setImages(createInitialImages());
     
     const handleResize = () => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       setDimensions({ width: rect.width, height: rect.height });
       
-      // Recreate images with new responsive sizes on resize
+      // Don't recreate images on resize, just update their positions
       setTimeout(() => {
-        setImages(createImages());
+        setImages(prev => prev.map(img => {
+          // Ensure images stay within new bounds
+          const boundaryInset = rect.width * responsiveConfig.boundaryInsetRatio;
+          const minX = boundaryInset - img.size / 2;
+          const maxX = rect.width - boundaryInset + img.size / 2;
+          const minY = boundaryInset - img.size / 2;
+          const maxY = rect.height - boundaryInset + img.size / 2;
+          
+          return {
+            ...img,
+            x: Math.max(minX, Math.min(img.x, maxX)),
+            y: Math.max(minY, Math.min(img.y, maxY))
+          };
+        }));
       }, 100);
     };
     
@@ -184,6 +215,106 @@ export const FloatingImages = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isMobile]);
+  
+  // Image cycling effect
+  useEffect(() => {
+    if (images.length === 0 || dimensions.width === 0) return;
+    
+    const interval = setInterval(() => {
+      const currentTime = Date.now();
+      
+      setImages(prevImages => {
+        let newImages = [...prevImages];
+        let hasChanges = false;
+        
+        // Check each image to see if it needs to be cycled out
+        newImages = newImages.map(img => {
+          const timeAlive = currentTime - img.startTime;
+          
+          // Start fading out after IMAGE_DISPLAY_DURATION
+          if (timeAlive > IMAGE_DISPLAY_DURATION && img.transitionState === 'visible') {
+            hasChanges = true;
+            return { ...img, transitionState: 'fading-out' as const };
+          }
+          
+          // Remove image after fade out completes
+          if (timeAlive > IMAGE_DISPLAY_DURATION + FADE_DURATION && img.transitionState === 'fading-out') {
+            hasChanges = true;
+            return null; // Mark for removal
+          }
+          
+          // Complete fade in
+          if (timeAlive > FADE_DURATION && img.transitionState === 'fading-in') {
+            hasChanges = true;
+            return { ...img, transitionState: 'visible' as const };
+          }
+          
+          return img;
+        }).filter(img => img !== null) as FloatingImage[];
+        
+        // Add a new image if we removed one
+        const numActiveImages = isMobile ? 6 : 8;
+        if (newImages.length < numActiveImages && hasChanges) {
+          const newImageIndex = nextImageIndexRef.current;
+          const newImg = communityImages[newImageIndex];
+          
+          // Find a good spawn position (away from other images)
+          let bestX = dimensions.width / 2;
+          let bestY = dimensions.height / 2;
+          let maxMinDistance = 0;
+          
+          // Try multiple random positions and pick the one furthest from existing images
+          for (let attempt = 0; attempt < 10; attempt++) {
+            const testX = Math.random() * dimensions.width * 0.8 + dimensions.width * 0.1;
+            const testY = Math.random() * dimensions.height * 0.8 + dimensions.height * 0.1;
+            
+            let minDistance = Infinity;
+            newImages.forEach(existingImg => {
+              const dx = existingImg.x - testX;
+              const dy = existingImg.y - testY;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              minDistance = Math.min(minDistance, distance);
+            });
+            
+            if (minDistance > maxMinDistance) {
+              maxMinDistance = minDistance;
+              bestX = testX;
+              bestY = testY;
+            }
+          }
+          
+          const baseSpeed = 0.8 * responsiveConfig.speedMultiplier;
+          
+          newImages.push({
+            id: `${newImg.id}-${currentTime}`,
+            x: bestX,
+            y: bestY,
+            speedX: (Math.random() - 0.5) * baseSpeed,
+            speedY: (Math.random() - 0.5) * baseSpeed,
+            size: Math.random() < 0.3 
+              ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
+              : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
+            rotation: Math.random() * 20 - 10,
+            rotationSpeed: (Math.random() - 0.5) * 0.2,
+            url: newImg.url,
+            alt: newImg.alt,
+            opacity: 0, // Start invisible
+            scale: 1,
+            imageIndex: newImageIndex,
+            startTime: currentTime,
+            transitionState: 'fading-in' as const
+          });
+          
+          // Move to next image in sequence
+          nextImageIndexRef.current = (newImageIndex + 1) % communityImages.length;
+        }
+        
+        return hasChanges ? newImages : prevImages;
+      });
+    }, 500); // Check every 500ms
+    
+    return () => clearInterval(interval);
+  }, [dimensions, isMobile, responsiveConfig]);
   
   useEffect(() => {
     if (images.length === 0 || dimensions.width === 0) return;
@@ -307,6 +438,19 @@ export const FloatingImages = () => {
           // Gentle pulsing scale effect - disabled on mobile to reduce jitter
           const newScale = responsiveConfig.speedMultiplier < 0.8 ? 1 : (1 + Math.sin((Date.now() / 1000 + index) * 0.2) * 0.03); // 97% to 103% scale on desktop only
           
+          // Calculate opacity based on transition state
+          let newOpacity = img.opacity;
+          const timeAlive = Date.now() - img.startTime;
+          
+          if (img.transitionState === 'fading-in') {
+            newOpacity = Math.min(1, timeAlive / FADE_DURATION);
+          } else if (img.transitionState === 'fading-out') {
+            const fadeOutTime = timeAlive - IMAGE_DISPLAY_DURATION;
+            newOpacity = Math.max(0, 1 - (fadeOutTime / FADE_DURATION));
+          } else {
+            newOpacity = 1;
+          }
+          
           return {
             ...img,
             x: newX,
@@ -314,7 +458,8 @@ export const FloatingImages = () => {
             speedX: newSpeedX,
             speedY: newSpeedY,
             rotation: newRotation,
-            scale: newScale
+            scale: newScale,
+            opacity: newOpacity
           };
         })
       );
@@ -372,7 +517,7 @@ export const FloatingImages = () => {
             width: `${img.size}px`,
             height: `${img.size}px`,
             transform: `translate3d(-50%, -50%, 0) rotate(${img.rotation}deg) scale(${img.scale})`,
-            opacity: 1, // Always full opacity
+            opacity: img.opacity,
             // No transition for smoother continuous animation
             filter: 'none', // Remove any filters that might cause fading
             willChange: 'transform', // Optimize for animations
