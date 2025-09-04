@@ -29,12 +29,6 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
       const eventDate = new Date(year, month - 1, day);
       eventDate.setHours(0, 0, 0, 0);
       
-      // If a specific date is selected, only show events for that date
-      if (selectedDate) {
-        const matchesSelectedDate = isSameDay(eventDate, selectedDate);
-        if (!matchesSelectedDate) return false;
-      }
-      
       // Check if event is past either by date comparison or explicit isPastEvent flag
       const isPastByDate = eventDate < currentDate;
       const isPastExplicit = event.isPastEvent === true;
@@ -49,7 +43,7 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
       
       return matchesTimeFilter && matchesEventType && matchesAudience && matchesSearch;
     });
-  }, [events, selectedEventType, selectedAudience, searchTerm, showPastEvents, currentDate, selectedDate]);
+  }, [events, selectedEventType, selectedAudience, searchTerm, showPastEvents, currentDate]);
 
   const sortedEvents = useMemo(() => {
     const sorted = [...filteredEvents].sort((a, b) => {
@@ -88,12 +82,10 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
     <section id="events" className="py-16 sm:py-24 bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6">
         <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl">
-          {selectedDate 
-            ? `Events on ${format(selectedDate, 'MMMM d, yyyy')}`
-            : showPastEvents ? 'Past Events' : 'Upcoming Events'}
+          {showPastEvents ? 'Past Events' : 'Upcoming Events'}
         </h2>
         
-        {selectedDate && (
+        {false && (
           <div className="text-center mb-6">
             <button
               onClick={() => window.location.reload()}

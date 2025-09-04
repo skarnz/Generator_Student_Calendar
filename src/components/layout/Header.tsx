@@ -48,11 +48,40 @@ export function Header() {
         </div>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
-          <a href="#hero" onClick={handleNavClick} className="nav-link">Home</a>
-          <a href="#about" onClick={handleNavClick} className="nav-link">About</a>
-          <a href="#events" onClick={handleNavClick} className="nav-link">Events</a>
-          <a href="#filters" onClick={handleNavClick} className="nav-link">Filter</a>
+        <nav className="hidden md:flex items-center space-x-2">
+          <a 
+            href="#hero" 
+            onClick={handleNavClick} 
+            className="relative px-4 py-2 text-generator-darkGreen font-medium transition-all duration-300 hover:text-generator-gold group"
+          >
+            Home
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-generator-gold scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+          </a>
+          <a 
+            href="#about" 
+            onClick={handleNavClick} 
+            className="relative px-4 py-2 text-generator-darkGreen font-medium transition-all duration-300 hover:text-generator-gold group"
+          >
+            About
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-generator-gold scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+          </a>
+          <a 
+            href="#events" 
+            onClick={handleNavClick} 
+            className="relative px-4 py-2 text-generator-darkGreen font-medium transition-all duration-300 hover:text-generator-gold group"
+          >
+            Events
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-generator-gold scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+          </a>
+          <a 
+            href="https://g1000-portal.vercel.app/" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative px-4 py-2 text-generator-darkGreen font-medium transition-all duration-300 hover:text-generator-gold group"
+          >
+            G1000 Portal
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-generator-gold scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+          </a>
         </nav>
         
         {/* Desktop CTA */}
@@ -87,12 +116,37 @@ export function Header() {
 
       {/* Mobile Navigation Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md py-4 px-6 transition-all transform z-50">
-          <nav className="flex flex-col space-y-2">
-            <a href="#hero" onClick={handleNavClick} className="nav-link text-center py-3 min-h-[44px] flex items-center justify-center">Home</a>
-            <a href="#about" onClick={handleNavClick} className="nav-link text-center py-3 min-h-[44px] flex items-center justify-center">About</a>
-            <a href="#events" onClick={handleNavClick} className="nav-link text-center py-3 min-h-[44px] flex items-center justify-center">Events</a>
-            <a href="#filters" onClick={handleNavClick} className="nav-link text-center py-3 min-h-[44px] flex items-center justify-center">Filter</a>
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg py-4 px-6 transition-all transform z-50 border-t border-gray-100">
+          <nav className="flex flex-col space-y-1">
+            <a 
+              href="#hero" 
+              onClick={handleNavClick} 
+              className="text-center py-3 min-h-[44px] flex items-center justify-center text-generator-darkGreen font-medium rounded-lg hover:bg-generator-gold hover:text-generator-darkGreen transition-all duration-200"
+            >
+              Home
+            </a>
+            <a 
+              href="#about" 
+              onClick={handleNavClick} 
+              className="text-center py-3 min-h-[44px] flex items-center justify-center text-generator-darkGreen font-medium rounded-lg hover:bg-generator-gold hover:text-generator-darkGreen transition-all duration-200"
+            >
+              About
+            </a>
+            <a 
+              href="#events" 
+              onClick={handleNavClick} 
+              className="text-center py-3 min-h-[44px] flex items-center justify-center text-generator-darkGreen font-medium rounded-lg hover:bg-generator-gold hover:text-generator-darkGreen transition-all duration-200"
+            >
+              Events
+            </a>
+            <a 
+              href="https://g1000-portal.vercel.app/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-center py-3 min-h-[44px] flex items-center justify-center text-generator-darkGreen font-medium rounded-lg hover:bg-generator-gold hover:text-generator-darkGreen transition-all duration-200"
+            >
+              G1000 Portal
+            </a>
           </nav>
         </div>
       )}
