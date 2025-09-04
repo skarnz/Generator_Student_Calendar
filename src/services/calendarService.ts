@@ -30,11 +30,11 @@ export function generateICSFile(data: CalendarEventData): string {
   const eventDate = new Date(year, month - 1, day);
   const { startTime, endTime } = parseEventTime(event.time, eventDate);
 
-  // Create event
+  // Create event with "Generator: " prefix
   const calEvent = calendar.createEvent({
     start: startTime,
     end: endTime,
-    summary: event.title,
+    summary: `Generator: ${event.title}`,
     description: formatEventDescription(event),
     location: event.location,
     url: event.registrationUrl,
@@ -211,7 +211,7 @@ export function generateCalendarLinks(event: Event): {
   // Google Calendar
   const googleUrl = new URL('https://calendar.google.com/calendar/render');
   googleUrl.searchParams.set('action', 'TEMPLATE');
-  googleUrl.searchParams.set('text', event.title);
+  googleUrl.searchParams.set('text', `Generator: ${event.title}`);
   googleUrl.searchParams.set('dates', `${startStr}/${endStr}`);
   googleUrl.searchParams.set('details', formatEventDescription(event));
   googleUrl.searchParams.set('location', event.location);
@@ -219,7 +219,7 @@ export function generateCalendarLinks(event: Event): {
   
   // Outlook Web
   const outlookUrl = new URL('https://outlook.live.com/calendar/0/deeplink/compose');
-  outlookUrl.searchParams.set('subject', event.title);
+  outlookUrl.searchParams.set('subject', `Generator: ${event.title}`);
   outlookUrl.searchParams.set('body', formatEventDescription(event));
   outlookUrl.searchParams.set('location', event.location);
   outlookUrl.searchParams.set('startdt', startStr);
@@ -228,7 +228,7 @@ export function generateCalendarLinks(event: Event): {
   // Yahoo Calendar
   const yahooUrl = new URL('https://calendar.yahoo.com/');
   yahooUrl.searchParams.set('v', '60');
-  yahooUrl.searchParams.set('title', event.title);
+  yahooUrl.searchParams.set('title', `Generator: ${event.title}`);
   yahooUrl.searchParams.set('desc', formatEventDescription(event));
   yahooUrl.searchParams.set('in_loc', event.location);
   yahooUrl.searchParams.set('st', startStr);

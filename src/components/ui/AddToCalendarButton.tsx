@@ -1,21 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Event } from '@/data/events';
-
-// Try to import the package, but also load from CDN as fallback
-try {
-  import('add-to-calendar-button');
-} catch {
-  // Will load from CDN as fallback
-}
-
-// Declare the custom element for TypeScript
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'add-to-calendar-button': any;
-    }
-  }
-}
+import { generateCalendarLinks, downloadICSFile } from '@/services/calendarService';
+import { Calendar, ChevronDown, Apple } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AddToCalendarButtonProps {
   event: Event;
@@ -24,149 +11,141 @@ interface AddToCalendarButtonProps {
 }
 
 export function AddToCalendarButton({ event, className = '', variant = 'default' }: AddToCalendarButtonProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('bottom');
   
-  // Parse event time to get start and end times
-  const parseEventTime = (timeStr: string, date: string) => {
-    // Default times if TBD
-    if (!timeStr || timeStr.toLowerCase() === 'tbd') {
-      return {
-        startTime: '09:00',
-        endTime: '17:00'
-      };
+  // Get calendar links
+  const calendarLinks = generateCalendarLinks(event);
+  
+  // Calculate dropdown position
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - buttonRect.bottom;
+      const spaceAbove = buttonRect.top;
+      const dropdownHeight = 300; // Approximate height
+      
+      if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+        setDropdownPosition('top');
+      } else {
+        setDropdownPosition('bottom');
+      }
     }
-    
-    // Parse time range (e.g., "3:00 PM - 6:00 PM")
-    const timeMatch = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?.*?(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-    
-    if (timeMatch) {
-      const [, startHour, startMin, startMeridiem, endHour, endMin, endMeridiem] = timeMatch;
-      
-      let startH = parseInt(startHour);
-      let endH = parseInt(endHour);
-      
-      // Convert to 24-hour format
-      if (startMeridiem?.toUpperCase() === 'PM' && startH !== 12) startH += 12;
-      if (startMeridiem?.toUpperCase() === 'AM' && startH === 12) startH = 0;
-      if (endMeridiem?.toUpperCase() === 'PM' && endH !== 12) endH += 12;
-      if (endMeridiem?.toUpperCase() === 'AM' && endH === 12) endH = 0;
-      
-      return {
-        startTime: `${String(startH).padStart(2, '0')}:${startMin}`,
-        endTime: `${String(endH).padStart(2, '0')}:${endMin}`
-      };
-    }
-    
-    // Single time - assume 2 hour duration
-    const singleTimeMatch = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-    if (singleTimeMatch) {
-      const [, hour, min, meridiem] = singleTimeMatch;
-      let h = parseInt(hour);
-      
-      if (meridiem?.toUpperCase() === 'PM' && h !== 12) h += 12;
-      if (meridiem?.toUpperCase() === 'AM' && h === 12) h = 0;
-      
-      const endH = (h + 2) % 24;
-      
-      return {
-        startTime: `${String(h).padStart(2, '0')}:${min}`,
-        endTime: `${String(endH).padStart(2, '0')}:${min}`
-      };
-    }
-    
-    // Default fallback
-    return {
-      startTime: '09:00',
-      endTime: '11:00'
+  }, [isOpen]);
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
     };
+    
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+  
+  // Scroll dropdown into view when opened
+  useEffect(() => {
+    if (isOpen && dropdownRef.current) {
+      const dropdown = dropdownRef.current.querySelector('.calendar-dropdown');
+      if (dropdown) {
+        dropdown.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'nearest',
+          inline: 'nearest'
+        });
+      }
+    }
+  }, [isOpen]);
+  
+  const handleAppleCalendar = () => {
+    downloadICSFile(event);
+    setIsOpen(false);
   };
   
-  useEffect(() => {
-    if (!containerRef.current) return;
-    
-    // Ensure the web component is loaded
-    if (!customElements.get('add-to-calendar-button')) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/add-to-calendar-button@2/dist/atcb.min.js';
-      script.async = true;
-      document.head.appendChild(script);
-    }
-    
-    // Clear container
-    containerRef.current.innerHTML = '';
-    
-    const { startTime, endTime } = parseEventTime(event.time, event.date);
-    
-    // Escape special characters for HTML attributes
-    const escapeHtml = (str: string) => {
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    };
-    
-    // Create the web component with all necessary attributes
-    const htmlContent = `
-      <add-to-calendar-button
-        name="${escapeHtml(event.title)}"
-        description="${escapeHtml(event.description)}"
-        startDate="${event.date}"
-        startTime="${startTime}"
-        endTime="${endTime}"
-        timeZone="America/New_York"
-        location="${escapeHtml(event.location)}"
-        organizer="The Generator|generator@babson.edu"
-        options="Apple,Google,Outlook.com,Microsoft365,Yahoo,iCal"
-        iCalFileName="${event.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}"
-        label="Details &amp; Add to Calendar"
-        trigger="click"
-        listStyle="${variant === 'mobile' ? 'modal' : 'dropdown'}"
-        buttonStyle="flat"
-        size="16|16|16"
-        lightMode="bodyScheme"
-      ></add-to-calendar-button>
-    `;
-    
-    // Add CSS to style the button
-    const style = document.createElement('style');
-    style.textContent = `
-      add-to-calendar-button {
-        width: 100%;
-      }
-      add-to-calendar-button::part(atcb-button) {
-        background-color: #22c55e !important;
-        color: white !important;
-        border: none !important;
-        padding: 12px 24px !important;
-        border-radius: 8px !important;
-        font-weight: 500 !important;
-        font-size: 16px !important;
-        width: 100% !important;
-        cursor: pointer !important;
-        transition: background-color 0.2s !important;
-      }
-      add-to-calendar-button::part(atcb-button):hover {
-        background-color: #16a34a !important;
-      }
-      add-to-calendar-button::part(atcb-list) {
-        border-radius: 8px !important;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-      }
-      add-to-calendar-button::part(atcb-list-item) {
-        padding: 12px 16px !important;
-      }
-      add-to-calendar-button::part(atcb-list-item):hover {
-        background-color: #f3f4f6 !important;
-      }
-      ${className ? `.${className} add-to-calendar-button { ${className} }` : ''}
-    `;
-    
-    containerRef.current.appendChild(style);
-    containerRef.current.insertAdjacentHTML('beforeend', htmlContent);
-    
-  }, [event, variant, className]);
+  // DO NOT MODIFY - Google Calendar working perfectly
+  const handleGoogleCalendar = () => {
+    window.open(calendarLinks.google, '_blank');
+    setIsOpen(false);
+  };
   
-  return <div ref={containerRef} className={className} />;
+  // DO NOT MODIFY - Outlook Calendar working perfectly  
+  const handleOutlookCalendar = () => {
+    window.open(calendarLinks.outlook, '_blank');
+    setIsOpen(false);
+  };
+  
+  return (
+    <div className={cn("relative", className)} ref={dropdownRef}>
+      <button
+        ref={buttonRef}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-generator-green text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+      >
+        <Calendar className="h-5 w-5" />
+        Details & Add to Calendar
+        <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+      </button>
+      
+      {isOpen && (
+        <div 
+          className={cn(
+            "calendar-dropdown absolute z-50 w-full bg-white rounded-lg shadow-xl border border-gray-200 py-2",
+            dropdownPosition === 'bottom' ? 'mt-2 top-full' : 'mb-2 bottom-full'
+          )}
+          style={{
+            minWidth: '250px',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}
+        >
+          <button
+            onClick={handleAppleCalendar}
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+          >
+            <Apple className="h-5 w-5 text-gray-600" />
+            <span className="text-gray-900">Apple Calendar</span>
+          </button>
+          
+          {/* DO NOT MODIFY - Google Calendar button working perfectly */}
+          <button
+            onClick={handleGoogleCalendar}
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+          >
+            <Calendar className="h-5 w-5 text-blue-600" />
+            <span className="text-gray-900">Google Calendar</span>
+          </button>
+          
+          {/* DO NOT MODIFY - Outlook Calendar button working perfectly */}
+          <button
+            onClick={handleOutlookCalendar}
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+          >
+            <div className="h-5 w-5 bg-blue-500 rounded flex items-center justify-center">
+              <span className="text-white text-xs font-bold">O</span>
+            </div>
+            <span className="text-gray-900">Outlook Calendar</span>
+          </button>
+          
+          <div className="border-t border-gray-200 mt-2 pt-2">
+            <button
+              onClick={handleAppleCalendar}
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+            >
+              <Calendar className="h-5 w-5 text-gray-600" />
+              <span className="text-gray-900">Download .ics file</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

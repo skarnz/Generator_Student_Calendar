@@ -177,16 +177,14 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
                 </div>
               )}
               
-              {/* Add to Calendar button - only show for future events */}
-              {!isPast && (
-                <div className="relative">
-                  <AddToCalendarButton 
-                    event={event} 
-                    variant={isMobile ? 'mobile' : 'default'}
-                    className="w-full"
-                  />
-                </div>
-              )}
+              {/* Add to Calendar button - always show */}
+              <div className="relative">
+                <AddToCalendarButton 
+                  event={event} 
+                  variant={isMobile ? 'mobile' : 'default'}
+                  className="w-full"
+                />
+              </div>
 
               {/* Registration button */}
               {event.registrationUrl && !isPast && (
