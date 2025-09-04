@@ -47,9 +47,25 @@ export const FloatingImages = () => {
   const animationFrameRef = useRef<number>();
   const collisionStatesRef = useRef<Map<string, boolean>>(new Map());
   const nextImageIndexRef = useRef<number>(0);
-  const IMAGE_DISPLAY_DURATION = 15000; // 15 seconds per image (was 12)
-  const IMAGE_TRANSITION_INTERVAL = 3750; // New image every 3.75 seconds (was 3)
-  const FADE_DURATION = 1250; // 1.25 second fade in/out (was 1)
+  const currentSetRef = useRef<number>(0);
+  const IMAGE_DISPLAY_DURATION = 15000; // 15 seconds per image
+  const IMAGE_TRANSITION_INTERVAL = 3750; // New image every 3.75 seconds  
+  const FADE_DURATION = 1250; // 1.25 second fade in/out
+  const IMAGES_TO_SWAP = 2; // Swap 2 images at a time
+  
+  // Define 5 different image sets with different starting orders for all 41 images
+  const IMAGE_SETS = [
+    // Set 1: Sequential with offset
+    Array.from({ length: 41 }, (_, i) => i),
+    // Set 2: Reverse order
+    Array.from({ length: 41 }, (_, i) => 40 - i),
+    // Set 3: Every 3rd image, wrapping around
+    Array.from({ length: 41 }, (_, i) => (i * 3) % 41),
+    // Set 4: Random-like pattern using prime number
+    Array.from({ length: 41 }, (_, i) => (i * 7) % 41),
+    // Set 5: Mixed pattern - alternating from start and end
+    Array.from({ length: 41 }, (_, i) => i % 2 === 0 ? i / 2 : 40 - Math.floor(i / 2))
+  ];
   
   // Get responsive configuration based on screen size
   const getResponsiveConfig = (): ResponsiveConfig => {
@@ -117,8 +133,15 @@ export const FloatingImages = () => {
       const numActiveImages = isMobile ? 6 : 8; // Show 6 on mobile, 8 on desktop
       const initialImages: FloatingImage[] = [];
       
+      // Select a random image set on each page load
+      const randomSetIndex = Math.floor(Math.random() * IMAGE_SETS.length);
+      currentSetRef.current = randomSetIndex;
+      const selectedSet = IMAGE_SETS[randomSetIndex];
+      
       for (let i = 0; i < numActiveImages; i++) {
-        const imageIndex = i % communityImages.length;
+        // Use the selected set's order, wrapping around if needed
+        const setIndex = i % selectedSet.length;
+        const imageIndex = selectedSet[setIndex] % communityImages.length;
         const img = communityImages[imageIndex];
         
         const angle = (i / numActiveImages) * Math.PI * 2;
@@ -153,13 +176,14 @@ export const FloatingImages = () => {
           opacity: 1,
           scale: 1,
           imageIndex: imageIndex,
-          startTime: Date.now() - (i * IMAGE_TRANSITION_INTERVAL), // Stagger start times
+          // Stagger start times based on the set for varied initial appearance
+          startTime: Date.now() - (i * IMAGE_TRANSITION_INTERVAL * 0.5) - (randomSetIndex * 1000), 
           transitionState: 'visible' as const
         });
       }
       
-      // Set the next image index to continue from where we left off
-      nextImageIndexRef.current = numActiveImages % communityImages.length;
+      // Set the next image index to continue from the selected set
+      nextImageIndexRef.current = numActiveImages % selectedSet.length;
       
       return initialImages;
     };
@@ -216,7 +240,7 @@ export const FloatingImages = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isMobile]);
   
-  // Image cycling effect
+  // Image cycling effect - swap 2 images at a time
   useEffect(() => {
     if (images.length === 0 || dimensions.width === 0) return;
     
@@ -225,91 +249,101 @@ export const FloatingImages = () => {
       
       setImages(prevImages => {
         let newImages = [...prevImages];
-        let hasChanges = false;
+        let imagesMarkedForRemoval = 0;
+        let imagesToRemove: number[] = [];
         
-        // Check each image to see if it needs to be cycled out
-        newImages = newImages.map(img => {
+        // First pass: identify images to fade out and remove
+        newImages = newImages.map((img, index) => {
           const timeAlive = currentTime - img.startTime;
           
           // Start fading out after IMAGE_DISPLAY_DURATION
-          if (timeAlive > IMAGE_DISPLAY_DURATION && img.transitionState === 'visible') {
-            hasChanges = true;
+          if (timeAlive > IMAGE_DISPLAY_DURATION && img.transitionState === 'visible' && imagesMarkedForRemoval < IMAGES_TO_SWAP) {
+            imagesMarkedForRemoval++;
             return { ...img, transitionState: 'fading-out' as const };
           }
           
-          // Remove image after fade out completes
+          // Mark image for removal after fade out completes
           if (timeAlive > IMAGE_DISPLAY_DURATION + FADE_DURATION && img.transitionState === 'fading-out') {
-            hasChanges = true;
-            return null; // Mark for removal
+            imagesToRemove.push(index);
+            return null;
           }
           
           // Complete fade in
           if (timeAlive > FADE_DURATION && img.transitionState === 'fading-in') {
-            hasChanges = true;
             return { ...img, transitionState: 'visible' as const };
           }
           
           return img;
         }).filter(img => img !== null) as FloatingImage[];
         
-        // Add a new image if we removed one
+        // Add new images if we removed any
         const numActiveImages = isMobile ? 6 : 8;
-        if (newImages.length < numActiveImages && hasChanges) {
-          const newImageIndex = nextImageIndexRef.current;
-          const newImg = communityImages[newImageIndex];
+        const imagesToAdd = Math.min(IMAGES_TO_SWAP, numActiveImages - newImages.length);
+        
+        if (imagesToAdd > 0) {
+          // Get the current image set
+          const selectedSet = IMAGE_SETS[currentSetRef.current];
           
-          // Find a good spawn position (away from other images)
-          let bestX = dimensions.width / 2;
-          let bestY = dimensions.height / 2;
-          let maxMinDistance = 0;
-          
-          // Try multiple random positions and pick the one furthest from existing images
-          for (let attempt = 0; attempt < 10; attempt++) {
-            const testX = Math.random() * dimensions.width * 0.8 + dimensions.width * 0.1;
-            const testY = Math.random() * dimensions.height * 0.8 + dimensions.height * 0.1;
+          // Add multiple new images
+          for (let i = 0; i < imagesToAdd; i++) {
+            // Get next image from the selected set
+            const setIndex = nextImageIndexRef.current;
+            const imageIndex = selectedSet[setIndex] % communityImages.length;
+            const newImg = communityImages[imageIndex];
             
-            let minDistance = Infinity;
-            newImages.forEach(existingImg => {
-              const dx = existingImg.x - testX;
-              const dy = existingImg.y - testY;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              minDistance = Math.min(minDistance, distance);
+            // Find a good spawn position (away from other images)
+            let bestX = dimensions.width / 2;
+            let bestY = dimensions.height / 2;
+            let maxMinDistance = 0;
+            
+            // Try multiple random positions and pick the one furthest from existing images
+            for (let attempt = 0; attempt < 10; attempt++) {
+              const testX = Math.random() * dimensions.width * 0.8 + dimensions.width * 0.1;
+              const testY = Math.random() * dimensions.height * 0.8 + dimensions.height * 0.1;
+              
+              let minDistance = Infinity;
+              newImages.forEach(existingImg => {
+                const dx = existingImg.x - testX;
+                const dy = existingImg.y - testY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                minDistance = Math.min(minDistance, distance);
+              });
+              
+              if (minDistance > maxMinDistance) {
+                maxMinDistance = minDistance;
+                bestX = testX;
+                bestY = testY;
+              }
+            }
+            
+            const baseSpeed = 0.8 * responsiveConfig.speedMultiplier;
+            
+            newImages.push({
+              id: `${newImg.id}-${currentTime}-${i}`,
+              x: bestX,
+              y: bestY,
+              speedX: (Math.random() - 0.5) * baseSpeed,
+              speedY: (Math.random() - 0.5) * baseSpeed,
+              size: Math.random() < 0.3 
+                ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
+                : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
+              rotation: Math.random() * 20 - 10,
+              rotationSpeed: (Math.random() - 0.5) * 0.2,
+              url: newImg.url,
+              alt: newImg.alt,
+              opacity: 0, // Start invisible
+              scale: 1,
+              imageIndex: imageIndex,
+              startTime: currentTime + (i * 500), // Stagger the new images slightly
+              transitionState: 'fading-in' as const
             });
             
-            if (minDistance > maxMinDistance) {
-              maxMinDistance = minDistance;
-              bestX = testX;
-              bestY = testY;
-            }
+            // Move to next image in the set
+            nextImageIndexRef.current = (setIndex + 1) % selectedSet.length;
           }
-          
-          const baseSpeed = 0.8 * responsiveConfig.speedMultiplier;
-          
-          newImages.push({
-            id: `${newImg.id}-${currentTime}`,
-            x: bestX,
-            y: bestY,
-            speedX: (Math.random() - 0.5) * baseSpeed,
-            speedY: (Math.random() - 0.5) * baseSpeed,
-            size: Math.random() < 0.3 
-              ? responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize)
-              : responsiveConfig.minSize + Math.random() * (responsiveConfig.maxSize - responsiveConfig.minSize),
-            rotation: Math.random() * 20 - 10,
-            rotationSpeed: (Math.random() - 0.5) * 0.2,
-            url: newImg.url,
-            alt: newImg.alt,
-            opacity: 0, // Start invisible
-            scale: 1,
-            imageIndex: newImageIndex,
-            startTime: currentTime,
-            transitionState: 'fading-in' as const
-          });
-          
-          // Move to next image in sequence
-          nextImageIndexRef.current = (newImageIndex + 1) % communityImages.length;
         }
         
-        return hasChanges ? newImages : prevImages;
+        return newImages;
       });
     }, 500); // Check every 500ms
     

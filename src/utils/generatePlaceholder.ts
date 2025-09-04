@@ -61,8 +61,9 @@ export function getEventPosterUrl(
     return posterImage;
   }
   
-  // Return the appropriate size
-  return `/event-posters/${size}/${posterImage}`;
+  // For now, return the image from the root event-posters directory
+  // In the future, we can add logic to check if size-specific versions exist
+  return `/event-posters/${posterImage}`;
 }
 
 /**
@@ -73,9 +74,7 @@ export function generatePosterSrcSet(posterImage: string | undefined): string {
     return '';
   }
   
-  return `
-    /event-posters/thumbnail/${posterImage} 400w,
-    /event-posters/mobile/${posterImage} 800w,
-    /event-posters/full/${posterImage} 1200w
-  `.trim();
+  // For now, just return the single image since we don't have size variants
+  // In the future, we can generate different sizes
+  return `/event-posters/${posterImage} 800w`;
 }
