@@ -89,7 +89,7 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
       {/* Background image - half of the section height */}
       <div className="absolute inset-0 z-0 h-1/2">
         <img
-          src="/images/events/babson-commons-header.jpg"
+          src="/images/events/Main_generator_photo.jpg"
           alt="Generator events background"
           className="w-full h-full object-cover"
         />

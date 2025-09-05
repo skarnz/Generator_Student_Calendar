@@ -136,20 +136,31 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
     <div className="relative calendar-blur-container">
       {/* ENHANCED GLASS BLUR - FULLY PERSISTENT ACROSS ALL BROWSERS */}
       {/* Triple-layer approach for maximum compatibility and persistence */}
+      {/* Optimized for 20px blur with GPU acceleration and mobile Safari fixes */}
       
       {/* Layer 1: Base gradient background - always visible */}
       <div 
         className="absolute inset-0 rounded-xl calendar-glass-morphism"
         style={{
           zIndex: 0,
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)',
+          willChange: 'transform',
+          WebkitBackfaceVisibility: 'hidden',
+          backfaceVisibility: 'hidden',
         }}
       />
       
-      {/* Layer 2: Primary blur effect with fallbacks */}
+      {/* Layer 2: Primary blur effect with fallbacks - Enhanced to 20px */}
       <div 
         className="absolute inset-0 rounded-xl calendar-blur-effect"
         style={{
           zIndex: 1,
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)',
+          willChange: 'transform',
+          WebkitBackfaceVisibility: 'hidden',
+          backfaceVisibility: 'hidden',
         }}
       />
       
@@ -160,11 +171,20 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
           background: 'radial-gradient(ellipse at top left, rgba(255, 255, 255, 0.1) 0%, transparent 50%)',
           pointerEvents: 'none',
           zIndex: 2,
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)',
         }}
       />
       
       {/* Content layer - MUST have highest zIndex */}
-      <div className="relative rounded-xl p-3 sm:p-6 shadow-2xl" style={{ zIndex: 3 }}>
+      <div 
+        className="relative rounded-xl p-3 sm:p-6 shadow-2xl" 
+        style={{ 
+          zIndex: 3,
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)',
+        }}
+      >
       {/* Header with navigation */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3 sm:gap-0">
         <h3 className="text-white font-semibold text-sm sm:text-lg break-words max-w-full">
@@ -395,15 +415,20 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                       </div>
                     </button>
 
-                    {/* Simple expanded event list */}
+                    {/* Enhanced expanded event list with 20px blur */}
                     {isExpanded && hasEvents && (
                       <div 
                         className="rounded-lg p-3 sm:p-4 space-y-2 animate-in slide-in-from-top-2 duration-300"
                         style={{
                           backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                          backdropFilter: 'blur(16px) saturate(180%)',
-                          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                          backdropFilter: 'blur(20px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
                           boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.2)',
+                          transform: 'translateZ(0)',
+                          WebkitTransform: 'translateZ(0)',
+                          willChange: 'transform',
+                          WebkitBackfaceVisibility: 'hidden',
+                          backfaceVisibility: 'hidden',
                         }}
                       >
                         <div className="space-y-2">
@@ -444,12 +469,33 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
             className="relative max-w-md w-full animate-in zoom-in-95 fade-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Glass morphism container */}
+            {/* Enhanced Glass morphism container with 20px blur */}
             <div className="calendar-blur-container rounded-2xl overflow-hidden">
-              <div className="calendar-blur-effect" />
-              <div className="calendar-glass-morphism" />
+              <div 
+                className="absolute inset-0 calendar-blur-effect"
+                style={{
+                  transform: 'translateZ(0)',
+                  WebkitTransform: 'translateZ(0)',
+                  willChange: 'transform',
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden',
+                }}
+              />
+              <div 
+                className="absolute inset-0 calendar-glass-morphism"
+                style={{
+                  transform: 'translateZ(0)',
+                  WebkitTransform: 'translateZ(0)',
+                }}
+              />
               
-              <div className="relative p-6 z-10">
+              <div 
+                className="relative p-6 z-10"
+                style={{
+                  transform: 'translateZ(0)',
+                  WebkitTransform: 'translateZ(0)',
+                }}
+              >
                 {/* Close button */}
                 <button
                   onClick={() => setQuickExpandEvent(null)}

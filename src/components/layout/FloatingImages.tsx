@@ -47,25 +47,13 @@ export const FloatingImages = () => {
   const animationFrameRef = useRef<number>();
   const collisionStatesRef = useRef<Map<string, boolean>>(new Map());
   const nextImageIndexRef = useRef<number>(0);
-  const currentSetRef = useRef<number>(0);
   const IMAGE_DISPLAY_DURATION = 15000; // 15 seconds per image
   const IMAGE_TRANSITION_INTERVAL = 3750; // New image every 3.75 seconds  
   const FADE_DURATION = 1250; // 1.25 second fade in/out
   const IMAGES_TO_SWAP = 2; // Swap 2 images at a time
   
-  // Define 5 different image sets with different starting orders for all 41 images
-  const IMAGE_SETS = [
-    // Set 1: IMG_5951 (index 19) appears frequently
-    Array.from({ length: 41 }, (_, i) => i % 4 === 0 ? 19 : i),
-    // Set 2: IMG_5951 at start and every 5th position
-    Array.from({ length: 41 }, (_, i) => (i === 0 || i % 5 === 0) ? 19 : 40 - i),
-    // Set 3: IMG_5951 heavy rotation - appears every 3rd position
-    Array.from({ length: 41 }, (_, i) => i % 3 === 0 ? 19 : (i * 3) % 41),
-    // Set 4: IMG_5951 every 4th position with mixed pattern
-    Array.from({ length: 41 }, (_, i) => i % 4 === 2 ? 19 : (i * 7) % 41),
-    // Set 5: IMG_5951 alternating pattern - very frequent
-    Array.from({ length: 41 }, (_, i) => (i % 2 === 0) ? 19 : i % 2 === 0 ? i / 2 : 40 - Math.floor(i / 2))
-  ];
+  // Simple sequential order - all 41 images shown in order
+  const TOTAL_IMAGES = communityImages.length; // 41 images
   
   // Get responsive configuration based on screen size
   const getResponsiveConfig = (): ResponsiveConfig => {
@@ -133,15 +121,12 @@ export const FloatingImages = () => {
       const numActiveImages = isMobile ? 6 : 8; // Show 6 on mobile, 8 on desktop
       const initialImages: FloatingImage[] = [];
       
-      // Select a random image set on each page load
-      const randomSetIndex = Math.floor(Math.random() * IMAGE_SETS.length);
-      currentSetRef.current = randomSetIndex;
-      const selectedSet = IMAGE_SETS[randomSetIndex];
+      // Start from the beginning of the image array
+      nextImageIndexRef.current = 0;
       
       for (let i = 0; i < numActiveImages; i++) {
-        // Use the selected set's order, wrapping around if needed
-        const setIndex = i % selectedSet.length;
-        const imageIndex = selectedSet[setIndex] % communityImages.length;
+        // Simple sequential order
+        const imageIndex = i % TOTAL_IMAGES;
         const img = communityImages[imageIndex];
         
         const angle = (i / numActiveImages) * Math.PI * 2;
@@ -159,14 +144,9 @@ export const FloatingImages = () => {
         const speedX = (Math.random() - 0.5) * baseSpeed;
         const speedY = (Math.random() - 0.5) * baseSpeed;
         
-        // Make IMG_5951 (index 19) appear larger
-        const isSpecialImage = imageIndex === 19;
+        // Consistent size distribution - no special treatment for any image
         let imageSize;
-        
-        if (isSpecialImage) {
-          // IMG_5951 is always large, 50% bigger than normal max size
-          imageSize = responsiveConfig.maxSize * 1.5;
-        } else if (i >= numActiveImages - 3) {
+        if (i >= numActiveImages - 3) {
           // Last 3 images are smaller
           imageSize = responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize);
         } else {
@@ -188,14 +168,14 @@ export const FloatingImages = () => {
           opacity: 1,
           scale: 1,
           imageIndex: imageIndex,
-          // Stagger start times based on the set for varied initial appearance
-          startTime: Date.now() - (i * IMAGE_TRANSITION_INTERVAL * 0.5) - (randomSetIndex * 1000), 
+          // Stagger start times for varied initial appearance
+          startTime: Date.now() - (i * IMAGE_TRANSITION_INTERVAL * 0.5), 
           transitionState: 'visible' as const
         });
       }
       
-      // Set the next image index to continue from the selected set
-      nextImageIndexRef.current = numActiveImages % selectedSet.length;
+      // Set the next image index to continue sequentially
+      nextImageIndexRef.current = numActiveImages % TOTAL_IMAGES;
       
       return initialImages;
     };
@@ -293,14 +273,10 @@ export const FloatingImages = () => {
         const imagesToAdd = Math.min(IMAGES_TO_SWAP, numActiveImages - newImages.length);
         
         if (imagesToAdd > 0) {
-          // Get the current image set
-          const selectedSet = IMAGE_SETS[currentSetRef.current];
-          
           // Add multiple new images
           for (let i = 0; i < imagesToAdd; i++) {
-            // Get next image from the selected set
-            const setIndex = nextImageIndexRef.current;
-            const imageIndex = selectedSet[setIndex] % communityImages.length;
+            // Get next image in sequential order
+            const imageIndex = nextImageIndexRef.current;
             const newImg = communityImages[imageIndex];
             
             // Find a good spawn position (away from other images)
@@ -330,14 +306,9 @@ export const FloatingImages = () => {
             
             const baseSpeed = 0.8 * responsiveConfig.speedMultiplier;
             
-            // Make IMG_5951 (index 19) appear larger when cycling
-            const isSpecialImage = imageIndex === 19;
+            // Consistent size distribution
             let imageSize;
-            
-            if (isSpecialImage) {
-              // IMG_5951 is always large, 50% bigger than normal max size
-              imageSize = responsiveConfig.maxSize * 1.5;
-            } else if (Math.random() < 0.3) {
+            if (Math.random() < 0.3) {
               // 30% chance for small images
               imageSize = responsiveConfig.smallMinSize + Math.random() * (responsiveConfig.smallMaxSize - responsiveConfig.smallMinSize);
             } else {
@@ -363,8 +334,8 @@ export const FloatingImages = () => {
               transitionState: 'fading-in' as const
             });
             
-            // Move to next image in the set
-            nextImageIndexRef.current = (setIndex + 1) % selectedSet.length;
+            // Move to next image in sequential order
+            nextImageIndexRef.current = (nextImageIndexRef.current + 1) % TOTAL_IMAGES;
           }
         }
         

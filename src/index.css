@@ -42,13 +42,16 @@
 
 /* Primary blur effect with multiple fallbacks */
 .calendar-blur-effect {
-  /* Force GPU acceleration */
+  /* Force GPU acceleration with enhanced hints */
   transform: translate3d(0, 0, 0) !important;
   -webkit-transform: translate3d(0, 0, 0) !important;
+  will-change: transform !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
   
-  /* Primary blur effect */
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  /* Enhanced primary blur effect - 20px as requested */
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   
   /* Background fallback */
   background: rgba(255, 255, 255, 0.1) !important;
@@ -71,24 +74,40 @@
     0 10px 30px -10px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Force backdrop filter on all screen sizes */
+/* Force backdrop filter on all screen sizes - Enhanced to 20px */
 @media all {
   .calendar-blur-effect {
-    backdrop-filter: blur(16px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   }
 }
 
-/* Safari-specific fixes */
-@supports (-webkit-backdrop-filter: blur(16px)) {
+/* Safari-specific fixes - Enhanced to 20px with mobile Safari persistence */
+@supports (-webkit-backdrop-filter: blur(20px)) {
   .calendar-blur-effect {
-    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    /* Additional mobile Safari fixes */
+    -webkit-transform: translateZ(0) !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+}
+
+/* Mobile Safari specific fixes to prevent blur disappearing on scroll */
+@supports (-webkit-touch-callout: none) {
+  .calendar-blur-effect {
+    -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(110%) !important;
+    backdrop-filter: blur(20px) saturate(180%) brightness(110%) !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+    transform: translate3d(0, 0, 0) !important;
+    position: relative !important;
+    z-index: 1 !important;
   }
 }
 
 /* Fallback for non-supporting browsers */
-@supports not (backdrop-filter: blur(16px)) {
+@supports not (backdrop-filter: blur(20px)) {
   .calendar-blur-effect {
     background: linear-gradient(135deg,
       rgba(255, 255, 255, 0.25) 0%,
@@ -100,11 +119,15 @@
   }
 }
 
-/* Ensure blur persists during interactions */
+/* Ensure blur persists during interactions - Enhanced to 20px */
 .calendar-blur-container:hover .calendar-blur-effect,
-.calendar-blur-container:focus-within .calendar-blur-effect {
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+.calendar-blur-container:focus-within .calendar-blur-effect,
+.calendar-blur-container:active .calendar-blur-effect {
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  /* Additional persistence fixes */
+  -webkit-transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 
 /* Subtle animation for glass effect */
