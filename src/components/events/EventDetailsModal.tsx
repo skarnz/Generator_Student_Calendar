@@ -88,9 +88,20 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
 
           {/* Right side - Event details */}
           <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 max-h-[60vh] lg:max-h-[500px] overflow-y-auto">
-            {/* Event type badge */}
-            <div className="inline-block px-3 py-1 mb-4 text-sm font-medium text-generator-green bg-generator-green/10 rounded-full">
-              {event.eventType}
+            {/* Event type badge and Calendar button on mobile */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+              <div className="inline-block px-3 py-1 text-sm font-medium text-generator-green bg-generator-green/10 rounded-full w-fit">
+                {event.eventType}
+              </div>
+              
+              {/* Add to Calendar button - show early on mobile */}
+              <div className="block sm:hidden">
+                <AddToCalendarButton 
+                  event={event} 
+                  variant="mobile"
+                  className="w-full"
+                />
+              </div>
             </div>
 
             {/* Title */}
@@ -177,8 +188,8 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
                 </div>
               )}
               
-              {/* Add to Calendar button - always show */}
-              <div className="relative">
+              {/* Add to Calendar button - hide on mobile since it's shown at top */}
+              <div className="relative hidden sm:block">
                 <AddToCalendarButton 
                   event={event} 
                   variant={isMobile ? 'mobile' : 'default'}
