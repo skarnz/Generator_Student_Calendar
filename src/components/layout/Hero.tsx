@@ -33,24 +33,23 @@ export function Hero({ onDateSelect }: HeroProps) {
       <div className="container relative z-10 mx-auto px-4 sm:px-6 py-8 sm:py-16 lg:py-32">
         <div className="mx-auto max-w-4xl text-center">
           <div className="relative">
-            {/* Glass blur background only for title and subtitle */}
-            {/* IMPORTANT: Keep this exact glass blur styling - it looks perfect and professional! */}
-            {/* Using multiple techniques to ensure persistence across builds */}
-            <div 
-              className="glass-blur absolute inset-0 -inset-x-4 sm:-inset-x-8 -inset-y-3 sm:-inset-y-4 rounded-2xl -z-10"
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(4px)',
-                WebkitBackdropFilter: 'blur(4px)',
-              }}
-            />
             <div className="p-4 sm:p-6 lg:p-8">
-              <h1 className="animate-fade-in mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-extrabold leading-tight">
+              <h1 
+                className="animate-fade-in mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-extrabold leading-tight"
+                style={{
+                  textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6)'
+                }}
+              >
                 <span className="block">The Generator</span>
                 <span className="mt-1 sm:mt-2 block text-generator-gold">Events Calendar 2025-26</span>
               </h1>
               
-              <p className="animate-fade-in animate-delay-100 mb-0 text-sm sm:text-base md:text-lg lg:text-xl opacity-90 px-1 sm:px-2 leading-relaxed">
+              <p 
+                className="animate-fade-in animate-delay-100 mb-0 text-sm sm:text-base md:text-lg lg:text-xl opacity-90 px-1 sm:px-2 leading-relaxed"
+                style={{
+                  textShadow: '1px 1px 4px rgba(0, 0, 0, 0.7), 0 0 12px rgba(0, 0, 0, 0.5)'
+                }}
+              >
                 Join us for workshops, talks, buildathons, and networking events.
                 Build your entrepreneurial journey with our vibrant community.
               </p>

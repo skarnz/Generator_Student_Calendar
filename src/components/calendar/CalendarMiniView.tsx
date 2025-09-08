@@ -187,18 +187,18 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
       >
       {/* Header with navigation */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3 sm:gap-0">
-        <h3 className="text-white font-semibold text-sm sm:text-lg break-words max-w-full">
+        <h3 className="text-generator-darkGreen font-semibold text-sm sm:text-lg break-words max-w-full">
           {getHeaderText()}
         </h3>
         
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
           {/* View mode toggle */}
-          <div className="flex bg-white/20 rounded-lg p-0.5 sm:p-1">
+          <div className="flex bg-gray-100 rounded-lg p-0.5 sm:p-1">
             <button
               onClick={() => setViewMode('month')}
               className={cn(
                 "p-2 sm:p-1.5 rounded transition-colors min-h-[44px] sm:min-h-0",
-                viewMode === 'month' ? "bg-white text-generator-darkGreen" : "text-white hover:bg-white/10"
+                viewMode === 'month' ? "bg-generator-darkGreen text-white" : "text-generator-darkGreen hover:bg-gray-200"
               )}
               title="Month view"
             >
@@ -208,7 +208,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
               onClick={() => setViewMode('week')}
               className={cn(
                 "p-2 sm:p-1.5 rounded transition-colors min-h-[44px] sm:min-h-0",
-                viewMode === 'week' ? "bg-white text-generator-darkGreen" : "text-white hover:bg-white/10"
+                viewMode === 'week' ? "bg-generator-darkGreen text-white" : "text-generator-darkGreen hover:bg-gray-200"
               )}
               title="Week view"
             >
@@ -218,7 +218,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
               onClick={() => setViewMode('day')}
               className={cn(
                 "p-2 sm:p-1.5 rounded transition-colors min-h-[44px] sm:min-h-0",
-                viewMode === 'day' ? "bg-white text-generator-darkGreen" : "text-white hover:bg-white/10"
+                viewMode === 'day' ? "bg-generator-darkGreen text-white" : "text-generator-darkGreen hover:bg-gray-200"
               )}
               title="Day view"
             >
@@ -229,19 +229,19 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
           {/* Navigation buttons */}
           <button
             onClick={navigatePrevious}
-            className="p-2 sm:p-1.5 text-white hover:bg-white/20 rounded transition-colors min-h-[44px] sm:min-h-0 min-w-[44px] sm:min-w-0"
+            className="p-2 sm:p-1.5 text-generator-darkGreen hover:bg-gray-100 rounded transition-colors min-h-[44px] sm:min-h-0 min-w-[44px] sm:min-w-0"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <button
             onClick={navigateToToday}
-            className="px-2 sm:px-3 py-2 sm:py-1 text-xs sm:text-sm text-white hover:bg-white/20 rounded transition-colors min-h-[44px] sm:min-h-0"
+            className="px-2 sm:px-3 py-2 sm:py-1 text-xs sm:text-sm text-generator-darkGreen hover:bg-gray-100 rounded transition-colors min-h-[44px] sm:min-h-0"
           >
             Today
           </button>
           <button
             onClick={navigateNext}
-            className="p-2 sm:p-1.5 text-white hover:bg-white/20 rounded transition-colors min-h-[44px] sm:min-h-0 min-w-[44px] sm:min-w-0"
+            className="p-2 sm:p-1.5 text-generator-darkGreen hover:bg-gray-100 rounded transition-colors min-h-[44px] sm:min-h-0 min-w-[44px] sm:min-w-0"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -250,11 +250,11 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
 
       {/* Calendar grid */}
       <div className="space-y-2">
-        {/* Day headers for month/week view */}
-        {viewMode !== 'day' && (
+        {/* Day headers for month view only */}
+        {viewMode === 'month' && (
           <div className="grid grid-cols-7 gap-0.5 sm:gap-1 text-center">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="text-xs font-medium text-generator-gold py-1 px-0.5">
+              <div key={day} className="text-xs font-medium text-generator-darkGreen py-1 px-0.5">
                 {day}
               </div>
             ))}
@@ -282,15 +282,15 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                     className={cn(
                       "relative p-1 sm:p-2 rounded-lg transition-all min-h-[60px] sm:min-h-[80px]",
                       "hover:bg-white/20 active:bg-white/30",
-                      isCurrentMonth ? "text-white" : "text-white/40",
-                      isToday(day) && "ring-2 ring-generator-gold",
+                      isCurrentMonth ? "text-generator-darkGreen" : "text-gray-400",
+                      isToday(day) && "ring-2 ring-generator-darkGreen",
                       isSelected && "bg-white/30"
                     )}
                   >
                     <div className="flex flex-col items-center justify-start h-full">
                       <span className={cn(
                         "text-xs sm:text-sm font-medium mb-1",
-                        isToday(day) && "text-generator-gold"
+                        isToday(day) && "text-generator-darkGreen font-bold"
                       )}>
                         {format(day, 'd')}
                       </span>
@@ -306,18 +306,18 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                             
                             // Event type colors with better contrast
                             const typeColors: Record<string, string> = {
-                              'Workshop': 'bg-blue-600/40 text-white border border-blue-400/50',
-                              'Major Event': 'bg-generator-gold/40 text-white border border-generator-gold/50',
-                              'Speaker Series': 'bg-purple-600/40 text-white border border-purple-400/50',
-                              'Roundtable': 'bg-green-600/40 text-white border border-green-400/50',
-                              'Weekly Event': 'bg-orange-600/40 text-white border border-orange-400/50',
-                              'Talk': 'bg-indigo-600/40 text-white border border-indigo-400/50',
-                              'Buildathon': 'bg-red-600/40 text-white border border-red-400/50',
-                              'Hackathon': 'bg-pink-600/40 text-white border border-pink-400/50',
-                              'Competition': 'bg-yellow-600/40 text-white border border-yellow-400/50',
-                              'Mixer': 'bg-teal-600/40 text-white border border-teal-400/50',
-                              'Open House': 'bg-cyan-600/40 text-white border border-cyan-400/50',
-                              'default': 'bg-white/30 text-white border border-white/40'
+                              'Workshop': 'bg-blue-600/70 text-white border border-blue-400/70',
+                              'Major Event': 'bg-generator-darkGreen/70 text-white border border-generator-darkGreen/70',
+                              'Speaker Series': 'bg-purple-600/70 text-white border border-purple-400/70',
+                              'Roundtable': 'bg-green-600/70 text-white border border-green-400/70',
+                              'Weekly Event': 'bg-orange-600/70 text-white border border-orange-400/70',
+                              'Talk': 'bg-indigo-600/70 text-white border border-indigo-400/70',
+                              'Buildathon': 'bg-red-600/70 text-white border border-red-400/70',
+                              'Hackathon': 'bg-pink-600/70 text-white border border-pink-400/70',
+                              'Competition': 'bg-yellow-600/70 text-white border border-yellow-400/70',
+                              'Mixer': 'bg-teal-600/70 text-white border border-teal-400/70',
+                              'Open House': 'bg-cyan-600/70 text-white border border-cyan-400/70',
+                              'default': 'bg-gray-200 text-generator-darkGreen border border-gray-300'
                             };
                             
                             const colorClass = typeColors[event.eventType] || typeColors.default;
@@ -343,7 +343,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                             );
                           })}
                           {dayEvents.length > 2 && (
-                            <div className="text-[8px] text-white/60 text-center">
+                            <div className="text-[8px] text-gray-500 text-center">
                               +{dayEvents.length - 2} more
                             </div>
                           )}
@@ -375,21 +375,21 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                       className={cn(
                         "w-full relative p-2 sm:p-3 rounded-lg transition-all flex items-center justify-between min-h-[44px]",
                         "hover:bg-white/20 active:bg-white/30",
-                        isToday(day) && "ring-2 ring-generator-gold",
+                        isToday(day) && "ring-2 ring-generator-darkGreen",
                         isSelected && "bg-white/30"
                       )}
                     >
                       <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                         <span className={cn(
                           "text-xs sm:text-sm font-medium truncate",
-                          isToday(day) && "text-generator-gold",
-                          "text-white"
+                          isToday(day) && "text-generator-darkGreen font-bold",
+                          "text-generator-darkGreen"
                         )}>
                           {format(day, viewMode === 'week' ? 'EEE, MMM d' : 'EEEE, MMMM d, yyyy')}
                         </span>
                         
                         {hasEvents && (
-                          <span className="text-xs text-generator-gold whitespace-nowrap">
+                          <span className="text-xs text-generator-darkGreen font-semibold whitespace-nowrap">
                             {dayEvents.length} event{dayEvents.length !== 1 ? 's' : ''}
                           </span>
                         )}
@@ -401,14 +401,14 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                             {dayEvents.slice(0, 3).map((_, i) => (
                               <div
                                 key={i}
-                                className="w-1.5 h-1.5 bg-generator-gold rounded-full"
+                                className="w-1.5 h-1.5 bg-generator-darkGreen rounded-full"
                               />
                             ))}
                           </div>
                         )}
                         {viewMode !== 'month' && (
                           <ChevronDown className={cn(
-                            "h-4 w-4 text-white/60 transition-transform",
+                            "h-4 w-4 text-gray-500 transition-transform",
                             isExpanded && "transform rotate-180"
                           )} />
                         )}
@@ -434,10 +434,10 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                         <div className="space-y-2">
                           {dayEvents.map(event => (
                             <div key={event.id} className="text-xs sm:text-sm">
-                              <div className="font-medium text-generator-gold break-words">
+                              <div className="font-medium text-generator-darkGreen break-words">
                                 {event.title}
                               </div>
-                              <div className="text-white/70 text-xs break-words">
+                              <div className="text-gray-600 text-xs break-words">
                                 {event.time} • {event.location}
                               </div>
                             </div>
@@ -505,7 +505,7 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                 </button>
                 
                 {/* Event type badge */}
-                <div className="inline-block px-3 py-1 mb-3 text-xs font-medium bg-generator-gold/30 text-generator-gold rounded-full border border-generator-gold/50">
+                <div className="inline-block px-3 py-1 mb-3 text-xs font-medium bg-generator-darkGreen/20 text-generator-darkGreen rounded-full border border-generator-darkGreen/50">
                   {quickExpandEvent.eventType}
                 </div>
                 
@@ -517,17 +517,17 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                 {/* Event details */}
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-white/80">
-                    <Calendar className="h-4 w-4 text-generator-gold" />
+                    <Calendar className="h-4 w-4 text-generator-darkGreen" />
                     <span className="text-sm">{format(quickExpandEvent.date, 'EEEE, MMMM d, yyyy')}</span>
                   </div>
                   
                   <div className="flex items-center gap-2 text-white/80">
-                    <Clock className="h-4 w-4 text-generator-gold" />
+                    <Clock className="h-4 w-4 text-generator-darkGreen" />
                     <span className="text-sm">{quickExpandEvent.time}</span>
                   </div>
                   
                   <div className="flex items-center gap-2 text-white/80">
-                    <MapPin className="h-4 w-4 text-generator-gold" />
+                    <MapPin className="h-4 w-4 text-generator-darkGreen" />
                     <span className="text-sm">{quickExpandEvent.location}</span>
                   </div>
                 </div>

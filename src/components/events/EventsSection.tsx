@@ -29,12 +29,6 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
       const eventDate = new Date(year, month - 1, day);
       eventDate.setHours(0, 0, 0, 0);
       
-      // If a specific date is selected, only show events for that date
-      if (selectedDate) {
-        const matchesSelectedDate = isSameDay(eventDate, selectedDate);
-        if (!matchesSelectedDate) return false;
-      }
-      
       // Check if event is past either by date comparison or explicit isPastEvent flag
       const isPastByDate = eventDate < currentDate;
       const isPastExplicit = event.isPastEvent === true;
@@ -49,7 +43,7 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
       
       return matchesTimeFilter && matchesEventType && matchesAudience && matchesSearch;
     });
-  }, [events, selectedEventType, selectedAudience, searchTerm, showPastEvents, currentDate, selectedDate]);
+  }, [events, selectedEventType, selectedAudience, searchTerm, showPastEvents, currentDate]);
 
   const sortedEvents = useMemo(() => {
     const sorted = [...filteredEvents].sort((a, b) => {
@@ -106,7 +100,7 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
             : showPastEvents ? 'Past Events' : 'Upcoming Events'}
         </h2>
         
-        {selectedDate && (
+        {false && (
           <div className="text-center mb-6">
             <button
               onClick={() => window.location.reload()}

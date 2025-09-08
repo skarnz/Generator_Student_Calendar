@@ -40,7 +40,7 @@
   perspective: 1000px !important;
 }
 
-/* Primary blur effect with multiple fallbacks */
+/* Primary blur effect with white background */
 .calendar-blur-effect {
   /* Force GPU acceleration with enhanced hints */
   transform: translate3d(0, 0, 0) !important;
@@ -53,25 +53,26 @@
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   
-  /* Background fallback */
-  background: rgba(255, 255, 255, 0.1) !important;
+  /* White background with high opacity */
+  background: rgba(255, 255, 255, 0.95) !important;
   
   /* Box shadow for depth */
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Enhanced glass morphism effect */
+/* Enhanced glass morphism effect with white background */
 .calendar-glass-morphism {
-  /* Gradient overlay */
+  /* White background with subtle gradient */
   background: linear-gradient(135deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(255, 255, 255, 0.05) 100%) !important;
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(250, 250, 250, 0.95) 100%) !important;
   
-  /* Inner glow */
+  /* Subtle inner glow and shadow */
   box-shadow: 
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.1),
-    0 10px 30px -10px rgba(0, 0, 0, 0.3) !important;
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 10px 20px -8px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Force backdrop filter on all screen sizes - Enhanced to 20px */
@@ -109,13 +110,11 @@
 /* Fallback for non-supporting browsers */
 @supports not (backdrop-filter: blur(20px)) {
   .calendar-blur-effect {
-    background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.25) 0%,
-      rgba(255, 255, 255, 0.15) 50%,
-      rgba(255, 255, 255, 0.1) 100%) !important;
+    background: rgba(255, 255, 255, 0.97) !important;
     box-shadow: 
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.3),
-      0 20px 40px -20px rgba(0, 0, 0, 0.4) !important;
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+      0 20px 40px rgba(0, 0, 0, 0.15),
+      0 10px 20px rgba(0, 0, 0, 0.1) !important;
   }
 }
 
@@ -152,8 +151,16 @@
     transparent 60%
   );
   background-size: 200% 100%;
-  animation: glass-shimmer 3s ease-in-out infinite;
+  background-position: -200% center;
   pointer-events: none;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+/* Trigger shimmer animation on hover - plays once */
+.calendar-blur-container:hover .calendar-glass-morphism::after {
+  animation: glass-shimmer 1.5s ease-in-out forwards;
+  opacity: 1;
 }
 
 /* Ensure content inside calendar is readable */
