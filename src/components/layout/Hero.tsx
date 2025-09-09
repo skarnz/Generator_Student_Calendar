@@ -3,11 +3,14 @@ import { ArrowDown } from 'lucide-react';
 import { FloatingImages } from './FloatingImages';
 import { CalendarMiniView } from '../calendar/CalendarMiniView';
 
+import { Event } from '@/data/events';
+
 interface HeroProps {
   onDateSelect?: (date: Date) => void;
+  onEventClick?: (event: Event) => void;
 }
 
-export function Hero({ onDateSelect }: HeroProps) {
+export function Hero({ onDateSelect, onEventClick }: HeroProps) {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const href = e.currentTarget.getAttribute('href');
@@ -60,7 +63,7 @@ export function Hero({ onDateSelect }: HeroProps) {
             <a
               href="#events"
               onClick={handleNavClick}
-              className="inline-flex items-center justify-center rounded-lg bg-generator-gold px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen transition-all hover:bg-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
               View Events
             </a>
@@ -68,7 +71,7 @@ export function Hero({ onDateSelect }: HeroProps) {
               href="https://forms.gle/D5mFsPjBNXrhzKqu9"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-lg border border-generator-gold bg-transparent px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-gold transition-all hover:bg-generator-darkGreen hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
               Join Associates
             </a>
@@ -76,7 +79,7 @@ export function Hero({ onDateSelect }: HeroProps) {
               href="https://chat.whatsapp.com/GdnB3cExacMA5XfqsXh4pO?mode=ems_copy_c"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-lg border border-generator-gold bg-transparent px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-gold transition-all hover:bg-generator-darkGreen hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0 mt-3 sm:mt-0"
+              className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0 mt-3 sm:mt-0"
             >
               Join Our WhatsApp for Updates and Opportunities!
             </a>
@@ -85,7 +88,7 @@ export function Hero({ onDateSelect }: HeroProps) {
         
         {/* Calendar Mini View - positioned above gradient */}
         <div className="animate-fade-in animate-delay-300 mx-auto max-w-2xl mb-8 sm:mb-12 lg:mb-16">
-          <CalendarMiniView onDateSelect={onDateSelect} />
+          <CalendarMiniView onDateSelect={onDateSelect} onEventClick={onEventClick} />
         </div>
         
         <div className="absolute bottom-4 sm:bottom-8 left-0 right-0 mx-auto flex justify-center animate-float">

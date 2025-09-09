@@ -10,9 +10,10 @@ type ViewMode = 'month' | 'week' | 'day';
 
 interface CalendarMiniViewProps {
   onDateSelect?: (date: Date) => void;
+  onEventClick?: (event: Event) => void;
 }
 
-export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
+export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('week');
@@ -433,7 +434,15 @@ export function CalendarMiniView({ onDateSelect }: CalendarMiniViewProps) {
                       >
                         <div className="space-y-2">
                           {dayEvents.map(event => (
-                            <div key={event.id} className="text-xs sm:text-sm">
+                            <div 
+                              key={event.id} 
+                              className="text-xs sm:text-sm cursor-pointer hover:bg-white/10 rounded p-2 -m-2 transition-colors"
+                              onClick={() => {
+                                if (onEventClick) {
+                                  onEventClick(event);
+                                }
+                              }}
+                            >
                               <div className="font-medium text-generator-darkGreen break-words">
                                 {event.title}
                               </div>

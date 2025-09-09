@@ -5,12 +5,15 @@ import { Hero } from '@/components/layout/Hero';
 import { About } from '@/components/layout/About';
 import { EventsSection } from '@/components/events/EventsSection';
 import { Footer } from '@/components/layout/Footer';
-import { events, eventTypes, audiences } from '@/data/events';
+import { EventDetailsModal } from '@/components/events/EventDetailsModal';
+import { events, eventTypes, audiences, Event } from '@/data/events';
 
 const Index = () => {
   const [selectedEventType, setSelectedEventType] = useState('All');
   const [selectedAudience, setSelectedAudience] = useState('All');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +24,16 @@ const Index = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -49,7 +62,7 @@ const Index = () => {
     <div className="flex flex-col">
       <Header />
       <main className="pt-16 sm:pt-0">
-        <Hero onDateSelect={setSelectedDate} />
+        <Hero onDateSelect={setSelectedDate} onEventClick={handleEventClick} />
         <About />
         <EventsSection 
           events={events} 
@@ -59,6 +72,15 @@ const Index = () => {
         />
       </main>
       <Footer />
+      
+      {/* Event Details Modal */}
+      {selectedEvent && (
+        <EventDetailsModal
+          event={selectedEvent}
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+        />
+      )}
       
       {/* Back to top button */}
       <a
