@@ -1,10 +1,9 @@
-import { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, CalendarDays, CalendarRange, ChevronDown, Clock, MapPin, X } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Calendar, CalendarDays, CalendarRange, ChevronDown } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { events, Event } from '@/data/events';
 import { TodaysEvents } from './TodaysEvents';
-import { AddToCalendarButton } from '@/components/ui/AddToCalendarButton';
 
 type ViewMode = 'month' | 'week' | 'day';
 
@@ -18,25 +17,6 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('week');
   const [expandedDate, setExpandedDate] = useState<Date | null>(null);
-  const [quickExpandEvent, setQuickExpandEvent] = useState<Event | null>(null);
-  
-  // Prevent body scroll when quick expand popup is open
-  useEffect(() => {
-    if (quickExpandEvent) {
-      const scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-      
-      return () => {
-        const scrollY = document.body.style.top;
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      };
-    }
-  }, [quickExpandEvent]);
 
   // Get events for the current view with parsed dates
   const eventsWithParsedDates = useMemo(() => {
@@ -354,7 +334,10 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
                                 title={event.title}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setQuickExpandEvent(event.originalEvent);
+                                  // Directly open the full modal instead of quick expand
+                                  if (onEventClick) {
+                                    onEventClick(event.originalEvent);
+                                  }
                                 }}
                               >
                                 <Calendar className="h-3 w-3 flex-shrink-0 drop-shadow-sm" />
@@ -484,120 +467,6 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
       {/* Today's Events section */}
       <TodaysEvents />
       </div>
-      
-      {/* Quick Expand Event Popup */}
-      {quickExpandEvent && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          onClick={() => setQuickExpandEvent(null)}
-        >
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-          
-          <div 
-            className="relative max-w-md w-full animate-in zoom-in-95 fade-in duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Enhanced Glass morphism container with 20px blur */}
-            <div className="calendar-blur-container rounded-2xl overflow-hidden">
-              <div 
-                className="absolute inset-0 calendar-blur-effect"
-                style={{
-                  transform: 'translateZ(0)',
-                  WebkitTransform: 'translateZ(0)',
-                  willChange: 'transform',
-                  WebkitBackfaceVisibility: 'hidden',
-                  backfaceVisibility: 'hidden',
-                }}
-              />
-              <div 
-                className="absolute inset-0 calendar-glass-morphism"
-                style={{
-                  transform: 'translateZ(0)',
-                  WebkitTransform: 'translateZ(0)',
-                }}
-              />
-              
-              <div 
-                className="relative p-6 z-10"
-                style={{
-                  transform: 'translateZ(0)',
-                  WebkitTransform: 'translateZ(0)',
-                }}
-              >
-                {/* Close button */}
-                <button
-                  onClick={() => setQuickExpandEvent(null)}
-                  className="absolute top-4 right-4 p-1 rounded-full hover:bg-white/20 transition-colors"
-                >
-                  <X className="h-5 w-5 text-white" />
-                </button>
-                
-                {/* Event type badge */}
-                <div className="inline-block px-3 py-1 mb-3 text-xs font-medium bg-generator-darkGreen/20 text-generator-darkGreen rounded-full border border-generator-darkGreen/50">
-                  {quickExpandEvent.eventType}
-                </div>
-                
-                {/* Event title */}
-                <h3 className="text-xl font-bold text-white mb-3">
-                  {quickExpandEvent.title}
-                </h3>
-                
-                {/* Event details */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Calendar className="h-4 w-4 text-generator-darkGreen" />
-                    <span className="text-sm">{(() => {
-                      const [year, month, day] = quickExpandEvent.date.split('-').map(Number);
-                      const eventDate = new Date(year, month - 1, day);
-                      return format(eventDate, 'EEEE, MMMM d, yyyy');
-                    })()}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Clock className="h-4 w-4 text-generator-darkGreen" />
-                    <span className="text-sm">{quickExpandEvent.time}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-white/80">
-                    <MapPin className="h-4 w-4 text-generator-darkGreen" />
-                    <span className="text-sm">{quickExpandEvent.location}</span>
-                  </div>
-                </div>
-                
-                {/* Description */}
-                <p className="text-sm text-white/70 mb-4 line-clamp-3">
-                  {quickExpandEvent.description}
-                </p>
-                
-                {/* Actions */}
-                <div className="flex gap-3">
-                  {/* Check if event is past */}
-                  <div className="flex-1">
-                    <AddToCalendarButton 
-                      event={quickExpandEvent}
-                      variant="mobile"
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <button
-                    onClick={() => {
-                      // Call onEventClick to open the full modal
-                      if (onEventClick) {
-                        onEventClick(quickExpandEvent);
-                      }
-                      setQuickExpandEvent(null);
-                    }}
-                    className="flex-1 py-2 px-4 bg-white/20 text-white font-medium rounded-lg hover:bg-white/30 transition-colors"
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
