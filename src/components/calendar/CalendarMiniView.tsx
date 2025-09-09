@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar, CalendarDays, CalendarRange, ChevronDown, Clock, MapPin, X } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -19,23 +19,42 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
   const [viewMode, setViewMode] = useState<ViewMode>('week');
   const [expandedDate, setExpandedDate] = useState<Date | null>(null);
   const [quickExpandEvent, setQuickExpandEvent] = useState<Event | null>(null);
+  
+  // Prevent body scroll when quick expand popup is open
+  useEffect(() => {
+    if (quickExpandEvent) {
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      
+      return () => {
+        const scrollY = document.body.style.top;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      };
+    }
+  }, [quickExpandEvent]);
 
-  // Get events for the current view
-  const eventsInView = useMemo(() => {
+  // Get events for the current view with parsed dates
+  const eventsWithParsedDates = useMemo(() => {
     return events.map(event => {
       // Parse date as local to avoid timezone issues
       const [year, month, day] = event.date.split('-').map(Number);
       return {
+        originalEvent: event, // Keep reference to original event
         ...event,
-        date: new Date(year, month - 1, day)
+        parsedDate: new Date(year, month - 1, day)
       };
     });
   }, []);
 
   // Get events for a specific date
   const getEventsForDate = (date: Date) => {
-    return eventsInView.filter(event => 
-      isSameDay(event.date, date)
+    return eventsWithParsedDates.filter(event => 
+      isSameDay(event.parsedDate, date)
     );
   };
 
@@ -335,7 +354,7 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
                                 title={event.title}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setQuickExpandEvent(event);
+                                  setQuickExpandEvent(event.originalEvent);
                                 }}
                               >
                                 <Calendar className="h-3 w-3 flex-shrink-0 drop-shadow-sm" />
@@ -369,7 +388,7 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
                     <button
                       onClick={() => {
                         handleDateClick(day);
-                        if (viewMode !== 'month') {
+                        if (viewMode === 'week' || viewMode === 'day') {
                           toggleDateExpansion(day);
                         }
                       }}
@@ -407,7 +426,7 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
                             ))}
                           </div>
                         )}
-                        {viewMode !== 'month' && (
+                        {(viewMode === 'week' || viewMode === 'day') && (
                           <ChevronDown className={cn(
                             "h-4 w-4 text-gray-500 transition-transform",
                             isExpanded && "transform rotate-180"
@@ -439,7 +458,7 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
                               className="text-xs sm:text-sm cursor-pointer hover:bg-white/10 rounded p-2 -m-2 transition-colors"
                               onClick={() => {
                                 if (onEventClick) {
-                                  onEventClick(event);
+                                  onEventClick(event.originalEvent);
                                 }
                               }}
                             >
@@ -527,7 +546,11 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-white/80">
                     <Calendar className="h-4 w-4 text-generator-darkGreen" />
-                    <span className="text-sm">{format(quickExpandEvent.date, 'EEEE, MMMM d, yyyy')}</span>
+                    <span className="text-sm">{(() => {
+                      const [year, month, day] = quickExpandEvent.date.split('-').map(Number);
+                      const eventDate = new Date(year, month - 1, day);
+                      return format(eventDate, 'EEEE, MMMM d, yyyy');
+                    })()}</span>
                   </div>
                   
                   <div className="flex items-center gap-2 text-white/80">
@@ -559,9 +582,9 @@ export function CalendarMiniView({ onDateSelect, onEventClick }: CalendarMiniVie
                   
                   <button
                     onClick={() => {
-                      // Navigate to events section with this date selected
-                      if (onDateSelect) {
-                        onDateSelect(quickExpandEvent.date);
+                      // Call onEventClick to open the full modal
+                      if (onEventClick) {
+                        onEventClick(quickExpandEvent);
                       }
                       setQuickExpandEvent(null);
                     }}

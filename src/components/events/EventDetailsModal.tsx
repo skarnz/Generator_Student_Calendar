@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, ExternalLink, MapPin, Clock, Users, Mail, Gift, Pizza, Calendar } from 'lucide-react';
 import { Event } from '@/data/events';
 import { getEventPosterUrl, generatePosterSrcSet } from '@/utils/generatePlaceholder';
@@ -17,6 +17,54 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
   const isMobile = useIsMobile();
+  
+  // Prevent body scroll when modal is open (mobile optimization)
+  useEffect(() => {
+    if (isOpen) {
+      // Store original body style
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      // Prevent background scrolling
+      document.body.style.overflow = 'hidden';
+      // Add class for iOS Safari
+      document.body.classList.add('modal-open');
+      
+      return () => {
+        // Restore original style
+        document.body.style.overflow = originalStyle;
+        document.body.classList.remove('modal-open');
+      };
+    }
+  }, [isOpen]);
+
+  // Handle escape key
+  useEffect(() => {
+    if (isOpen) {
+      // Prevent body scroll when modal is open
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      
+      const handleEscapeKey = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          onClose();
+        }
+      };
+      
+      document.addEventListener('keydown', handleEscapeKey);
+      
+      return () => {
+        // Restore body scroll
+        const scrollY = document.body.style.top;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        
+        document.removeEventListener('keydown', handleEscapeKey);
+      };
+    }
+  }, [isOpen, onClose]);
   
   if (!isOpen) return null;
   
@@ -43,17 +91,48 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
 
   return (
     <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
+      className="modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
       onClick={handleBackdropClick}
+      style={{ 
+        isolation: 'isolate',
+        transform: 'translateZ(0)',
+        WebkitTransform: 'translateZ(0)'
+      }}
     >
-      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
-        {/* Close button */}
+      <div 
+        className="modal-content relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto"
+        style={{ 
+          isolation: 'isolate',
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)'
+        }}
+      >
+        {/* Close button with enhanced mobile positioning and accessibility */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 p-2 bg-white/90 backdrop-blur rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+          className={cn(
+            "modal-close-button absolute z-[10001] transition-all duration-200",
+            // Mobile-first positioning - ensure it's above mobile nav
+            "top-3 right-3 p-3 min-w-[44px] min-h-[44px]",
+            // Tablet and desktop positioning
+            "sm:top-4 sm:right-4 sm:p-2 sm:min-w-[36px] sm:min-h-[36px]",
+            // Enhanced background for visibility over any content
+            "bg-white shadow-xl border border-gray-200",
+            "rounded-full hover:bg-gray-50 active:bg-gray-100",
+            // Enhanced focus states for accessibility
+            "focus:outline-none focus:ring-2 focus:ring-generator-green focus:ring-offset-2",
+            // Flex center content
+            "flex items-center justify-center"
+          )}
           aria-label="Close modal"
+          style={{ 
+            isolation: 'isolate',
+            transform: 'translateZ(1px)',
+            WebkitTransform: 'translateZ(1px)',
+            zIndex: 10001
+          }}
         >
-          <X className="h-4 w-4 sm:h-5 sm:w-5" />
+          <X className="h-5 w-5 sm:h-4 sm:w-4 text-generator-darkGreen flex-shrink-0" />
         </button>
 
         <div className="flex flex-col lg:flex-row">

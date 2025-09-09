@@ -116,7 +116,7 @@ export function Header() {
 
       {/* Mobile Navigation Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg py-4 px-6 transition-all transform z-50 border-t border-gray-100">
+        <div className="mobile-nav-menu md:hidden absolute top-full left-0 right-0 bg-white shadow-lg py-4 px-6 transition-all transform z-50 border-t border-gray-100">
           <nav className="flex flex-col space-y-1">
             <a 
               href="#hero" 
