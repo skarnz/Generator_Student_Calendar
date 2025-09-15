@@ -2,6 +2,8 @@
 import { ArrowDown } from 'lucide-react';
 import { FloatingImages } from './FloatingImages';
 import { CalendarMiniView } from '../calendar/CalendarMiniView';
+import { CheckInModal } from '../events/CheckInModal';
+import { useState } from 'react';
 
 import { Event } from '@/data/events';
 
@@ -11,6 +13,8 @@ interface HeroProps {
 }
 
 export function Hero({ onDateSelect, onEventClick }: HeroProps) {
+  const [checkInModalOpen, setCheckInModalOpen] = useState(false);
+  
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const href = e.currentTarget.getAttribute('href');
@@ -59,11 +63,11 @@ export function Hero({ onDateSelect, onEventClick }: HeroProps) {
             </div>
           </div>
           
-          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4 mt-6 sm:mt-8 mb-8 sm:mb-12 flex-wrap">
+          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4 mt-6 sm:mt-8 mb-8 sm:mb-12 flex-wrap">
             <a
               href="#events"
               onClick={handleNavClick}
-              className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
               View Events
             </a>
@@ -71,7 +75,7 @@ export function Hero({ onDateSelect, onEventClick }: HeroProps) {
               href="https://forms.gle/D5mFsPjBNXrhzKqu9"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
               Join Associates
             </a>
@@ -79,10 +83,16 @@ export function Hero({ onDateSelect, onEventClick }: HeroProps) {
               href="https://chat.whatsapp.com/GdnB3cExacMA5XfqsXh4pO?mode=ems_copy_c"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0 mt-3 sm:mt-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
               Join Our WhatsApp for Updates and Opportunities!
             </a>
+            <button
+              onClick={() => setCheckInModalOpen(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-generator-green px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:bg-generator-darkGreen hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0 border-2 border-white animate-pulse-soft"
+            >
+              Event Check-In
+            </button>
           </div>
         </div>
         
@@ -100,6 +110,8 @@ export function Hero({ onDateSelect, onEventClick }: HeroProps) {
       </div>
       
       <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-gradient-to-t from-white to-transparent"></div>
+      
+      <CheckInModal isOpen={checkInModalOpen} onClose={() => setCheckInModalOpen(false)} />
     </section>
   );
 }
