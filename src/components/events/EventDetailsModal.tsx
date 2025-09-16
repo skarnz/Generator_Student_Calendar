@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ExternalLink, MapPin, Clock, Users, Mail, Gift, Pizza, Calendar } from 'lucide-react';
+import { X, ExternalLink, MapPin, Clock, Users, Mail, Gift, Pizza, Calendar, FileText } from 'lucide-react';
 import { Event } from '@/data/events';
 import { getEventPosterUrl, generatePosterSrcSet } from '@/utils/generatePlaceholder';
 import { LazyImage } from '@/components/ui/LazyImage';
@@ -222,6 +222,19 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
               >
                 <ExternalLink className="h-4 w-4" />
                 Register for Event
+              </a>
+            )}
+
+            {/* Slides button if available */}
+            {event.slidesUrl && (
+              <a
+                href={event.slidesUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-generator-lightGold text-generator-darkGreen font-medium rounded-lg hover:bg-generator-gold transition-colors mb-4 border border-generator-gold/30"
+              >
+                <FileText className="h-4 w-4" />
+                See Event Slides
               </a>
             )}
 

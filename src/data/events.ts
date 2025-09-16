@@ -20,6 +20,7 @@ export interface Event {
   shortBlurb?: string;
   posterImage?: string; // Filename of the poster image (e.g., "babson-commons-mixer-2025.jpg")
   posterImageAlt?: string; // Alt text for accessibility
+  slidesUrl?: string; // URL to event presentation slides
 }
 
 // Load events from consolidated JSON file - single source of truth!
