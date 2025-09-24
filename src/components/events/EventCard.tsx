@@ -12,6 +12,7 @@ interface EventCardProps {
 
 export function EventCard({ event, index }: EventCardProps) {
   const [showModal, setShowModal] = useState(false);
+  const [showFullPoster, setShowFullPoster] = useState(false);
   const delay = `${index * 0.05}s`;
   
   // Format date - parse as local date to avoid timezone issues
@@ -40,19 +41,52 @@ export function EventCard({ event, index }: EventCardProps) {
         }}
       >
       <div className="p-4 sm:p-6 relative flex flex-col h-full">
+        {/* Mini poster preview in top right */}
+        {event.posterImage && (
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowFullPoster(true);
+              }}
+              className="block w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              <img
+                src={getEventPosterUrl(event.posterImage, 'thumbnail')}
+                alt={event.posterImageAlt || `${event.title} poster preview`}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <Eye className="h-6 w-6 text-white opacity-0 hover:opacity-100 transition-opacity duration-300 drop-shadow-lg" />
+              </div>
+            </button>
+          </div>
+        )}
+        
         {/* Content section that will grow */}
         <div className="flex-grow">
           <div className="flex items-start justify-between mb-3 gap-3">
-            <h3 className="font-semibold text-lg sm:text-xl text-generator-darkGreen flex-1 group-hover:text-generator-green transition-colors">
+            <h3 className={cn(
+              "font-semibold text-lg sm:text-xl text-generator-darkGreen flex-1 group-hover:text-generator-green transition-colors",
+              event.posterImage && "pr-20 sm:pr-24"
+            )}>
               {event.title}
             </h3>
-            {isPast && (
+            {isPast && !event.posterImage && (
               <span className="text-xs font-medium bg-gray-200 text-gray-600 rounded-full px-2.5 py-1">
                 Past Event
               </span>
             )}
           </div>
 
+          {isPast && event.posterImage && (
+            <div className="mb-2">
+              <span className="text-xs font-medium bg-gray-200 text-gray-600 rounded-full px-2.5 py-1">
+                Past Event
+              </span>
+            </div>
+          )}
+          
           <p className="text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-3 leading-relaxed">{event.description}</p>
 
           <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
@@ -81,12 +115,6 @@ export function EventCard({ event, index }: EventCardProps) {
             <span className="inline-block text-xs font-medium bg-generator-lightGreen text-generator-darkGreen rounded-full px-2.5 py-1">
               {event.eventType}
             </span>
-            {event.posterImage && (
-              <span className="inline-block text-xs font-medium bg-gray-100 text-gray-600 rounded-full px-2.5 py-1 flex items-center gap-1">
-                <ImageIcon className="h-3 w-3" />
-                Poster
-              </span>
-            )}
           </div>
 
           {event.speakerName && (
@@ -175,6 +203,32 @@ export function EventCard({ event, index }: EventCardProps) {
       isOpen={showModal} 
       onClose={() => setShowModal(false)} 
     />
+    
+    {/* Full Poster Modal */}
+    {showFullPoster && event.posterImage && (
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        onClick={() => setShowFullPoster(false)}
+      >
+        <div className="relative max-w-4xl max-h-[90vh] w-full">
+          <button
+            onClick={() => setShowFullPoster(false)}
+            className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+          >
+            <span className="sr-only">Close</span>
+            <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <img
+            src={getEventPosterUrl(event.posterImage, 'full')}
+            alt={event.posterImageAlt || `${event.title} event poster`}
+            className="w-full h-full object-contain rounded-lg shadow-2xl"
+          />
+        </div>
+      </div>
+    )}
     </>
   );
 }
