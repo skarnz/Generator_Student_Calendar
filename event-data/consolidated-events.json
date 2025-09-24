@@ -84,7 +84,7 @@
       "id": "ai-business-etower-2025",
       "title": "Elevating your business w/AI (Etower)",
       "description": "Join The Generator and E-Tower for an interactive workshop designed to transform your business through AI integration.",
-      "date": "2025-10-01",
+      "date": "2025-10-22",
       "time": "6:00 PM - 8:00 PM",
       "location": "Weissman Foundry",
       "eventType": "Major Event",
@@ -133,16 +133,17 @@
       "isPastEvent": false
     },
     {
-      "id": "mvp-coding-tools-2025",
-      "title": "MVP Coding Tools Workshop (W/code)",
+      "id": "vibe-coding-workshop-2025",
+      "title": "Vibe Coding Workshop",
       "description": "The AI Coding Tools Workshop, in collaboration with CODE, will be a student-led event focused on exploring AI-driven software development tools and building MVP products.",
-      "date": "2025-10-20",
+      "date": "2025-10-01",
       "time": "6:00 PM - 8:00 PM",
-      "location": "Park Manor West",
+      "location": "The Weissman Foundry",
       "eventType": "Major Event",
       "audience": ["Babson Students", "Greater Boston"],
       "contactEmail": "generator@babson.edu",
       "shortBlurb": "Build MVPs with AI coding tools",
+      "food": "Popeyes",
       "isPastEvent": false
     },
     {
