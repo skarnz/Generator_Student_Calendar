@@ -41,38 +41,15 @@ export function EventCard({ event, index }: EventCardProps) {
         }}
       >
       <div className="p-4 sm:p-6 flex flex-col h-full">
-        {/* Header section with title and poster */}
-        <div className="flex items-start gap-3 mb-3">
-          {/* Title and past event badge */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg sm:text-xl text-generator-darkGreen group-hover:text-generator-green transition-colors mb-1">
-              {event.title}
-            </h3>
-            {isPast && (
-              <span className="inline-block text-xs font-medium bg-gray-200 text-gray-600 rounded-full px-2.5 py-1">
-                Past Event
-              </span>
-            )}
-          </div>
-          
-          {/* Mini poster preview - fixed positioning */}
-          {event.posterImage && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowFullPoster(true);
-              }}
-              className="flex-shrink-0 block w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 relative group/poster"
-            >
-              <img
-                src={getEventPosterUrl(event.posterImage, 'thumbnail')}
-                alt={event.posterImageAlt || `${event.title} poster preview`}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover/poster:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-white opacity-0 group-hover/poster:opacity-100 transition-opacity duration-300 drop-shadow-lg" />
-              </div>
-            </button>
+        {/* Header section with title */}
+        <div className="mb-3">
+          <h3 className="font-semibold text-lg sm:text-xl text-generator-darkGreen group-hover:text-generator-green transition-colors mb-1">
+            {event.title}
+          </h3>
+          {isPast && (
+            <span className="inline-block text-xs font-medium bg-gray-200 text-gray-600 rounded-full px-2.5 py-1">
+              Past Event
+            </span>
           )}
         </div>
         
@@ -102,10 +79,32 @@ export function EventCard({ event, index }: EventCardProps) {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-3 sm:mb-4">
-            <span className="inline-block text-xs font-medium bg-generator-lightGreen text-generator-darkGreen rounded-full px-2.5 py-1">
-              {event.eventType}
-            </span>
+          <div className="flex items-end justify-between gap-3 mb-3 sm:mb-4">
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-block text-xs font-medium bg-generator-lightGreen text-generator-darkGreen rounded-full px-2.5 py-1">
+                {event.eventType}
+              </span>
+            </div>
+            
+            {/* Mini poster preview - bottom right */}
+            {event.posterImage && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFullPoster(true);
+                }}
+                className="flex-shrink-0 block w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 relative group/poster"
+              >
+                <img
+                  src={getEventPosterUrl(event.posterImage, 'thumbnail')}
+                  alt={event.posterImageAlt || `${event.title} poster preview`}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover/poster:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                  <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-white opacity-0 group-hover/poster:opacity-100 transition-opacity duration-300 drop-shadow-lg" />
+                </div>
+              </button>
+            )}
           </div>
 
           {event.speakerName && (
