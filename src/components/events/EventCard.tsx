@@ -40,53 +40,44 @@ export function EventCard({ event, index }: EventCardProps) {
           animationDelay: delay,
         }}
       >
-      <div className="p-4 sm:p-6 relative flex flex-col h-full">
-        {/* Mini poster preview in top right */}
-        {event.posterImage && (
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10">
+      <div className="p-4 sm:p-6 flex flex-col h-full">
+        {/* Header section with title and poster */}
+        <div className="flex items-start gap-3 mb-3">
+          {/* Title and past event badge */}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-lg sm:text-xl text-generator-darkGreen group-hover:text-generator-green transition-colors mb-1">
+              {event.title}
+            </h3>
+            {isPast && (
+              <span className="inline-block text-xs font-medium bg-gray-200 text-gray-600 rounded-full px-2.5 py-1">
+                Past Event
+              </span>
+            )}
+          </div>
+          
+          {/* Mini poster preview - fixed positioning */}
+          {event.posterImage && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowFullPoster(true);
               }}
-              className="block w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="flex-shrink-0 block w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 relative group/poster"
             >
               <img
                 src={getEventPosterUrl(event.posterImage, 'thumbnail')}
                 alt={event.posterImageAlt || `${event.title} poster preview`}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
-                <Eye className="h-6 w-6 text-white opacity-0 hover:opacity-100 transition-opacity duration-300 drop-shadow-lg" />
+              <div className="absolute inset-0 bg-black/0 group-hover/poster:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-white opacity-0 group-hover/poster:opacity-100 transition-opacity duration-300 drop-shadow-lg" />
               </div>
             </button>
-          </div>
-        )}
+          )}
+        </div>
         
         {/* Content section that will grow */}
         <div className="flex-grow">
-          <div className="flex items-start justify-between mb-3 gap-3">
-            <h3 className={cn(
-              "font-semibold text-lg sm:text-xl text-generator-darkGreen flex-1 group-hover:text-generator-green transition-colors",
-              event.posterImage && "pr-20 sm:pr-24"
-            )}>
-              {event.title}
-            </h3>
-            {isPast && !event.posterImage && (
-              <span className="text-xs font-medium bg-gray-200 text-gray-600 rounded-full px-2.5 py-1">
-                Past Event
-              </span>
-            )}
-          </div>
-
-          {isPast && event.posterImage && (
-            <div className="mb-2">
-              <span className="text-xs font-medium bg-gray-200 text-gray-600 rounded-full px-2.5 py-1">
-                Past Event
-              </span>
-            </div>
-          )}
-          
           <p className="text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-3 leading-relaxed">{event.description}</p>
 
           <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
