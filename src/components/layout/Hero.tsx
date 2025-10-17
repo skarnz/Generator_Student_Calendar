@@ -67,9 +67,9 @@ export function Hero({ onDateSelect, onEventClick }: HeroProps) {
             <a
               href="#events"
               onClick={handleNavClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-blue-700 hover:to-cyan-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
-              View Events
+              🗓️ View Events
             </a>
             <a
               href="https://docs.google.com/document/d/1WAOdj4Oj8DzsudLVdWijktp61_yvK4KMCU1gF7Lwqpo/edit?usp=sharing"
@@ -83,15 +83,15 @@ export function Hero({ onDateSelect, onEventClick }: HeroProps) {
               href="https://chat.whatsapp.com/GdnB3cExacMA5XfqsXh4pO?mode=ems_copy_c"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-green-700 hover:to-emerald-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
-              Join Our WhatsApp for Updates and Opportunities!
+              💬 Join Our WhatsApp
             </a>
             <button
               onClick={() => setCheckInModalOpen(true)}
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-generator-green px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:bg-generator-darkGreen hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0 border-2 border-white animate-pulse-soft"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-orange-700 hover:to-red-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0 animate-pulse-soft"
             >
-              Event Check-In
+              ✅ Event Check-In
             </button>
           </div>
         </div>
