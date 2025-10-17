@@ -59,9 +59,9 @@ const Index = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-red-500">
       <Header />
-      <main className="pt-16 sm:pt-0">
+      <main className="pt-16 sm:pt-0 bg-red-500">
         <Hero onDateSelect={setSelectedDate} onEventClick={handleEventClick} />
         <About />
         <EventsSection 

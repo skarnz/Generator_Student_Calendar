@@ -72,12 +72,12 @@ export function Hero({ onDateSelect, onEventClick }: HeroProps) {
               View Events
             </a>
             <a
-              href="https://forms.gle/D5mFsPjBNXrhzKqu9"
+              href="https://docs.google.com/document/d/1WAOdj4Oj8DzsudLVdWijktp61_yvK4KMCU1gF7Lwqpo/edit?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-generator-darkGreen shadow-lg transition-all hover:bg-generator-gold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
             >
-              Join Associates
+              Resources Doc
             </a>
             <a
               href="https://chat.whatsapp.com/GdnB3cExacMA5XfqsXh4pO?mode=ems_copy_c"
