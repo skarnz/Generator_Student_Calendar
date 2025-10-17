@@ -120,16 +120,17 @@
       "isPastEvent": false
     },
     {
-      "id": "ai-matchmaking-pow-2025",
-      "title": "AI Matchmaking Event (collab w/POW)",
-      "description": "Looking to spark new connections at Babson? The Generator, in collaboration with POW, invites you to experience the future of networking through AI-powered matchmaking.",
-      "date": "2025-10-17",
-      "time": "TBD",
+      "id": "mit-sloan-openart-videoathon-2025",
+      "title": "MIT Sloan + OpenART Video-A-Thon",
+      "description": "Join The Generator for an exciting Video-A-Thon in collaboration with MIT Sloan and OpenART. Create compelling video content, learn from experts, and compete for prizes while enjoying Dave's Hot Chicken!",
+      "date": "2025-10-18",
+      "time": "3:30 PM - 6:30 PM",
       "location": "Winn Auditorium",
-      "eventType": "Regular Event",
-      "audience": ["Babson Students"],
+      "eventType": "Major Event",
+      "audience": ["Babson Students", "MIT Students"],
       "contactEmail": "generator@babson.edu",
-      "shortBlurb": "AI-powered matchmaking event",
+      "shortBlurb": "Video creation competition with MIT Sloan",
+      "food": "Dave's Hot Chicken",
       "isPastEvent": false
     },
     {
