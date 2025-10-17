@@ -122,15 +122,16 @@
     {
       "id": "mit-sloan-openart-videoathon-2025",
       "title": "MIT Sloan + OpenART Video-A-Thon",
-      "description": "Join The Generator for an exciting Video-A-Thon in collaboration with MIT Sloan and OpenART. Create compelling video content, learn from experts, and compete for prizes while enjoying Dave's Hot Chicken!",
+      "description": "Join The Generator for an exciting Video-A-Thon in collaboration with MIT Sloan and OpenART. Create compelling video content, learn from experts, and compete for $500 in cash prizes while enjoying Dave's Hot Chicken!",
       "date": "2025-10-18",
       "time": "3:30 PM - 6:30 PM",
       "location": "Winn Auditorium",
       "eventType": "Major Event",
       "audience": ["Babson Students", "MIT Students"],
       "contactEmail": "generator@babson.edu",
-      "shortBlurb": "Video creation competition with MIT Sloan",
+      "shortBlurb": "Video competition with $500 in prizes",
       "food": "Dave's Hot Chicken",
+      "prize": "$500 in cash prizes",
       "isPastEvent": false
     },
     {
