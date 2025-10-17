@@ -270,9 +270,11 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
                     </div>
                   )}
                   {event.prize && (
-                    <div className="flex items-center gap-2">
-                      <Gift className="h-4 w-4 text-generator-green" />
-                      <span className="text-sm text-gray-600">{event.prize}</span>
+                    <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-green-100 px-3 py-1.5 rounded-full">
+                      <span className="text-lg">💰</span>
+                      <span className="text-sm font-semibold bg-gradient-to-r from-yellow-600 to-green-600 bg-clip-text text-transparent">
+                        {event.prize}
+                      </span>
                     </div>
                   )}
                 </div>

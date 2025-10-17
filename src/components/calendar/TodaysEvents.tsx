@@ -153,9 +153,11 @@ export function TodaysEvents() {
                         )}
                         
                         {todayEvent.event.prize && (
-                          <div className="flex items-center gap-1 text-generator-darkGreen">
-                            <Gift className="h-3 w-3" />
-                            <span>{todayEvent.event.prize}</span>
+                          <div className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-100 to-green-100 px-2.5 py-1 rounded-full">
+                            <span className="text-sm">💰</span>
+                            <span className="text-xs font-semibold bg-gradient-to-r from-yellow-600 to-green-600 bg-clip-text text-transparent">
+                              {todayEvent.event.prize}
+                            </span>
                           </div>
                         )}
                       </div>
