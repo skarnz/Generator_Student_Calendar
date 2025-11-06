@@ -141,29 +141,39 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
             </select>
           </div>
           
-          <div className="flex items-center gap-1 sm:gap-2 bg-gray-100 p-1 rounded-lg w-full sm:w-auto">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={() => setShowPastEvents(false)}
-              className={`relative flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2 rounded-md transition-all duration-300 flex-1 sm:flex-none justify-center min-h-[44px] sm:min-h-0 ${
-                !showPastEvents 
-                  ? 'bg-generator-green text-white shadow-md' 
-                  : 'bg-transparent text-gray-600 hover:text-gray-800'
+              className={`relative flex items-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-300 flex-1 sm:flex-none justify-center min-h-[44px] font-medium ${
+                !showPastEvents
+                  ? 'bg-gradient-to-r from-generator-green to-generator-darkGreen text-white shadow-lg scale-105'
+                  : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-generator-green hover:text-generator-green hover:shadow-md'
               }`}
             >
-              <Clock className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">{upcomingCount} upcoming</span>
+              <Clock className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="text-sm sm:text-base font-semibold">
+                {upcomingCount} Upcoming
+              </span>
             </button>
-            
+
             <button
               onClick={() => setShowPastEvents(true)}
-              className={`relative flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2 rounded-md transition-all duration-300 flex-1 sm:flex-none justify-center min-h-[44px] sm:min-h-0 ${
-                showPastEvents 
-                  ? 'bg-generator-green text-white shadow-md' 
-                  : 'bg-transparent text-gray-600 hover:text-gray-800'
+              className={`relative flex items-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-300 flex-1 sm:flex-none justify-center min-h-[44px] font-medium ${
+                showPastEvents
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg scale-105'
+                  : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-500 hover:text-purple-600 hover:shadow-md hover:bg-purple-50'
               }`}
             >
-              <Clock className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">{pastCount} past</span>
+              <span className="text-lg">📅</span>
+              <span className="text-sm sm:text-base font-semibold">
+                {pastCount} Past Events
+              </span>
+              {!showPastEvents && pastCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
+                </span>
+              )}
             </button>
           </div>
         </div>
