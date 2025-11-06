@@ -50,13 +50,18 @@ export function EventsSection({ events, selectedEventType, selectedAudience, sel
       if (sortBy === 'date') {
         const [aYear, aMonth, aDay] = a.date.split('-').map(Number);
         const [bYear, bMonth, bDay] = b.date.split('-').map(Number);
-        return new Date(aYear, aMonth - 1, aDay).getTime() - new Date(bYear, bMonth - 1, bDay).getTime();
+        const aDate = new Date(aYear, aMonth - 1, aDay).getTime();
+        const bDate = new Date(bYear, bMonth - 1, bDay).getTime();
+
+        // If showing past events, sort descending (most recent first)
+        // If showing upcoming events, sort ascending (soonest first)
+        return showPastEvents ? bDate - aDate : aDate - bDate;
       } else {
         return a.eventType.localeCompare(b.eventType);
       }
     });
     return sorted;
-  }, [filteredEvents, sortBy]);
+  }, [filteredEvents, sortBy, showPastEvents]);
 
   const upcomingCount = events.filter(e => {
     const [year, month, day] = e.date.split('-').map(Number);
