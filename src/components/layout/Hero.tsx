@@ -63,35 +63,44 @@ export function Hero({ onDateSelect, onEventClick }: HeroProps) {
             </div>
           </div>
           
-          <div className="animate-fade-in animate-delay-200 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4 mt-6 sm:mt-8 mb-8 sm:mb-12 flex-wrap">
-            <a
-              href="#events"
-              onClick={handleNavClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-blue-700 hover:to-cyan-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
-            >
-              🗓️ View Events
-            </a>
-            <a
-              href="https://docs.google.com/document/d/1WAOdj4Oj8DzsudLVdWijktp61_yvK4KMCU1gF7Lwqpo/edit?usp=sharing"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-purple-700 hover:to-pink-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
-            >
-              📚 Resources Doc
-            </a>
-            <a
-              href="https://chat.whatsapp.com/GdnB3cExacMA5XfqsXh4pO?mode=ems_copy_c"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-green-700 hover:to-emerald-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
-            >
-              💬 Join Our WhatsApp
-            </a>
+          <div className="animate-fade-in animate-delay-200 flex flex-col justify-center items-center gap-4 sm:gap-5 px-4 mt-6 sm:mt-8 mb-8 sm:mb-12">
+            {/* Top row - main action buttons */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 flex-wrap w-full">
+              <a
+                href="#events"
+                onClick={handleNavClick}
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-blue-700 hover:to-cyan-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              >
+                🗓️ View Events
+              </a>
+              <a
+                href="https://docs.google.com/document/d/1WAOdj4Oj8DzsudLVdWijktp61_yvK4KMCU1gF7Lwqpo/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-purple-700 hover:to-pink-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              >
+                📚 Resources Doc
+              </a>
+              <a
+                href="https://chat.whatsapp.com/GdnB3cExacMA5XfqsXh4pO?mode=ems_copy_c"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-green-700 hover:to-emerald-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0"
+              >
+                💬 Join Our WhatsApp
+              </a>
+            </div>
+
+            {/* Bottom row - Event Check-In button (bigger and standalone) */}
             <button
               onClick={() => setCheckInModalOpen(true)}
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white shadow-lg transition-all hover:from-orange-700 hover:to-red-700 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[44px] sm:min-h-0 animate-pulse-soft"
+              className="relative w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-orange-600 to-red-600 px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-bold text-white shadow-2xl transition-all hover:from-orange-700 hover:to-red-700 hover:shadow-3xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-generator-green min-h-[56px] sm:min-h-[64px] animate-wiggle overflow-hidden group"
             >
-              ✅ Event Check-In
+              {/* Reflection/shine effect */}
+              <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out animate-shine"></div>
+
+              <span className="text-xl sm:text-2xl mr-2 animate-bounce-subtle">✅</span>
+              <span className="relative z-10">Event Check-In</span>
             </button>
           </div>
         </div>
